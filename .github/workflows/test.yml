@@ -1,0 +1,38 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: python -m pytest tests/ -q
+
+      - name: Verify Python syntax (hooks)
+        run: python -m py_compile hooks/output_safety_guard.py hooks/domain_classifier.py hooks/pack_loader.py hooks/andon_cli.py hooks/meta_andon_guard.py
+
+      - name: Verify shell syntax (hooks)
+        run: |
+          bash -n hooks/tps-andon-control.sh
+          bash -n hooks/tps-andon-pretool-guard.sh
+          bash -n hooks/tps-andon-posttool-guard.sh
+          bash -n hooks/kaizen-learning-capture.sh

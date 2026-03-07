@@ -1,0 +1,26 @@
+__pycache__/
+.pytest_cache/
+
+# Auto-generated import wrapper for hyphenated module name
+hooks/tps_kaizen_runtime.py
+
+# Internal planning documents (not for public distribution)
+PLAN.md
+
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+secrets.json
+credentials.json
+*.secrets.json
+*.credentials.json
+config.local.json
+settings.local.json
+
+# Keys and certificates
+*.pem
+*.p12
+*.key
+id_rsa
+id_ed25519

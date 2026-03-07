@@ -1,0 +1,80 @@
+# Sample Knowledge Pack — Web API Security
+# This is a minimal working example of a Knowledge Pack.
+# Use it as a starting point for your own packs.
+
+apiVersion: andon/v1
+kind: KnowledgePack
+metadata:
+  name: "sample-web-api-security"
+  version: "0.1.0"
+  description: "Sample pack: common web API security patterns and troubleshooting"
+  author: "ANDON Contributors"
+  license: "Apache-2.0"
+  tags: ["security", "api", "web", "sample"]
+
+# Pack 0 is not required for this sample (not a regulated domain).
+# For legal/medical/financial packs, you MUST add:
+# requires:
+#   - name: output-safety-guard
+#     version: ">=1.0.0"
+
+# Domain keywords — merged into domain_classifier at load time
+domains:
+  - id: "web_api_security"
+    keywords:
+      - pattern: "(401|403|unauthorized|forbidden)"
+        weight: 1.0
+      - pattern: "(CORS|cross-origin|access-control)"
+        weight: 0.9
+      - pattern: "(JWT|bearer token|OAuth|API key)"
+        weight: 0.9
+      - pattern: "(rate limit|429|too many requests)"
+        weight: 0.8
+      - pattern: "(SQL injection|XSS|CSRF)"
+        weight: 1.0
+      - pattern: "(SSL|TLS|certificate|https)"
+        weight: 0.7
+
+# Failure classification rules — merged into CLASSIFICATION_RULES
+classification_rules:
+  - cause_id: "api_auth_failure"
+    label: "API authentication/authorization failure"
+    confidence: 0.88
+    pattern: "(401|403|unauthorized|forbidden|invalid.*token)"
+
+  - cause_id: "api_cors_error"
+    label: "CORS policy violation"
+    confidence: 0.90
+    pattern: "(CORS|cross-origin|access-control-allow)"
+
+  - cause_id: "api_rate_limit"
+    label: "API rate limit exceeded"
+    confidence: 0.85
+    pattern: "(429|rate.?limit|too many requests|throttl)"
+
+# Map cause_ids to domains
+cause_to_domain:
+  api_auth_failure: "web_api_security"
+  api_cors_error: "web_api_security"
+  api_rate_limit: "web_api_security"
+
+# Skill recommendations — displayed in ANDON incident reports
+skill_map:
+  web_api_security:
+    primary:
+      - ref: "api-auth-guide"
+        path: "skills/api-auth-guide.md"
+        description: "Authentication & authorization patterns (JWT, OAuth, API keys)"
+      - ref: "api-security-checklist"
+        path: "skills/api-security-checklist.md"
+        description: "OWASP API Security Top 10 quick checklist"
+    secondary:
+      - ref: "cors-troubleshoot"
+        path: "skills/cors-troubleshoot.md"
+        description: "CORS configuration troubleshooting guide"
+  security:
+    primary:
+      - ref: "api-security-checklist"
+        path: "skills/api-security-checklist.md"
+        description: "OWASP API Security Top 10 quick checklist"
+    secondary: []

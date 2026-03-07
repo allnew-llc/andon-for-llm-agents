@@ -1,0 +1,33 @@
+# Pack 0: Human Rights Violations patterns
+# Guard level: BLOCK
+
+category: human_rights_violation
+level: block
+
+patterns:
+  # Child exploitation
+  - pattern: "(child (porn|pornography|sexual|exploitation|abuse)\\s+(images|videos|material|content))"
+    weight: 1.0
+  - pattern: "(CSAM|児童ポルノ|児童性的虐待)"
+    weight: 1.0
+
+  # Human trafficking
+  - pattern: "(how to (traffic|smuggle|sell|buy)\\s+(people|humans|persons|women|children))"
+    weight: 1.0
+  - pattern: "(人身売買|人身取引).*(方法|手順|やり方)"
+    weight: 1.0
+
+  # Forced labor
+  - pattern: "(how to (force|coerce|compel) (someone|workers|people) (to work|into labor))"
+    weight: 1.0
+  - pattern: "(強制労働|奴隷労働).*(方法|やり方)"
+    weight: 1.0
+
+  # Surveillance / stalking
+  - pattern: "(how to (stalk|track|surveil|spy on) (someone|a person|my (ex|wife|husband|partner)))"
+    weight: 0.9
+  - pattern: "(ストーカー|盗撮|盗聴).*(方法|やり方|ツール)"
+    weight: 0.9
+
+disclaimer: ""
+professional_referral: ""

@@ -1,0 +1,50 @@
+# Pack 0: Unauthorized Practice of Law (UPL) patterns
+# Guard level: GUARD (allow info, inject disclaimer + referral)
+#
+# Reference: Nippon Life v. OpenAI (2026/3, N.D. Ill. 1:26-cv-02448)
+# Japan: 弁護士法72条 (Attorney Act Art. 72)
+# US: State-specific UPL statutes
+
+category: unauthorized_practice_of_law
+level: guard
+
+patterns:
+  # Directive legal judgment (EN)
+  - pattern: "(you (should|must|need to|are required to|have to) (file|sue|claim|appeal|petition|litigate))"
+    weight: 1.0
+  - pattern: "(this (is|would be|constitutes) (illegal|unlawful|a violation|a breach))"
+    weight: 0.9
+  - pattern: "(you have (a legal right|grounds|standing) to)"
+    weight: 0.9
+  - pattern: "(I recommend (filing|suing|taking legal action))"
+    weight: 1.0
+  - pattern: "(legal advice|as your (lawyer|attorney|counsel))"
+    weight: 1.0
+
+  # Directive legal judgment (JA)
+  - pattern: "(提訴すべき|訴訟を起こすべき|法的措置を(取るべき|講じるべき))"
+    weight: 1.0
+  - pattern: "(義務がある|違法である|合法である|適法である)"
+    weight: 0.9
+  - pattern: "(法的助言|法的見解|法律相談)"
+    weight: 0.9
+  - pattern: "(弁護士として|法律の専門家として)"
+    weight: 1.0
+
+  # Litigation coaching
+  - pattern: "(file a (lawsuit|complaint|motion|brief)|draft a (complaint|petition|motion))"
+    weight: 0.95
+  - pattern: "(訴状を(作成|起案)|準備書面を(作成|起案))"
+    weight: 0.95
+
+disclaimer: |
+  ⚠️ Legal Information Disclaimer
+
+  This output provides general legal information only and does NOT constitute
+  legal advice, legal opinion, or attorney-client communication.
+
+  - Do not take legal action based solely on this output
+  - Consult a licensed attorney in your jurisdiction for specific legal guidance
+  - Laws are subject to amendment; verify current text from primary sources
+
+professional_referral: "Attorney at Law / 弁護士"

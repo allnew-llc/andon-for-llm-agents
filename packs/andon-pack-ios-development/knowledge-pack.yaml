@@ -1,0 +1,146 @@
+# ANDON Knowledge Pack: iOS Development
+#
+# Provides domain classification, failure detection, and skill
+# recommendations for iOS app development and App Store submission.
+#
+# NOT a regulated domain — Pack 0 is not required.
+
+apiVersion: andon/v1
+kind: KnowledgePack
+metadata:
+  name: "andon-pack-ios-development"
+  version: "1.0.0"
+  description: "iOS app development and App Store submission skills"
+  author: "AllNew LLC"
+  license: "Apache-2.0"
+  homepage: "https://github.com/allnew-llc/andon-for-llm-agents"
+  tags: ["ios", "swift", "xcode", "app-store", "apple"]
+
+# No Pack 0 required — iOS development is not a regulated domain.
+
+# Domain keywords — merged into domain_classifier at load time
+domains:
+  - id: "ios_development"
+    keywords:
+      # Build errors
+      - pattern: "(xcodebuild|xcrun|swift.?build|xcode)"
+        weight: 1.0
+      - pattern: "(build.?failed|compilation.?error|linker.?error)"
+        weight: 0.9
+      - pattern: "(swift.?compiler|swiftc|clang)"
+        weight: 0.8
+
+      # Frameworks
+      - pattern: "(SwiftUI|UIKit|HealthKit|StoreKit|CoreData)"
+        weight: 0.9
+      - pattern: "(AppIntents|WidgetKit|CloudKit|CoreML)"
+        weight: 0.8
+      - pattern: "(AVFoundation|Vision|Speech|NaturalLanguage)"
+        weight: 0.7
+
+      # Signing & provisioning
+      - pattern: "(code.?sign|provisioning.?profile|certificate|entitlement)"
+        weight: 1.0
+      - pattern: "(PRODUCT_BUNDLE_IDENTIFIER|DEVELOPMENT_TEAM)"
+        weight: 0.9
+
+      # App Store
+      - pattern: "(app.?store.?connect|ASC|TestFlight)"
+        weight: 0.9
+      - pattern: "(app.?review|rejection|guideline)"
+        weight: 0.8
+      - pattern: "(screenshot|metadata|keyword|description)"
+        weight: 0.6
+
+      # Privacy
+      - pattern: "(PrivacyInfo|privacy.?manifest|NSPrivacyTracking)"
+        weight: 1.0
+      - pattern: "(privacy.?nutrition|data.?collection|tracking.?transparency)"
+        weight: 0.8
+
+      # IAP / StoreKit
+      - pattern: "(in-app.?purchase|IAP|subscription|StoreKit)"
+        weight: 0.9
+      - pattern: "(Product|Transaction|entitlement|receipt)"
+        weight: 0.7
+
+  - id: "quality_test"
+    keywords:
+      - pattern: "(XCTest|XCUITest|xctest|test.?plan)"
+        weight: 0.8
+      - pattern: "(UI.?test|unit.?test|snapshot.?test)"
+        weight: 0.7
+
+# Failure classification rules
+classification_rules:
+  - cause_id: "xcode_build_failure"
+    label: "Xcode build or compilation failure"
+    confidence: 0.90
+    pattern: "(xcodebuild.*failed|Build Failed|error:.*swift)"
+
+  - cause_id: "code_signing_error"
+    label: "Code signing or provisioning failure"
+    confidence: 0.92
+    pattern: "(code.?sign.*error|provisioning.*error|no.?signing.?certificate)"
+
+  - cause_id: "app_review_rejection"
+    label: "App Store review rejection"
+    confidence: 0.85
+    pattern: "(reject|guideline.*\\d+\\.\\d+|review.*issue|binary.*rejected)"
+
+  - cause_id: "privacy_manifest_issue"
+    label: "Privacy manifest or tracking compliance issue"
+    confidence: 0.88
+    pattern: "(PrivacyInfo|ITMS-91053|privacy.*manifest|required.?reason.?API)"
+
+  - cause_id: "storekit_iap_error"
+    label: "StoreKit / in-app purchase configuration error"
+    confidence: 0.80
+    pattern: "(StoreKit.*error|purchase.*failed|subscription.*config|IAP.*missing)"
+
+  - cause_id: "simulator_device_error"
+    label: "Simulator or device deployment error"
+    confidence: 0.75
+    pattern: "(simulator.*error|device.*unavailable|unable.*install.*app)"
+
+# Map cause IDs to domains
+cause_to_domain:
+  xcode_build_failure: "ios_development"
+  code_signing_error: "ios_development"
+  app_review_rejection: "ios_development"
+  privacy_manifest_issue: "ios_development"
+  storekit_iap_error: "ios_development"
+  simulator_device_error: "ios_development"
+
+# Skill recommendations
+skill_map:
+  ios_development:
+    primary:
+      - ref: "apple-framework-patterns"
+        path: "skills/apple-framework-patterns.md"
+        description: "Common Apple framework API patterns and solutions"
+      - ref: "app-review-guide"
+        path: "skills/app-review-guide.md"
+        description: "App Store Review Guidelines quick reference"
+    secondary:
+      - ref: "privacy-compliance"
+        path: "skills/privacy-compliance.md"
+        description: "Privacy manifest and data collection compliance"
+      - ref: "code-signing-guide"
+        path: "skills/code-signing-guide.md"
+        description: "Code signing and provisioning troubleshooting"
+      - ref: "storekit-patterns"
+        path: "skills/storekit-patterns.md"
+        description: "StoreKit 2 implementation patterns"
+  quality_test:
+    primary:
+      - ref: "apple-framework-patterns"
+        path: "skills/apple-framework-patterns.md"
+        description: "Common Apple framework API patterns and solutions"
+    secondary: []
+
+quality_criteria:
+  - "All skills reference official Apple documentation"
+  - "No Apple trademarks used as branding — descriptive use only"
+  - "Code examples use Swift 6+ and latest SDK conventions"
+  - "Review Guidelines referenced by section number"

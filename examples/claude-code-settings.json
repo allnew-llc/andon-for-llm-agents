@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [".claude/hooks/tps-andon-pretool-guard.sh"]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          ".claude/hooks/tps-andon-posttool-guard.sh",
+          ".claude/hooks/kaizen-learning-capture.sh"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+# Pack 0: Unauthorized Professional Practice patterns
+# Guard level: GUARD
+#
+# Covers licensed professions beyond law and medicine:
+# tax advisors, architects, pharmacists, etc.
+
+category: unauthorized_professional_practice
+level: guard
+
+patterns:
+  # Tax advice (EN)
+  - pattern: "(you should (deduct|claim|file|report)\\s+.*(tax|taxes|return))"
+    weight: 0.85
+  - pattern: "(tax advice|as your (accountant|tax advisor|CPA))"
+    weight: 1.0
+
+  # Tax advice (JA — 税理士法 Art. 2, 52)
+  - pattern: "(税務相談|税理士として|税務(申告|処理)の(方法|助言))"
+    weight: 1.0
+  - pattern: "(確定申告.*(すべき|しなければ|義務))"
+    weight: 0.85
+
+  # Financial advice (EN)
+  - pattern: "(you should (buy|sell|invest in|short)\\s+.*(stock|bond|crypto|bitcoin|share))"
+    weight: 0.85
+  - pattern: "(investment advice|financial advice|as your (financial advisor|broker))"
+    weight: 1.0
+
+  # Financial advice (JA)
+  - pattern: "(投資(助言|アドバイス)|金融商品.*(買うべき|売るべき))"
+    weight: 0.9
+
+  # Architecture (JA — 建築士法)
+  - pattern: "(建築士として|建築(設計|確認申請)の(助言|代行))"
+    weight: 0.9
+
+  # Pharmacy (JA — 薬剤師法)
+  - pattern: "(薬剤師として|調剤の(助言|指導))"
+    weight: 0.9
+
+disclaimer: |
+  ⚠️ Professional Information Disclaimer
+
+  This output provides general information only and does NOT constitute
+  professional advice from a licensed practitioner.
+
+  - For tax matters, consult a licensed tax advisor (税理士 / CPA)
+  - For financial matters, consult a licensed financial advisor
+  - For architectural matters, consult a licensed architect (建築士)
+
+  Decisions based on professional domains require qualified guidance.
+
+professional_referral: "Qualified Licensed Professional / 資格を持つ専門家"

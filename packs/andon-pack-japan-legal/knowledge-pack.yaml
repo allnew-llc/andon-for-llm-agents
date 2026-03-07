@@ -1,0 +1,186 @@
+# ANDON Knowledge Pack: Japan Legal (e-Gov)
+#
+# Provides domain classification, failure detection, and skill
+# recommendations for Japanese law compliance tasks.
+# Uses e-Gov Law API v2 for primary source access.
+#
+# IMPORTANT: This pack covers a regulated domain and REQUIRES Pack 0.
+
+apiVersion: andon/v1
+kind: KnowledgePack
+metadata:
+  name: "andon-pack-japan-legal"
+  version: "1.0.0"
+  description: "Japanese law compliance skills powered by e-Gov Law API v2"
+  author: "AllNew LLC"
+  license: "Apache-2.0"
+  homepage: "https://github.com/allnew-llc/andon-for-llm-agents"
+  tags: ["legal", "japan", "e-gov", "compliance", "regulated"]
+
+# Pack 0 dependency — mandatory for regulated domains
+requires:
+  - name: "output-safety-guard"
+    version: ">=1.0.0"
+    reason: "Regulated domain (japan_legal) — requires UPL/disclaimer guards"
+
+# Domain keywords — merged into domain_classifier at load time
+domains:
+  - id: "japan_legal"
+    keywords:
+      # APPI (個人情報保護法)
+      - pattern: "(個人情報|APPI|personal.?information.?protection)"
+        weight: 1.0
+      - pattern: "(個人データ|要配慮個人情報|匿名加工情報)"
+        weight: 0.9
+      - pattern: "(個人情報保護委員会|PPC)"
+        weight: 0.8
+
+      # 特定商取引法
+      - pattern: "(特定商取引|特商法|tokusho)"
+        weight: 1.0
+      - pattern: "(通信販売|訪問販売|電話勧誘)"
+        weight: 0.8
+
+      # 消費者契約法
+      - pattern: "(消費者契約|consumer.?contract)"
+        weight: 0.9
+      - pattern: "(不当条項|取消権|消費者の利益)"
+        weight: 0.8
+
+      # 弁護士法
+      - pattern: "(弁護士法|attorney.?act|非弁行為)"
+        weight: 1.0
+      - pattern: "(法的助言|legal.?advice)"
+        weight: 0.9
+
+      # 電気通信事業法
+      - pattern: "(電気通信事業|telecommunications.?business)"
+        weight: 0.9
+
+      # 著作権法
+      - pattern: "(著作権|copyright.?act|著作物)"
+        weight: 0.8
+
+      # 景品表示法
+      - pattern: "(景品表示|不当景品|misleading.?representation)"
+        weight: 0.8
+
+      # e-Gov API
+      - pattern: "(e-Gov|laws\\.e-gov\\.go\\.jp|法令検索)"
+        weight: 0.7
+
+  - id: "legal"
+    keywords:
+      - pattern: "(法令|statute|法律|regulation|条文|article)"
+        weight: 0.6
+      - pattern: "(コンプライアンス|compliance|法務|legal.?review)"
+        weight: 0.7
+
+# Failure classification rules
+classification_rules:
+  - cause_id: "legal_compliance_gap"
+    label: "Legal compliance requirement not met"
+    confidence: 0.75
+    pattern: "(compliance|法令|規制|違反|non-compliant)"
+
+  - cause_id: "privacy_violation"
+    label: "Privacy / personal data handling issue"
+    confidence: 0.80
+    pattern: "(個人情報|privacy|APPI|personal.?data|データ漏洩)"
+
+  - cause_id: "consumer_protection_issue"
+    label: "Consumer protection law concern"
+    confidence: 0.75
+    pattern: "(特商法|consumer.?protection|返品|クーリングオフ|特定商取引)"
+
+  - cause_id: "upl_risk"
+    label: "Unauthorized practice of law risk"
+    confidence: 0.85
+    pattern: "(非弁行為|弁護士法72条|unauthorized.*legal|legal.?advice)"
+
+  - cause_id: "copyright_issue"
+    label: "Copyright compliance concern"
+    confidence: 0.70
+    pattern: "(著作権侵害|copyright.?infringement|無断転載|無断使用)"
+
+  - cause_id: "telecom_compliance"
+    label: "Telecommunications regulation concern"
+    confidence: 0.70
+    pattern: "(電気通信事業.*届出|通信の秘密|telecommunications.*registration)"
+
+# Map cause IDs to domains
+cause_to_domain:
+  legal_compliance_gap: "japan_legal"
+  privacy_violation: "japan_legal"
+  consumer_protection_issue: "japan_legal"
+  upl_risk: "japan_legal"
+  copyright_issue: "japan_legal"
+  telecom_compliance: "japan_legal"
+
+# Skill recommendations
+skill_map:
+  japan_legal:
+    primary:
+      - ref: "legal-orchestrator"
+        path: "skills/legal-orchestrator.md"
+        description: "Multi-law compliance audit entry point"
+      - ref: "egov-api-guide"
+        path: "skills/egov-api-guide.md"
+        description: "e-Gov Law API v2 usage guide"
+    secondary:
+      - ref: "appi-guide"
+        path: "skills/appi-guide.md"
+        description: "Personal Information Protection Act (APPI) guide"
+      - ref: "tokusho-guide"
+        path: "skills/tokusho-guide.md"
+        description: "Specified Commercial Transactions Act guide"
+      - ref: "consumer-contract-guide"
+        path: "skills/consumer-contract-guide.md"
+        description: "Consumer Contract Act guide"
+      - ref: "upl-prevention"
+        path: "skills/upl-prevention.md"
+        description: "Unauthorized Practice of Law prevention guide"
+  legal:
+    primary:
+      - ref: "legal-orchestrator"
+        path: "skills/legal-orchestrator.md"
+        description: "Multi-law compliance audit entry point"
+    secondary:
+      - ref: "egov-api-guide"
+        path: "skills/egov-api-guide.md"
+        description: "e-Gov Law API v2 usage guide"
+
+# Safety extensions — extend Pack 0 for Japan-specific patterns
+safety_extensions:
+  - category: "unauthorized_practice_of_law"
+    extra_patterns:
+      - pattern: "(弁護士法72条|非弁行為|弁護士でない.*法的)"
+        weight: 1.0
+      - pattern: "(法律相談|法律事務.*取り扱)"
+        weight: 0.9
+      - pattern: "(訴訟.*代理|示談.*交渉.*代行)"
+        weight: 1.0
+    jurisdiction: "JP"
+    disclaimer_override:
+      text: |
+        ⚠️ 法的情報に関する注意
+
+        本出力は e-Gov 法令検索の一次情報に基づく参考情報であり、
+        法的助言ではありません。弁護士法第72条により、弁護士でない者が
+        法律事務を取り扱うことは禁止されています。
+      source_attribution: "出典: e-Gov法令検索 (https://laws.e-gov.go.jp)"
+
+  - category: "unauthorized_professional_practice"
+    extra_patterns:
+      - pattern: "(行政書士.*代行|司法書士.*代理)"
+        weight: 0.9
+      - pattern: "(社会保険労務士.*手続|税理士.*申告.*代行)"
+        weight: 0.9
+    jurisdiction: "JP"
+
+quality_criteria:
+  - "All skills reference e-Gov Law API v2 as primary source"
+  - "No legal conclusions — only structured fact retrieval"
+  - "Disclaimers clearly state output is not legal advice"
+  - "Article-level citations with law_id and retrieval timestamp"
+  - "Escalation to licensed professionals at decision points"

@@ -1,0 +1,33 @@
+# Pack 0: Discrimination / Hate Speech patterns
+# Guard level: BLOCK
+#
+# Scope: explicit slurs, dehumanization, calls for violence against
+# protected groups.  Does NOT flag academic discussion, historical
+# accounts, or counter-speech.
+
+category: discrimination_hate
+level: block
+
+patterns:
+  # Dehumanization
+  - pattern: "(all (jews|muslims|blacks|whites|asians|latinos|hispanics|arabs|immigrants) (are|should)\\s+(be killed|die|be deported|be exterminated))"
+    weight: 1.0
+  - pattern: "((jews|muslims|blacks|whites|asians|latinos|hispanics|arabs|immigrants) are (subhuman|animals|vermin|parasites|inferior))"
+    weight: 1.0
+
+  # Gender / sexual orientation
+  - pattern: "((women|gays|lesbians|trans people|transgender) (are|should)\\s+(be killed|die|not exist|be eliminated))"
+    weight: 1.0
+
+  # Disability
+  - pattern: "((disabled people|retards|cripples) (are|should)\\s+(be killed|die|not exist|be eliminated))"
+    weight: 1.0
+
+  # JA equivalents
+  - pattern: "((在日|外国人|障害者|女性|同性愛者).*(死ね|殺せ|出て行け|劣等|害虫))"
+    weight: 1.0
+  - pattern: "(ヘイトスピーチ.*(扇動|呼びかけ|実行))"
+    weight: 0.9
+
+disclaimer: ""
+professional_referral: ""

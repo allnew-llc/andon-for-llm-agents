@@ -1,0 +1,39 @@
+# Pack 0: Unauthorized Practice of Medicine (UPM) patterns
+# Guard level: GUARD
+
+category: unauthorized_practice_of_medicine
+level: guard
+
+patterns:
+  # Diagnosis / prescription (EN)
+  - pattern: "(you (have|likely have|probably have|are suffering from|are diagnosed with)\\s+\\w+)"
+    weight: 0.9
+  - pattern: "(you should (take|stop taking|increase|decrease|start)\\s+(medication|dosage|prescription))"
+    weight: 1.0
+  - pattern: "(I (diagnose|prescribe|recommend treatment))"
+    weight: 1.0
+  - pattern: "(medical advice|as your (doctor|physician))"
+    weight: 1.0
+  - pattern: "(this (medication|drug|treatment) will (cure|treat|heal))"
+    weight: 0.9
+
+  # Diagnosis / prescription (JA)
+  - pattern: "(あなたの症状は.+(です|でしょう)|診断します)"
+    weight: 0.9
+  - pattern: "(服用すべき|処方します|投薬|治療法として)"
+    weight: 1.0
+  - pattern: "(医療助言|医学的見解|医師として)"
+    weight: 1.0
+
+disclaimer: |
+  ⚠️ Health Information Disclaimer
+
+  This output provides general health information only and does NOT constitute
+  medical advice, diagnosis, or prescription.
+
+  - Consult a licensed physician for symptoms or health concerns
+  - Do not change medication or treatment without medical supervision
+
+  Emergency: 119 (Japan) / 911 (US) / 112 (EU)
+
+professional_referral: "Licensed Physician / 医師"

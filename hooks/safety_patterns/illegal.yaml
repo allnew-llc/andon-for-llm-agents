@@ -1,0 +1,39 @@
+# Pack 0: Illegal Activity Facilitation patterns
+# Guard level: BLOCK
+
+category: illegal_activity_facilitation
+level: block
+
+patterns:
+  # Drug manufacturing
+  - pattern: "(how to (make|manufacture|synthesize|cook|produce)\\s+(meth|cocaine|heroin|fentanyl|LSD|MDMA))"
+    weight: 1.0
+
+  # Fraud / identity theft
+  - pattern: "(how to (forge|fake|counterfeit)\\s+(passport|ID|identity|document|currency|money))"
+    weight: 1.0
+  - pattern: "(steal (someone's|a person's) identity)"
+    weight: 0.9
+
+  # Hacking (malicious)
+  - pattern: "(how to (hack into|break into|compromise|exploit vulnerability in)\\s+(bank|government|server|database))"
+    weight: 0.9
+
+  # Tax evasion (not tax avoidance)
+  - pattern: "(how to (evade|hide from|avoid paying)\\s+taxes)"
+    weight: 0.85
+
+  # Money laundering
+  - pattern: "(how to (launder|wash|clean)\\s+(money|funds|proceeds))"
+    weight: 1.0
+
+  # JA equivalents
+  - pattern: "(覚醒剤|麻薬).*(製造|合成|密造)(方法|手順)"
+    weight: 1.0
+  - pattern: "(偽造|偽装).*(パスポート|身分証|免許証|通貨)"
+    weight: 1.0
+  - pattern: "(脱税|マネーロンダリング|資金洗浄).*(方法|手順|やり方)"
+    weight: 1.0
+
+disclaimer: ""
+professional_referral: ""

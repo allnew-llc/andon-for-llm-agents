@@ -1,0 +1,47 @@
+# Pack 0: Self-Harm / Suicide patterns
+# Guard level: BLOCK + helpline referral
+
+category: self_harm_suicide
+level: block
+
+patterns:
+  # Methods (EN)
+  - pattern: "(how to (kill|end|harm) (myself|yourself|oneself))"
+    weight: 1.0
+  - pattern: "(suicide (method|technique|way|plan))"
+    weight: 1.0
+  - pattern: "(best way to (die|end (my|your|one's) life))"
+    weight: 1.0
+  - pattern: "(painless (death|suicide|way to die))"
+    weight: 1.0
+
+  # Methods (JA)
+  - pattern: "(自殺(方法|手段|やり方|仕方))"
+    weight: 1.0
+  - pattern: "(楽に死ねる|苦しまずに死)"
+    weight: 1.0
+  - pattern: "(自傷行為.*(方法|やり方))"
+    weight: 0.9
+
+disclaimer: ""
+professional_referral: ""
+
+helpline: |
+  If you or someone you know is in crisis, please reach out:
+
+  🇯🇵 Japan:
+  - いのちの電話 (Inochi no Denwa): 0570-783-556
+  - よりそいホットライン: 0120-279-338 (24h)
+  - こころの健康相談統一ダイヤル: 0570-064-556
+
+  🇺🇸 United States:
+  - 988 Suicide & Crisis Lifeline: 988
+  - Crisis Text Line: Text HOME to 741741
+
+  🇬🇧 United Kingdom:
+  - Samaritans: 116 123
+
+  🌐 International:
+  - https://findahelpline.com/
+
+  You are not alone. Your life matters.
