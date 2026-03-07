@@ -1,3 +1,5 @@
+[日本語](./README.ja.md)
+
 # ANDON for LLM Agents
 
 **Lean manufacturing (TPS) principles applied to LLM-assisted coding.**
