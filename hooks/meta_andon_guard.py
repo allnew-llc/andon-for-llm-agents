@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """meta_andon_guard.py — Meta-ANDON: Detect repeated failure patterns
 
 Detects when the agent is stuck in a whack-a-mole debugging loop by
@@ -6,7 +7,8 @@ tracking consecutive failures across runs.
 This is a generic implementation. For pipeline-specific usage,
 extend with your own project directory detection and run tracking.
 
-Copyright 2026 AllNew LLC — Apache License 2.0
+Copyright 2026 AllNew LLC
+Licensed under Apache License 2.0
 """
 
 from __future__ import annotations

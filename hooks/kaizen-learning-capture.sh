@@ -14,14 +14,14 @@ set -euo pipefail
 
 INPUT=$(cat)
 
-TOOL_INPUT=$(echo "$INPUT" | python3 -c "
+TOOL_INPUT=$(printf '%s\n' "$INPUT" | python3 -c "
 import sys, json
 data = json.load(sys.stdin)
 print(data.get('tool_input', {}).get('command', ''))
 " 2>/dev/null || echo "")
 
 # Only process git commit commands
-if ! echo "$TOOL_INPUT" | grep -q "git commit"; then
+if ! printf '%s\n' "$TOOL_INPUT" | grep -q "git commit"; then
   echo "{}"
   exit 0
 fi
@@ -30,7 +30,7 @@ COMMIT_MSG="$TOOL_INPUT"
 
 HAS_FIX_KEYWORD=false
 for keyword in "fix" "bug" "hotfix" "patch" "workaround" "kaizen"; do
-  if echo "$COMMIT_MSG" | grep -qi "$keyword"; then
+  if printf '%s\n' "$COMMIT_MSG" | grep -qi "$keyword"; then
     HAS_FIX_KEYWORD=true
     break
   fi

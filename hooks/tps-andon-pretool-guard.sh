@@ -73,7 +73,7 @@ try:
 except ValueError:
     deny(
         "Shell quote mismatch detected before execution. Use a heredoc script:\n"
-        "cat <<'SH' >/tmp/run.sh ... SH ; bash -n /tmp/run.sh && bash /tmp/run.sh"
+        "f=$(mktemp); cat <<'SH' >\"$f\" ... SH; bash -n \"$f\" && bash \"$f\"; rm \"$f\""
     )
 
 # Guard 2: block brittle long inline JSON + escaping patterns.

@@ -22,7 +22,7 @@ import shlex
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 # === Pack 0 + Domain Classifier + Pack Loader ===
 # Lazy-imported to avoid hard failures if PyYAML is not installed
@@ -79,7 +79,7 @@ def ensure_dirs() -> None:
     KAIZEN_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def load_json(path: Path) -> Dict[str, Any]:
+def load_json(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
     try:
@@ -88,7 +88,7 @@ def load_json(path: Path) -> Dict[str, Any]:
         return {}
 
 
-def write_json(path: Path, data: Dict[str, Any]) -> None:
+def write_json(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     content = json.dumps(data, ensure_ascii=False, indent=2)
     # Use explicit file mode (owner rw, group r, no other) to avoid
@@ -100,9 +100,9 @@ def write_json(path: Path, data: Dict[str, Any]) -> None:
         os.close(fd)
 
 
-def append_json_event(path: Path, data: Dict[str, Any]) -> None:
-    existing: Dict[str, Any] = load_json(path)
-    events: List[Dict[str, Any]] = []
+def append_json_event(path: Path, data: dict[str, Any]) -> None:
+    existing: dict[str, Any] = load_json(path)
+    events: list[dict[str, Any]] = []
     if isinstance(existing.get("events"), list):
         events = existing["events"]
     events.append(data)
@@ -110,7 +110,7 @@ def append_json_event(path: Path, data: Dict[str, Any]) -> None:
 
 
 def print_hook_context(message: str, block: bool) -> None:
-    payload: Dict[str, Any] = {
+    payload: dict[str, Any] = {
         "hookSpecificOutput": {
             "hookEventName": "PostToolUse",
             "additionalContext": message,
@@ -126,7 +126,7 @@ def print_empty() -> None:
     print("{}")
 
 
-def get_payload_from_env() -> Dict[str, Any]:
+def get_payload_from_env() -> dict[str, Any]:
     raw = os.environ.get("INPUT_JSON", "")
     if not raw:
         return {}
@@ -139,7 +139,7 @@ def get_payload_from_env() -> Dict[str, Any]:
         return {}
 
 
-def get_command(payload: Dict[str, Any]) -> str:
+def get_command(payload: dict[str, Any]) -> str:
     tool_input = payload.get("tool_input")
     if isinstance(tool_input, dict):
         command = tool_input.get("command")
@@ -148,7 +148,7 @@ def get_command(payload: Dict[str, Any]) -> str:
     return ""
 
 
-def get_workdir(payload: Dict[str, Any]) -> str:
+def get_workdir(payload: dict[str, Any]) -> str:
     tool_input = payload.get("tool_input")
     if isinstance(tool_input, dict):
         workdir = tool_input.get("workdir")
@@ -157,7 +157,7 @@ def get_workdir(payload: Dict[str, Any]) -> str:
     return str(WORKSPACE)
 
 
-def find_exit_code(obj: Any) -> Optional[int]:
+def find_exit_code(obj: Any) -> int | None:
     if isinstance(obj, dict):
         for key in ("exit_code", "exitCode", "status_code", "statusCode", "code", "returncode"):
             value = obj.get(key)
@@ -177,8 +177,8 @@ def find_exit_code(obj: Any) -> Optional[int]:
     return None
 
 
-def collect_text_blobs(payload: Dict[str, Any]) -> List[str]:
-    blobs: List[str] = []
+def collect_text_blobs(payload: dict[str, Any]) -> list[str]:
+    blobs: list[str] = []
     for key in ("tool_response", "tool_output", "output", "stdout", "stderr"):
         value = payload.get(key)
         if isinstance(value, str):
@@ -191,7 +191,7 @@ def collect_text_blobs(payload: Dict[str, Any]) -> List[str]:
     return blobs
 
 
-def derive_exit_code(payload: Dict[str, Any]) -> Optional[int]:
+def derive_exit_code(payload: dict[str, Any]) -> int | None:
     code = find_exit_code(payload)
     if code is not None:
         return code
@@ -236,7 +236,7 @@ def safe_snippet(text: str, limit: int = 2400) -> str:
 
 
 # Secret redaction patterns — applied before any output is persisted
-_SECRET_PATTERNS: List[re.Pattern[str]] = [
+_SECRET_PATTERNS: list[re.Pattern[str]] = [
     # Bearer / Authorization headers
     re.compile(r"(Bearer\s+)[A-Za-z0-9\-._~+/]+=*", re.IGNORECASE),
     re.compile(r"(Authorization:\s*(?:Bearer|Basic|Token)\s+)[^\s'\"]+", re.IGNORECASE),
@@ -272,7 +272,7 @@ def redact_secrets(text: str) -> str:
     return result
 
 
-def run_git(args: List[str], cwd: Path) -> str:
+def run_git(args: list[str], cwd: Path) -> str:
     try:
         result = subprocess.run(
             ["git"] + args,
@@ -292,7 +292,7 @@ def run_git(args: List[str], cwd: Path) -> str:
     return err
 
 
-def collect_git_context(cwd: Path) -> Dict[str, str]:
+def collect_git_context(cwd: Path) -> dict[str, str]:
     repo = WORKSPACE if (WORKSPACE / ".git").exists() else cwd
     return {
         "repo": str(repo),
@@ -308,7 +308,7 @@ def collect_git_context(cwd: Path) -> Dict[str, str]:
 # Built-in rules. Add your own patterns by appending to this list
 # or loading from a JSON config file.
 
-CLASSIFICATION_RULES: List[Tuple[str, str, float, str]] = [
+CLASSIFICATION_RULES: list[tuple[str, str, float, str]] = [
     ("command_not_found", "Required command not installed", 0.94,
      r"(command not found|not recognized as an internal or external command)"),
     ("python_module_missing", "Python dependency missing", 0.88,
@@ -326,7 +326,7 @@ CLASSIFICATION_RULES: List[Tuple[str, str, float, str]] = [
 ]
 
 
-def classify_failure(command: str, merged_output: str) -> Dict[str, Any]:
+def classify_failure(command: str, merged_output: str) -> dict[str, Any]:
     text = f"{command}\n{merged_output}"
     lower = text.lower()
 
@@ -343,7 +343,7 @@ def classify_failure(command: str, merged_output: str) -> Dict[str, Any]:
             matched_pattern = pattern
             break
 
-    details: Dict[str, Any] = {}
+    details: dict[str, Any] = {}
     if cause_id == "command_not_found":
         m = re.search(r"([A-Za-z0-9._/-]+):\s*command not found", merged_output)
         if m:
@@ -361,8 +361,8 @@ def classify_failure(command: str, merged_output: str) -> Dict[str, Any]:
         if m:
             details["missing_path"] = m.group(1)
 
-    prevention_actions: List[Dict[str, str]] = []
-    standardization_actions: List[Dict[str, str]] = []
+    prevention_actions: list[dict[str, str]] = []
+    standardization_actions: list[dict[str, str]] = []
 
     if cause_id == "command_not_found":
         missing = details.get("missing_command", "UNKNOWN_COMMAND")
@@ -410,7 +410,7 @@ def classify_failure(command: str, merged_output: str) -> Dict[str, Any]:
         ]
 
     # Enrich with domain classification + skill recommendations from packs
-    recommended_skills: Dict[str, Any] = {}
+    recommended_skills: dict[str, Any] = {}
     _init_packs()
     if _pack_bundle is not None:
         try:
@@ -436,12 +436,12 @@ def classify_failure(command: str, merged_output: str) -> Dict[str, Any]:
 
 
 def incident_id_from(command: str, at: str) -> str:
-    digest = hashlib.sha1(f"{at}:{command}".encode("utf-8", errors="ignore")).hexdigest()[:8]
+    digest = hashlib.sha256(f"{at}:{command}".encode("utf-8", errors="ignore")).hexdigest()[:8]
     t = datetime.datetime.fromisoformat(at.replace("Z", "+00:00"))
     return f"INC-{t.strftime('%Y%m%d-%H%M%S')}-{digest}"
 
 
-def load_standard_registry() -> Dict[str, Any]:
+def load_standard_registry() -> dict[str, Any]:
     data = load_json(STANDARD_REGISTRY)
     if not data:
         return {"version": 1, "rules": []}
@@ -450,7 +450,7 @@ def load_standard_registry() -> Dict[str, Any]:
     return data
 
 
-def render_standard_registry_markdown(registry: Dict[str, Any]) -> str:
+def render_standard_registry_markdown(registry: dict[str, Any]) -> str:
     lines = [
         "# KAIZEN Standardized Rules",
         "",
@@ -468,9 +468,9 @@ def render_standard_registry_markdown(registry: Dict[str, Any]) -> str:
 
 
 def apply_standardization(
-    incident_id: str, actions: List[Dict[str, str]], incident_dir: Path
-) -> Dict[str, Any]:
-    result: Dict[str, Any] = {
+    incident_id: str, actions: list[dict[str, str]], incident_dir: Path
+) -> dict[str, Any]:
+    result: dict[str, Any] = {
         "applied": False,
         "applied_count": 0,
         "rollback_ready": False,
@@ -526,13 +526,13 @@ def apply_standardization(
 def write_incident_report(
     incident_id: str,
     incident_dir: Path,
-    evidence: Dict[str, Any],
-    analysis: Dict[str, Any],
-    actions: Dict[str, Any],
-    standardization_result: Dict[str, Any],
+    evidence: dict[str, Any],
+    analysis: dict[str, Any],
+    actions: dict[str, Any],
+    standardization_result: dict[str, Any],
 ) -> Path:
     report_path = incident_dir / "report.md"
-    lines: List[str] = []
+    lines: list[str] = []
     lines.append(f"# KAIZEN Incident Report: {incident_id}")
     lines.append("")
     lines.append("## Summary")
@@ -699,7 +699,7 @@ def open_from_payload() -> int:
     analysis["updated_at"] = now_utc()
     write_json(incident_dir / "analysis.json", analysis)
 
-    standardization_result: Dict[str, Any] = {
+    standardization_result: dict[str, Any] = {
         "applied": False,
         "applied_count": 0,
         "rollback_ready": False,
@@ -839,7 +839,7 @@ def close_incident(reason: str) -> int:
     return 0
 
 
-def find_incident_for_rollback(target: str) -> Optional[str]:
+def find_incident_for_rollback(target: str) -> str | None:
     if target and target != "latest":
         return target
     andon = load_json(ANDON_FILE)

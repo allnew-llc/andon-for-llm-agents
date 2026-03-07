@@ -137,11 +137,11 @@ skill_map:
   japan_legal:
     primary:
       - ref: "legal-orchestrator"
-        path: "skills/legal-jp-orchestrator.md"
+        path: "skills/legal-orchestrator.md"
         description: "Multi-law compliance audit orchestrator"
     secondary:
       - ref: "appi-guide"
-        path: "skills/legal-jp-appi.md"
+        path: "skills/appi-guide.md"
         description: "Personal Information Protection Act guide"
 ```
 

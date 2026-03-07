@@ -423,7 +423,7 @@ This framework embodies three core beliefs:
 
 This framework was developed at [AllNew LLC](https://www.allnew.work) for iOS app development with Claude Code and Codex. It emerged from real incidents where LLM agents:
 
-- Shipped an app with zero tests (PainSnap incident)
+- Shipped an app with zero tests
 - Bypassed 14 out of 14 pipeline safeguards in a single run
 - Silently changed requirement semantics to pass gates
 - Got stuck in 5+ retry loops involving user authentication
@@ -450,3 +450,8 @@ Apache License 2.0. See [LICENSE](./LICENSE).
 Patent Notice: Certain methods implemented in this software are subject to pending patent
 applications filed by AllNew LLC (patent pending). If patents are granted, Apache 2.0 Section 3
 provides users a perpetual, royalty-free patent license. See [NOTICE](./NOTICE) for details.
+
+Trademark Notice: Toyota Production System, TPS, ANDON, Kaizen, Jidoka, and Poka-yoke are
+trademarks or associated terms of Toyota Motor Corporation. Claude is a product of Anthropic, PBC.
+Cursor, Windsurf, and Codex are products of their respective owners. This project is not affiliated
+with or endorsed by Toyota Motor Corporation or any of the above companies.

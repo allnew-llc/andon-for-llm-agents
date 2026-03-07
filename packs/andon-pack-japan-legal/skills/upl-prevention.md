@@ -16,12 +16,13 @@ description: Unauthorized Practice of Law (UPL) prevention guide for LLM agents.
 
 Non-attorneys are prohibited from handling legal affairs for profit.
 
-### Nippon Life v. OpenAI (2026)
+### Emerging UPL Litigation Against AI Providers
 
-In March 2026, Nippon Life Insurance sued OpenAI in the Northern District
-of Illinois (1:26-cv-02448), alleging that ChatGPT provided unauthorized
-legal advice that caused $10.3M in claimed damages.  This case
-demonstrates the real-world risk of LLM agents crossing the UPL boundary.
+As of early 2026, lawsuits have been filed alleging that AI chatbots
+provided unauthorized legal advice, resulting in significant claimed
+damages.  These cases (e.g., N.D. Ill., pending) demonstrate the
+real-world risk of LLM agents crossing the UPL boundary.  Verify
+current case status via PACER for the latest developments.
 
 ## Safe vs. Unsafe Output Patterns
 

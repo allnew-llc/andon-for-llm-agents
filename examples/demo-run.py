@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """demo-run.py — ANDON for LLM Agents: Interactive Guided Demo
 
 A retro-game-style, menu-driven demo inspired by factory ANDON boards
@@ -55,7 +57,7 @@ W = min(os.get_terminal_size().columns if sys.stdout.isatty() else 72, 76)
 # ── Terminal helpers ─────────────────────────────────────────
 
 def clear() -> None:
-    os.system("cls" if os.name == "nt" else "clear")
+    print("\033[H\033[2J", end="", flush=True)
 
 
 def pause(msg: str = "") -> None:
