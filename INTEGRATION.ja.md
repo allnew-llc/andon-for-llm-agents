@@ -1,12 +1,12 @@
-[日本語](./INTEGRATION.ja.md)
+[English](./INTEGRATION.md)
 
-# Integration Guide
+# 導入ガイド
 
-## Overview
+## 概要
 
-This guide covers the full integration of ANDON for LLM Agents into your Claude Code project.
+このガイドでは、ANDON for LLM Agents を Claude Code プロジェクトに完全に導入する方法を説明します。
 
-## Architecture
+## アーキテクチャ
 
 ```
 ┌────────────────────────────────────────────────────────────┐
@@ -39,42 +39,42 @@ This guide covers the full integration of ANDON for LLM Agents into your Claude 
 └────────────────────────────────────────────────────────────┘
 ```
 
-## Step-by-Step Setup
+## ステップバイステップ セットアップ
 
-### 1. Copy Files
+### 1. ファイルのコピー
 
 ```bash
-# From your project root
+# プロジェクトルートから
 mkdir -p .claude/hooks .claude/rules .claude/commands
 
-# Core hooks (required)
+# コアフック（必須）
 cp hooks/tps-kaizen-runtime.py .claude/hooks/
 cp hooks/tps-andon-posttool-guard.sh .claude/hooks/
 cp hooks/tps-andon-pretool-guard.sh .claude/hooks/
 cp hooks/tps-andon-control.sh .claude/hooks/
 chmod +x .claude/hooks/*.sh
 
-# Learning capture hook (recommended)
+# 学習キャプチャフック（推奨）
 cp hooks/kaizen-learning-capture.sh .claude/hooks/
 chmod +x .claude/hooks/kaizen-learning-capture.sh
 
-# Meta-ANDON guard (recommended for pipeline projects)
+# Meta-ANDON ガード（パイプラインプロジェクトに推奨）
 cp hooks/meta_andon_guard.py .claude/hooks/
 
-# Rules (add to your CLAUDE.md or .claude/rules/)
+# ルール（CLAUDE.md または .claude/rules/ に追加）
 cp rules/70-kaizen-learning.md .claude/rules/
 cp rules/45-quality-driven-execution.md .claude/rules/
 
-# Skills (optional but recommended)
+# スキル（オプションだが推奨）
 mkdir -p .claude/commands
 cp skills/tps-kaizen/tps-kaizen.md .claude/commands/
-# Copy the full skill + references to a docs directory
+# スキル本体とリファレンスを docs ディレクトリにコピー
 cp -r skills/tps-kaizen docs/skills/tps-kaizen
 ```
 
-### 2. Register Hooks
+### 2. フックの登録
 
-Add to your `.claude/settings.json`:
+`.claude/settings.json` に追加：
 
 ```json
 {
@@ -98,124 +98,124 @@ Add to your `.claude/settings.json`:
 }
 ```
 
-### 3. Add Rules to CLAUDE.md
+### 3. CLAUDE.md にルールを追加
 
-Option A: Reference the rule files
+方法 A：ルールファイルを参照
 
 ```markdown
 # CLAUDE.md
 
 ## Rules
-- `.claude/rules/70-kaizen-learning.md` — ANDON + Kaizen learning capture
-- `.claude/rules/45-quality-driven-execution.md` — Quality-driven execution
+- `.claude/rules/70-kaizen-learning.md` — ANDON + Kaizen 学習キャプチャ
+- `.claude/rules/45-quality-driven-execution.md` — 品質駆動実行
 ```
 
-Option B: Inline (if you don't use rule files)
+方法 B：インライン（ルールファイルを使用しない場合）
 
-Copy the content of `rules/70-kaizen-learning.md` directly into your `CLAUDE.md`.
+`rules/70-kaizen-learning.md` の内容を `CLAUDE.md` に直接コピーしてください。
 
-### 4. Verify Installation
+### 4. インストールの確認
 
 ```bash
-# Check hooks are executable
+# フックが実行可能か確認
 ls -la .claude/hooks/
 
-# Test the runtime
+# ランタイムのテスト
 python3 .claude/hooks/tps-kaizen-runtime.py status
-# Should print: "ANDON: CLEAR"
+# 出力: "ANDON: CLEAR"
 
-# Test the control script
+# 制御スクリプトのテスト
 .claude/hooks/tps-andon-control.sh status
-# Should print: "ANDON: CLEAR"
+# 出力: "ANDON: CLEAR"
 ```
 
 ---
 
-## Configuration
+## 設定
 
-### Environment Variables
+### 環境変数
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `ANDON_WORKSPACE` | (auto-detect) | Override workspace root path |
-| `ANDON_STATE_DIR` | `<workspace>/.claude/state` | Override state directory |
-| `ANDON_CONFIDENCE_AUTO` | `0.70` | Threshold for auto-standardization |
-| `ANDON_CONFIDENCE_MANUAL` | `0.70` | Threshold below which manual approval is required for close |
-| `META_ANDON_FAILURE_THRESHOLD` | `3` | Consecutive failures to trigger Meta-ANDON |
+| 変数 | デフォルト | 説明 |
+|------|----------|------|
+| `ANDON_WORKSPACE` | （自動検出） | ワークスペースルートパスの上書き |
+| `ANDON_STATE_DIR` | `<workspace>/.claude/state` | 状態ディレクトリの上書き |
+| `ANDON_CONFIDENCE_AUTO` | `0.70` | 自動標準化の閾値 |
+| `ANDON_CONFIDENCE_MANUAL` | `0.70` | この閾値未満はクローズ時に手動承認が必要 |
+| `META_ANDON_FAILURE_THRESHOLD` | `3` | Meta-ANDON を発動する連続失敗回数 |
 
-### Customizing Failure Patterns
+### 失敗パターンのカスタマイズ
 
-Edit `CLASSIFICATION_RULES` in `tps-kaizen-runtime.py`:
+`tps-kaizen-runtime.py` の `CLASSIFICATION_RULES` を編集：
 
 ```python
 CLASSIFICATION_RULES = [
     # (cause_id, label, confidence, regex_pattern)
     ("my_custom_error", "My custom error", 0.90, r"my specific pattern"),
-    # ... keep existing rules ...
+    # ... 既存ルールを維持 ...
 ]
 ```
 
-### Customizing Forward-Progress Blocks
+### 前進系ブロックのカスタマイズ
 
-Edit `block_patterns` in `tps-andon-pretool-guard.sh` to add/remove blocked commands:
+`tps-andon-pretool-guard.sh` の `block_patterns` を編集してブロックコマンドを追加/削除：
 
 ```python
 block_patterns = [
     r"\bgit\s+push\b",
-    r"\bmy-deploy-command\b",  # Add your own
+    r"\bmy-deploy-command\b",  # 独自のコマンドを追加
     # ...
 ]
 ```
 
 ---
 
-## Usage Guide
+## 使い方
 
-### Normal Flow (Automatic)
+### 通常フロー（自動）
 
-1. You're coding with Claude Code
-2. A Bash command fails (non-zero exit)
-3. ANDON opens automatically — you see the incident report
-4. Forward-progress commands are blocked
-5. Fix the issue
-6. Run Five Whys on the root cause
-7. Close ANDON: `.claude/hooks/tps-andon-control.sh close "root cause: X; prevention: Y"`
+1. Claude Code でコーディング中
+2. Bash コマンドが失敗（非ゼロ終了）
+3. ANDON が自動的にオープン — インシデントレポートが表示される
+4. 前進系コマンドがブロックされる
+5. 問題を修正
+6. 根本原因に対して Five Whys を実行
+7. ANDON をクローズ：`.claude/hooks/tps-andon-control.sh close "root cause: X; prevention: Y"`
 
-### Manual ANDON
+### 手動 ANDON
 
-You can also open ANDON manually for problems the hook doesn't catch:
+フックが検知しない問題に対して、ANDON を手動でオープンすることもできます：
 
 ```
 /tps-kaizen andon "deployment failed silently with exit 0"
 ```
 
-### Checking Status
+### ステータス確認
 
 ```bash
 .claude/hooks/tps-andon-control.sh status
 ```
 
-### Rolling Back Auto-Standardization
+### 自動標準化のロールバック
 
-If the auto-generated standardization rule is wrong:
+自動生成された標準化ルールが間違っている場合：
 
 ```bash
 .claude/hooks/tps-andon-control.sh rollback INC-20260305-abc123
-# or rollback the latest:
+# または最新をロールバック：
 .claude/hooks/tps-andon-control.sh rollback latest
 ```
 
 ---
 
-## Skill Setup (Optional)
+## スキル セットアップ（オプション）
 
-The `/tps-kaizen` skill provides structured commands. To set it up:
+`/tps-kaizen` スキルは構造化されたコマンドを提供します。セットアップ方法：
 
-1. Copy `skills/tps-kaizen/tps-kaizen.md` to `.claude/commands/tps-kaizen.md`
-2. Update the file paths in the skill to point to your docs directory
-3. Copy reference files to `docs/skills/tps-kaizen/references/`
+1. `skills/tps-kaizen/tps-kaizen.md` を `.claude/commands/tps-kaizen.md` にコピー
+2. スキル内のファイルパスを docs ディレクトリを指すように更新
+3. リファレンスファイルを `docs/skills/tps-kaizen/references/` にコピー
 
-Then use in Claude Code:
+Claude Code で使用：
 ```
 /tps-kaizen andon "tests are failing after dependency update"
 /tps-kaizen five-whys "build fails on CI but passes locally"
@@ -226,11 +226,11 @@ Then use in Claude Code:
 
 ---
 
-## Integration with Existing Pipelines
+## 既存パイプラインとの統合
 
-### CI/CD Integration
+### CI/CD 統合
 
-The Meta-ANDON guard can be integrated with CI run tracking:
+Meta-ANDON ガードは CI の実行追跡と統合できます：
 
 ```python
 from hooks.meta_andon_guard import evaluate_meta_andon
@@ -246,9 +246,9 @@ if result["blocked"]:
     print(f"Missing: {result['missing_artifacts']}")
 ```
 
-### Custom State Directory
+### カスタム状態ディレクトリ
 
-If your project uses a different state directory:
+プロジェクトが異なる状態ディレクトリを使用する場合：
 
 ```bash
 export ANDON_STATE_DIR="/path/to/my/state"
@@ -256,30 +256,30 @@ export ANDON_STATE_DIR="/path/to/my/state"
 
 ---
 
-## Troubleshooting
+## トラブルシューティング
 
-### ANDON won't close
+### ANDON がクローズできない
 
-**Missing artifacts**: Check that all required files exist:
+**成果物の不足**：必要なファイルがすべて存在するか確認：
 ```bash
 ls ~/.claude/state/kaizen/incidents/INC-*/
-# Should see: evidence.json, analysis.json, actions.json, report.md
+# evidence.json, analysis.json, actions.json, report.md が必要
 ```
 
-**Low confidence**: If root cause confidence < 0.70, include `manual-approved:` in close reason:
+**低信頼度**：根本原因の信頼度が 0.70 未満の場合、クローズ理由に `manual-approved:` を含めてください：
 ```bash
 .claude/hooks/tps-andon-control.sh close "manual-approved: verified root cause was X"
 ```
 
-### Hooks not firing
+### フックが動作しない
 
-1. Check `.claude/settings.json` has the hook configuration
-2. Check hook files are executable: `chmod +x .claude/hooks/*.sh`
-3. Check Python 3 is available: `python3 --version`
+1. `.claude/settings.json` にフック設定があるか確認
+2. フックファイルが実行可能か確認：`chmod +x .claude/hooks/*.sh`
+3. Python 3 が利用可能か確認：`python3 --version`
 
-### State directory issues
+### 状態ディレクトリの問題
 
-The runtime auto-creates state directories. If you see permission errors:
+ランタイムは状態ディレクトリを自動作成します。パーミッションエラーが出る場合：
 ```bash
 mkdir -p ~/.claude/state/kaizen
 ```

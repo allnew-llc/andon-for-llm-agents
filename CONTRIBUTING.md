@@ -1,3 +1,5 @@
+[日本語](./CONTRIBUTING.ja.md)
+
 # Contributing to ANDON for LLM Agents
 
 Thank you for your interest in contributing! This document covers the process
