@@ -25,6 +25,7 @@ META_ANDON_REQUIRED_ARTIFACTS = [
     "meta-andon-five-whys.md",
     "meta-andon-risk-table.md",
     "horizontal-sweep-report.md",
+    "meta-andon-batch-fix-plan.md",
 ]
 META_ANDON_STATE_SCHEMA_VERSION = "meta-andon-state.v1"
 
@@ -46,6 +47,12 @@ META_ANDON_ARTIFACT_RULES: dict[str, dict[str, Any]] = {
         "min_bytes": 80,
         "marker_groups": [
             ["| phase |", "| risk", "| evidence", "| action"],
+        ],
+    },
+    "meta-andon-batch-fix-plan.md": {
+        "min_bytes": 100,
+        "marker_groups": [
+            ["## objective", "## changes", "## verification"],
         ],
     },
 }

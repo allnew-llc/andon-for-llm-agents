@@ -61,6 +61,18 @@ Meta-ANDON addresses "the problem behind the problems".
 
 When Meta-ANDON triggers, **immediately ban further "just try it" runs** and do the following first:
 
+**Step 0: Enter Plan Mode (Structural Enforcement)**
+
+Use `EnterPlanMode` immediately when Meta-ANDON triggers. This forces the agent into read-only
+exploration mode — no file edits, no implementation — until a plan is approved by the user.
+
+- Steps 1–3 below are performed **inside plan mode** (code reading and analysis are allowed; file modification is not)
+- The batch fix plan is written to the plan file
+- `ExitPlanMode` is called to present the plan and request user approval
+- Implementation begins **only after** the user approves the plan
+
+This maps directly to TPS practice: Desk Walk-Through (read-only analysis) → Countermeasure Proposal (plan file) → Supervisor Approval (user approval via ExitPlanMode) → Execution (implementation after approval).
+
 **Step 1: Pattern Analysis (Pattern Five Whys)**
 
 Normal Five Whys asks "why did this problem happen?" Pattern Five Whys asks:
@@ -109,8 +121,9 @@ Re-run is allowed only when ALL of the following are met:
 
 1. Pattern Five Whys analysis presented to user
 2. Desk Walk-Through results for all phases presented to user
-3. Batch fixes completed and related tests passing
-4. User explicitly approves re-run
+3. Batch fix plan approved by user via `ExitPlanMode`
+4. Batch fixes completed and related tests passing
+5. User explicitly approves re-run
 
 ---
 

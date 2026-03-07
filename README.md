@@ -287,10 +287,11 @@ Detects when the agent is stuck in a whack-a-mole loop:
 - Fix → run → different failure → fix → run → different failure (2 cycles)
 
 **Response:**
-1. **Stop** — no more "try and see" runs
-2. **Pattern Five Whys** — "Why does it keep failing at different points?"
-3. **Desk Walk-Through** — review ALL remaining phases on paper before running
-4. **Batch fix** — fix all discovered issues at once, not one-by-one
+0. **Plan Mode** — enter `EnterPlanMode` immediately (read-only exploration, no implementation)
+1. **Pattern Five Whys** — "Why does it keep failing at different points?"
+2. **Desk Walk-Through** — review ALL remaining phases on paper before running
+3. **Batch Fix Plan** — write the plan, get user approval via `ExitPlanMode`
+4. **Implement** — only after plan approval, fix all discovered issues at once
 
 ### Human Trial Limit
 
