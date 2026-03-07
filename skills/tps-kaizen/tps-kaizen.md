@@ -1,11 +1,11 @@
 ---
-description: TPS (Toyota Production System) based anomaly response, root cause analysis, and continuous improvement
+description: TPS (lean manufacturing) based anomaly response, root cause analysis, and continuous improvement
 argument-hint: "<subcommand> — andon, five-whys, kaizen, audit, capture"
 ---
 
 # TPS Kaizen
 
-Improvement skill based on Toyota Production System (Jidoka + JIT).
+Improvement skill based on lean manufacturing principles (Jidoka + JIT).
 Executes the cycle of problem detection, line stop, analysis, and recurrence prevention.
 
 ## Subcommands

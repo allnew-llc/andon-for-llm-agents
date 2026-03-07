@@ -1,11 +1,11 @@
 ---
 name: TPS Kaizen
-description: Toyota Production System (Jidoka + JIT) based anomaly detection, root cause analysis, and continuous improvement skill
+description: Lean manufacturing (Jidoka + JIT) based anomaly detection, root cause analysis, and continuous improvement skill
 argument-hint: "<subcommand> [args] — andon, five-whys, kaizen, audit"
 version: 1.0.0
 ---
 
-# TPS Kaizen — Toyota Production System Improvement Skill
+# TPS Kaizen — Lean Manufacturing Improvement Skill
 
 > "When an abnormality occurs, the machine stops automatically and no defective products are made" (Jidoka),
 > and "each process produces only what is needed, when needed, flowing without stagnation" (Just-in-Time),
@@ -171,7 +171,7 @@ Analyze by **looking at actual code, logs, and config files**. Never rely on mem
 
 **Trigger**: Periodic improvement activities, or when problem trends are visible
 
-Run structured improvement cycles using Toyota Kata's "Improvement Kata".
+Run structured improvement cycles using the "Improvement Kata" pattern.
 
 ### Improvement Kata 4 Steps
 

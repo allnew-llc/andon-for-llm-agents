@@ -1,6 +1,6 @@
 # ANDON for LLM Agents
 
-**Toyota Production System (TPS) principles applied to LLM-assisted coding.**
+**Lean manufacturing (TPS) principles applied to LLM-assisted coding.**
 
 Stop defects from flowing downstream. Learn from every failure. Standardize improvements automatically.
 
@@ -20,7 +20,7 @@ These are not bugs in any specific LLM — they are **structural properties** of
 
 ## The Solution: TPS for LLM Agents
 
-Toyota Production System solves analogous problems in manufacturing with two pillars:
+Lean manufacturing solves analogous problems with two pillars:
 
 ### Pillar 1: Jidoka (Autonomation) — Stop on Abnormality
 
@@ -449,7 +449,7 @@ Patent Notice: Certain methods implemented in this software are subject to pendi
 applications filed by AllNew LLC (patent pending). If patents are granted, Apache 2.0 Section 3
 provides users a perpetual, royalty-free patent license. See [NOTICE](./NOTICE) for details.
 
-Trademark Notice: Toyota Production System, TPS, ANDON, Kaizen, Jidoka, and Poka-yoke are
-trademarks or associated terms of Toyota Motor Corporation. Claude is a product of Anthropic, PBC.
-Cursor, Windsurf, and Codex are products of their respective owners. This project is not affiliated
-with or endorsed by Toyota Motor Corporation or any of the above companies.
+Trademark Notice: ANDON, Kaizen, Jidoka, Poka-yoke, and TPS are terms originating from lean
+manufacturing. Claude is a product of Anthropic, PBC. Cursor, Windsurf, and Codex are products
+of their respective owners. This project is not affiliated with or endorsed by any of the above
+companies.

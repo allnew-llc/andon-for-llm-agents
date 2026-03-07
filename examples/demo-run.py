@@ -214,11 +214,11 @@ TITLE_ART = f"""\
 
 FACTORY_ART = f"""\
 {DIM}        ┌──────┐  ┌──────┐  ┌──────┐
-        │{RED}●{DIM} {GREEN}●{DIM} {YELLOW}●{DIM}│  │{GREEN}●{DIM} {GREEN}●{DIM} {GREEN}●{DIM}│  │{RED}●{DIM} {YELLOW}●{DIM} {GREEN}●{DIM}│
+        │{RED}●{DIM} {GREEN}●{DIM} {YELLOW}●{DIM} │  │{GREEN}●{DIM} {GREEN}●{DIM} {GREEN}●{DIM} │  │{RED}●{DIM} {YELLOW}●{DIM} {GREEN}●{DIM} │
         └──┬───┘  └──┬───┘  └──┬───┘
      ══════╧═════════╧═════════╧══════
-     ║  🏭  PRODUCTION  LINE  🏭   ║
-     ══════════════════════════════════{RESET}"""
+     ║      PRODUCTION   LINE      ║
+     ═════════════════════════════════{RESET}"""
 
 
 def show_title() -> None:
@@ -227,7 +227,7 @@ def show_title() -> None:
     print(TITLE_ART)
     print(FACTORY_ART)
     print(f"""
-  {BOLD}{WHITE}Toyota Production System (TPS) meets LLM Coding Agents{RESET}
+  {BOLD}{WHITE}TPS Principles meet LLM Coding Agents{RESET}
 
   {DIM}Stop defects. Learn from failures. Improve continuously.{RESET}
 
@@ -237,7 +237,7 @@ def show_title() -> None:
     {RED}▪{RESET} Blind retry loops      {RED}▪{RESET} Whack-a-mole debugging
     {RED}▪{RESET} Silent spec drift      {RED}▪{RESET} Volatile learning
 
-  This framework applies Toyota's two pillars:
+  This framework applies two TPS pillars:
 
     {YELLOW}▶ Jidoka (自働化){RESET}  Stop the line on abnormality
     {GREEN}▶ Kaizen (改善){RESET}    Capture learning, update standards
@@ -293,7 +293,7 @@ def show_menu() -> str:
 def explain_andon_before() -> None:
     clear()
     narrator_block("🔴 STAGE 1: ANDON — Failure Detection & Line Stop", [
-        "In Toyota factories, any worker can pull the ANDON cord to",
+        "In lean manufacturing, any worker can pull the ANDON cord to",
         "stop the production line when they find a defect.",
         "The problem is fixed at the source — defects never reach",
         "the next process.",

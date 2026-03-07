@@ -2,8 +2,8 @@
 
 ## Overview
 
-Toyota Kata systematizes Toyota's improvement culture as **reproducible patterns (kata = form)**.
-Proposed by Mike Rother in "Toyota Kata".
+The Improvement Kata systematizes lean manufacturing's improvement culture as **reproducible patterns (kata = form)**.
+Based on Mike Rother's work on continuous improvement patterns.
 
 Two katas:
 - **Improvement Kata**: Remove obstacles one by one toward a target
