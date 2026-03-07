@@ -19,7 +19,7 @@ import re
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import yaml  # PyYAML — listed in requirements
 
@@ -50,13 +50,13 @@ class GuardCategory(Enum):
 class GuardResult:
     """Result of a safety check against one or more categories."""
     triggered: bool = False
-    level: Optional[GuardLevel] = None
-    category: Optional[GuardCategory] = None
+    level: GuardLevel | None = None
+    category: GuardCategory | None = None
     reason: str = ""
     matched_pattern: str = ""
-    disclaimer: Optional[str] = None
-    professional_referral: Optional[str] = None
-    helpline: Optional[str] = None
+    disclaimer: str | None = None
+    professional_referral: str | None = None
+    helpline: str | None = None
 
 
 @dataclass
@@ -72,7 +72,7 @@ class CategoryDef:
     """Full definition for one guard category."""
     category: GuardCategory
     level: GuardLevel
-    patterns: List[PatternEntry] = field(default_factory=list)
+    patterns: list[PatternEntry] = field(default_factory=list)
     disclaimer: str = ""
     professional_referral: str = ""
     helpline: str = ""
@@ -82,13 +82,13 @@ class CategoryDef:
 # YAML loader
 # ============================================================
 
-_CATEGORY_MAP: Dict[str, GuardCategory] = {e.value: e for e in GuardCategory}
-_LEVEL_MAP: Dict[str, GuardLevel] = {e.value: e for e in GuardLevel}
+_CATEGORY_MAP: dict[str, GuardCategory] = {e.value: e for e in GuardCategory}
+_LEVEL_MAP: dict[str, GuardLevel] = {e.value: e for e in GuardLevel}
 
 PATTERNS_DIR = Path(__file__).parent / "safety_patterns"
 
 
-def _load_yaml(path: Path) -> Dict[str, Any]:
+def _load_yaml(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
     with open(path, encoding="utf-8") as fh:
@@ -99,7 +99,7 @@ def _compile_pattern(raw: str) -> re.Pattern[str]:
     return re.compile(raw, re.IGNORECASE | re.MULTILINE)
 
 
-def load_category_from_yaml(path: Path) -> Optional[CategoryDef]:
+def load_category_from_yaml(path: Path) -> CategoryDef | None:
     """Load a single category YAML file into a CategoryDef."""
     data = _load_yaml(path)
     if not data:
@@ -113,7 +113,7 @@ def load_category_from_yaml(path: Path) -> Optional[CategoryDef]:
     level_str = data.get("level", "block")
     level = _LEVEL_MAP.get(level_str, GuardLevel.BLOCK)
 
-    patterns: List[PatternEntry] = []
+    patterns: list[PatternEntry] = []
     for entry in data.get("patterns", []):
         raw = entry if isinstance(entry, str) else entry.get("pattern", "")
         weight = float(entry.get("weight", 1.0)) if isinstance(entry, dict) else 1.0
@@ -134,10 +134,10 @@ def load_category_from_yaml(path: Path) -> Optional[CategoryDef]:
     )
 
 
-def load_all_categories(patterns_dir: Optional[Path] = None) -> Dict[GuardCategory, CategoryDef]:
+def load_all_categories(patterns_dir: Path | None = None) -> dict[GuardCategory, CategoryDef]:
     """Load all category YAML files from the patterns directory."""
     d = patterns_dir or PATTERNS_DIR
-    cats: Dict[GuardCategory, CategoryDef] = {}
+    cats: dict[GuardCategory, CategoryDef] = {}
     if not d.is_dir():
         return cats
     for yml in sorted(d.glob("*.yaml")):
@@ -160,8 +160,8 @@ class OutputSafetyGuard:
 
     def __init__(
         self,
-        categories: Optional[Dict[GuardCategory, CategoryDef]] = None,
-        patterns_dir: Optional[Path] = None,
+        categories: dict[GuardCategory, CategoryDef] | None = None,
+        patterns_dir: Path | None = None,
     ):
         if categories is not None:
             self._cats = dict(categories)
@@ -178,19 +178,18 @@ class OutputSafetyGuard:
         Returns the **most severe** match found (BLOCK > GUARD > WARN).
         If nothing triggers, returns a safe GuardResult(triggered=False).
         """
-        worst: Optional[GuardResult] = None
+        worst: GuardResult | None = None
 
         for cat_def in self._cats.values():
             result = self._check_category(text, cat_def)
-            if result.triggered:
-                if worst is None or _LEVEL_SEVERITY.get(result.level, 0) > _LEVEL_SEVERITY.get(worst.level, 0):
-                    worst = result
+            if result.triggered and (worst is None or _LEVEL_SEVERITY.get(result.level, 0) > _LEVEL_SEVERITY.get(worst.level, 0)):
+                worst = result
 
         return worst if worst is not None else GuardResult()
 
-    def check_all(self, text: str) -> List[GuardResult]:
+    def check_all(self, text: str) -> list[GuardResult]:
         """Return every triggered result (for audit logging)."""
-        results: List[GuardResult] = []
+        results: list[GuardResult] = []
         for cat_def in self._cats.values():
             r = self._check_category(text, cat_def)
             if r.triggered:
@@ -215,7 +214,7 @@ class OutputSafetyGuard:
             return "\n".join(parts)
 
         if result.level == GuardLevel.GUARD:
-            parts: List[str] = []
+            parts: list[str] = []
             if result.disclaimer:
                 parts.append(result.disclaimer)
                 parts.append("")
@@ -235,7 +234,7 @@ class OutputSafetyGuard:
         )
         return f"{text}\n\n---\n{advisory}"
 
-    def merge_pack_extensions(self, extensions: List[Dict[str, Any]]) -> None:
+    def merge_pack_extensions(self, extensions: list[dict[str, Any]]) -> None:
         """Merge safety_extensions from a Knowledge Pack manifest."""
         for ext in extensions:
             cat_str = ext.get("category", "")

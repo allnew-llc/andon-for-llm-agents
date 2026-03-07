@@ -15,13 +15,13 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 # ============================================================
 # Built-in domains (generic — no vendor/project specifics)
 # ============================================================
 
-BUILTIN_DOMAIN_KEYWORDS: Dict[str, List[str]] = {
+BUILTIN_DOMAIN_KEYWORDS: dict[str, list[str]] = {
     "security": [
         "vulnerability", "injection", "xss", "csrf", "auth", "authentication",
         "authorization", "permission", "credential", "secret", "token",
@@ -54,7 +54,7 @@ BUILTIN_DOMAIN_KEYWORDS: Dict[str, List[str]] = {
 }
 
 # Map common failure cause_ids to domains
-BUILTIN_CAUSE_TO_DOMAIN: Dict[str, str] = {
+BUILTIN_CAUSE_TO_DOMAIN: dict[str, str] = {
     "command_not_found": "process",
     "python_module_missing": "process",
     "node_module_missing": "process",
@@ -71,7 +71,7 @@ class DomainScore:
     """Score for a single domain."""
     domain_id: str
     score: float
-    matched_keywords: List[str] = field(default_factory=list)
+    matched_keywords: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -85,8 +85,8 @@ class SkillRecommendation:
 
 def score_domains(
     text: str,
-    extra_keywords: Optional[Dict[str, List[Dict[str, Any]]]] = None,
-) -> List[DomainScore]:
+    extra_keywords: dict[str, list[dict[str, Any]]] | None = None,
+) -> list[DomainScore]:
     """Score all domains against *text*.
 
     Returns a sorted list (highest score first).
@@ -95,12 +95,12 @@ def score_domains(
     Format: {"domain_id": [{"pattern": "...", "weight": 1.0}, ...]}
     """
     lower = text.lower()
-    results: List[DomainScore] = []
+    results: list[DomainScore] = []
 
     # Built-in domains
     for domain_id, keywords in BUILTIN_DOMAIN_KEYWORDS.items():
         score = 0.0
-        matched: List[str] = []
+        matched: list[str] = []
         for kw in keywords:
             if kw in lower:
                 score += 1.0
@@ -138,9 +138,9 @@ def recommend_skills(
     cause_id: str,
     command: str,
     output: str,
-    skill_map: Optional[Dict[str, Dict[str, List[Dict[str, str]]]]] = None,
-    extra_keywords: Optional[Dict[str, List[Dict[str, Any]]]] = None,
-) -> Dict[str, Any]:
+    skill_map: dict[str, dict[str, list[dict[str, str]]]] | None = None,
+    extra_keywords: dict[str, list[dict[str, Any]]] | None = None,
+) -> dict[str, Any]:
     """Recommend knowledge skills based on failure context.
 
     Returns:
@@ -161,7 +161,7 @@ def recommend_skills(
     if not domain and domain_scores:
         domain = domain_scores[0].domain_id
 
-    result: Dict[str, Any] = {
+    result: dict[str, Any] = {
         "domain": domain,
         "domain_scores": [
             {"domain_id": ds.domain_id, "score": ds.score, "matched": ds.matched_keywords}

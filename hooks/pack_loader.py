@@ -13,7 +13,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import yaml
 
@@ -36,26 +36,26 @@ class PackManifest:
     description: str = ""
     author: str = ""
     license: str = ""
-    tags: List[str] = field(default_factory=list)
-    requires: List[Dict[str, str]] = field(default_factory=list)
-    domains: List[Dict[str, Any]] = field(default_factory=list)
-    classification_rules: List[Dict[str, Any]] = field(default_factory=list)
-    cause_to_domain: Dict[str, str] = field(default_factory=dict)
-    skill_map: Dict[str, Any] = field(default_factory=dict)
-    safety_extensions: List[Dict[str, Any]] = field(default_factory=list)
-    quality_criteria: List[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
+    requires: list[dict[str, str]] = field(default_factory=list)
+    domains: list[dict[str, Any]] = field(default_factory=list)
+    classification_rules: list[dict[str, Any]] = field(default_factory=list)
+    cause_to_domain: dict[str, str] = field(default_factory=dict)
+    skill_map: dict[str, Any] = field(default_factory=dict)
+    safety_extensions: list[dict[str, Any]] = field(default_factory=list)
+    quality_criteria: list[str] = field(default_factory=list)
     path: Path = field(default_factory=lambda: Path("."))
 
 
 @dataclass
 class PackBundle:
     """Merged result of all loaded packs."""
-    packs: List[PackManifest] = field(default_factory=list)
-    extra_keywords: Dict[str, List[Dict[str, Any]]] = field(default_factory=dict)
-    skill_map: Dict[str, Dict[str, List[Dict[str, str]]]] = field(default_factory=dict)
-    classification_rules: List[Dict[str, Any]] = field(default_factory=list)
-    cause_to_domain: Dict[str, str] = field(default_factory=dict)
-    safety_extensions: List[Dict[str, Any]] = field(default_factory=list)
+    packs: list[PackManifest] = field(default_factory=list)
+    extra_keywords: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
+    skill_map: dict[str, dict[str, list[dict[str, str]]]] = field(default_factory=dict)
+    classification_rules: list[dict[str, Any]] = field(default_factory=list)
+    cause_to_domain: dict[str, str] = field(default_factory=dict)
+    safety_extensions: list[dict[str, Any]] = field(default_factory=list)
 
     @classmethod
     def empty(cls) -> PackBundle:
@@ -66,8 +66,8 @@ class PackBundle:
 class ValidationResult:
     """Result of pack validation."""
     valid: bool = True
-    errors: List[str] = field(default_factory=list)
-    warnings: List[str] = field(default_factory=list)
+    errors: list[str] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
 
 
 class PackLoader:
@@ -161,7 +161,7 @@ class PackLoader:
     # Internals
     # ----------------------------------------------------------
 
-    def _parse_manifest(self, path: Path) -> Optional[PackManifest]:
+    def _parse_manifest(self, path: Path) -> PackManifest | None:
         try:
             with open(path, encoding="utf-8") as fh:
                 data = yaml.safe_load(fh) or {}
@@ -194,9 +194,7 @@ class PackLoader:
         requires_pack0 = any(
             r.get("name") == PACK_0_NAME for r in manifest.requires
         )
-        if requires_pack0 and not self._pack0_available:
-            return False
-        return True
+        return not (requires_pack0 and not self._pack0_available)
 
     def _merge_into_bundle(self, bundle: PackBundle, manifest: PackManifest) -> None:
         """Merge a single pack's data into the bundle."""

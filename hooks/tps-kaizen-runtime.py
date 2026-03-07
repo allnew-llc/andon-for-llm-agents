@@ -38,7 +38,7 @@ def _init_packs() -> None:
         return
     try:
         from output_safety_guard import OutputSafetyGuard
-        from pack_loader import PackLoader, PackBundle
+        from pack_loader import PackBundle, PackLoader
 
         _safety_guard = OutputSafetyGuard()
 
@@ -278,8 +278,7 @@ def run_git(args: list[str], cwd: Path) -> str:
         result = subprocess.run(
             ["git"] + args,
             cwd=str(cwd),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             text=True,
             timeout=6,
             check=False,
@@ -827,10 +826,7 @@ def close_incident(reason: str) -> int:
         "final_report": str(final_report),
     }
     write_json(archive_file, archive_payload)
-    try:
-        ANDON_FILE.unlink()
-    except FileNotFoundError:
-        pass
+    ANDON_FILE.unlink(missing_ok=True)
 
     print(f"ANDON closed: {reason}")
     print(f"Incident: {incident_id}")

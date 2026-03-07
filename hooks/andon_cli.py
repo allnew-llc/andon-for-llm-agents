@@ -22,8 +22,7 @@ from pathlib import Path
 _HOOKS_DIR = Path(__file__).parent
 sys.path.insert(0, str(_HOOKS_DIR))
 
-from pack_loader import PackLoader, PackBundle, REGULATED_DOMAINS  # noqa: E402
-
+from pack_loader import REGULATED_DOMAINS, PackLoader  # noqa: E402
 
 PACKS_DIR = _HOOKS_DIR.parent / "packs"
 
@@ -130,7 +129,7 @@ def cmd_install(args: argparse.Namespace) -> int:
     dest = packs_dir / safe_name
     # Verify dest is actually inside packs_dir
     if not dest.resolve().is_relative_to(packs_dir):
-        print(f"Error: Pack destination escapes packs directory.")
+        print("Error: Pack destination escapes packs directory.")
         return 1
 
     if dest.exists():

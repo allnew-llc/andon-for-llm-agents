@@ -10,23 +10,20 @@ from pathlib import Path
 HOOKS_DIR = Path(__file__).resolve().parent.parent / "hooks"
 sys.path.insert(0, str(HOOKS_DIR))
 
-import pytest
-
-from output_safety_guard import (
-    CategoryDef,
+import pytest  # noqa: E402
+from domain_classifier import (  # noqa: E402
+    BUILTIN_DOMAIN_KEYWORDS,
+    recommend_skills,
+    score_domains,
+)
+from output_safety_guard import (  # noqa: E402
     GuardCategory,
     GuardLevel,
     GuardResult,
     OutputSafetyGuard,
     load_all_categories,
 )
-from domain_classifier import (
-    BUILTIN_DOMAIN_KEYWORDS,
-    score_domains,
-    recommend_skills,
-)
-from pack_loader import PackLoader, PackBundle, ValidationResult
-
+from pack_loader import PackLoader  # noqa: E402
 
 # ============================================================
 # Output Safety Guard — YAML loading
