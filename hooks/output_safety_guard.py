@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """output_safety_guard.py — Pack 0: Output Safety Guard
 
-Detects and mitigates harmful, illegal, or unauthorized-professional-practice
-content in LLM agent outputs.  This is the output-level ANDON — stopping
-anomalies before they reach the user.
+Detects unauthorized-professional-practice content in LLM coding agent
+outputs and injects appropriate disclaimers.
 
-Motivated by the growing risk of LLM agents providing unguarded professional
-advice (legal, medical, financial) without appropriate disclaimers.
+Scope: UPL (unauthorized practice of law) and general unauthorized
+professional practice (tax, financial, architectural advice).  Content
+moderation categories (violence, self-harm, etc.) are intentionally
+excluded — those are handled by the underlying LLM's own safety layer.
 
 Copyright 2026 AllNew LLC
 Licensed under Apache License 2.0
@@ -34,14 +35,14 @@ class GuardLevel(Enum):
 
 
 class GuardCategory(Enum):
-    """Categories of output safety concern."""
+    """Categories of output safety concern.
+
+    Scoped to unauthorized professional practice — categories relevant
+    to LLM coding agents that may generate professional-domain text.
+    Content moderation (violence, self-harm, etc.) is out of scope;
+    the underlying LLM handles those.
+    """
     UPL        = "unauthorized_practice_of_law"
-    UPM        = "unauthorized_practice_of_medicine"
-    ILLEGAL    = "illegal_activity_facilitation"
-    SELF_HARM  = "self_harm_suicide"
-    VIOLENCE   = "violence_harm"
-    DISCRIMINATION = "discrimination_hate"
-    HUMAN_RIGHTS   = "human_rights_violation"
     UNQUALIFIED    = "unauthorized_professional_practice"
 
 

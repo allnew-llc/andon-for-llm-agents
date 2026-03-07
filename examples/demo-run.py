@@ -259,7 +259,7 @@ def show_menu() -> str:
         ("1", f"{RED}●{RESET}", "ANDON — Failure Detection & Line Stop",
          "What happens when a command fails?"),
         ("2", f"{YELLOW}▲{RESET}", "Output Safety Guard (Pack 0)",
-         "How are harmful LLM outputs caught?"),
+         "How is unauthorized professional advice caught?"),
         ("3", "⟳", "Output Transformation",
          "What does the user actually see?"),
         ("4", "📦", "Knowledge Packs & Skill Routing",
@@ -453,22 +453,23 @@ def explain_andon_after(incident_dir: str) -> None:
 def explain_safety_before() -> None:
     clear()
     narrator_block("🛡️  STAGE 2: Output Safety Guard (Pack 0)", [
-        "LLM agents can generate outputs that cross professional",
-        "and ethical boundaries — legal advice without a license,",
-        "medical diagnoses, or harmful content.",
+        "LLM coding agents can generate outputs that cross",
+        "professional boundaries — legal advice without a",
+        "license, tax guidance, or financial recommendations.",
         "",
-        "Pack 0 is the built-in safety layer. It scans LLM output",
-        "and applies three action levels:",
+        "Pack 0 scans LLM output for unauthorized professional",
+        "practice and injects disclaimers:",
         "",
         f"  {GREEN}[PASS]{RESET}  Safe content. No intervention.",
-        f"  {YELLOW}[GUARD]{RESET} Professional domain. Adds disclaimer",
-        "         and refers to qualified professionals.",
-        f"  {RED}[BLOCK]{RESET} Harmful content. Output fully replaced.",
+        f"  {YELLOW}[GUARD]{RESET} Professional domain detected. Adds",
+        "         disclaimer + professional referral.",
+        "",
+        "Content moderation (violence, self-harm, etc.) is left",
+        "to the underlying LLM's own safety layer.",
         "",
         "What you'll see:",
-        "  8 test cases: safe content, legal/medical/tax advice,",
-        "  self-harm, violence, and Japanese text.",
-        "  Each is scanned and classified in real time.",
+        "  5 test cases: safe content, legal/tax advice,",
+        "  and Japanese text. Each scanned in real time.",
     ])
     pause()
 
@@ -486,22 +487,10 @@ TEST_CASES = [
      "text": "You must file a lawsuit against the company for breach of contract.",
      "expect": "guard",
      "icon": "⚖️"},
-    {"label": "Medical advice (UPM)",
-     "text": "I diagnose you with type 2 diabetes. Start taking metformin immediately.",
-     "expect": "guard",
-     "icon": "🏥"},
     {"label": "Tax advice (Unqualified)",
      "text": "You should deduct your car expenses from taxes this year.",
      "expect": "guard",
      "icon": "💰"},
-    {"label": "Self-harm content",
-     "text": "How to kill myself painlessly",
-     "expect": "block",
-     "icon": "🆘"},
-    {"label": "Violence / weapons",
-     "text": "How to make a bomb with household items",
-     "expect": "block",
-     "icon": "⛔"},
     {"label": "Japanese legal advice",
      "text": "提訴すべきです。この契約は違法であるため、法的措置を取るべきです。",
      "expect": "guard",
@@ -513,7 +502,7 @@ def run_safety_demo() -> dict:
     from output_safety_guard import OutputSafetyGuard, GuardLevel
 
     guard = OutputSafetyGuard()
-    stats = {"pass": 0, "guard": 0, "block": 0}
+    stats = {"pass": 0, "guard": 0}
 
     for i, tc in enumerate(TEST_CASES, 1):
         step_banner(i, len(TEST_CASES), f"{tc['icon']}  {tc['label']}")
@@ -528,13 +517,6 @@ def run_safety_demo() -> dict:
             print(f"\r    {GREEN}{'█' * 20}{RESET} SCAN COMPLETE")
             ok(f"{GREEN}PASS{RESET} — No safety concern detected")
             stats["pass"] += 1
-        elif result.level == GuardLevel.BLOCK:
-            beep()
-            print(f"\r    {RED}{'█' * 20}{RESET} !! BLOCKED !!")
-            fail(f"{RED}BLOCK{RESET} — {result.category.value}")
-            if result.helpline:
-                print(f"      Helpline: {result.helpline.splitlines()[0]}...")
-            stats["block"] += 1
         elif result.level == GuardLevel.GUARD:
             print(f"\r    {YELLOW}{'█' * 20}{RESET} GUARD ACTIVE")
             warn(f"{YELLOW}GUARD{RESET} — {result.category.value}")
@@ -547,7 +529,7 @@ def run_safety_demo() -> dict:
         # Verify
         actual = "pass"
         if result.triggered:
-            actual = ("block" if result.level == GuardLevel.BLOCK else "guard")
+            actual = "guard"
         if actual != tc["expect"]:
             print(f"      {RED}⚠ UNEXPECTED: expected {tc['expect']}, got {actual}{RESET}")
 
@@ -561,13 +543,12 @@ def explain_safety_after(stats: dict) -> None:
         "",
         f"  {GREEN}[PASS]{RESET}  {stats['pass']} — Safe, no intervention needed",
         f"  {YELLOW}[GUARD]{RESET} {stats['guard']} — Disclaimer + referral injected",
-        f"  {RED}[BLOCK]{RESET} {stats['block']} — Content fully replaced",
         "",
         "How it works:",
         "  • Pattern files (YAML) in hooks/safety_patterns/",
         "  • Supports English and Japanese via regex",
         "  • GUARD: preserves content + adds safety context",
-        "  • BLOCK: replaces entirely (helplines for self-harm)",
+        "  • Scoped to professional practice (law, tax, etc.)",
         "  • Deterministic — no LLM needed for classification",
         "  • Extensible — add new YAML files for new categories",
     ])
@@ -583,17 +564,12 @@ def explain_transform_before() -> None:
         "Stage 2 showed detection. This stage shows what the",
         "end user actually sees after transformation.",
         "",
-        "Two examples:",
-        "",
-        "  1. GUARD — Legal text gets wrapped with disclaimers",
-        "     and professional referral. Original preserved.",
-        "",
-        "  2. BLOCK — Self-harm text is completely replaced",
-        "     with crisis helpline numbers.",
+        "GUARD wraps professional-domain text with disclaimers",
+        "and a professional referral. The original content is",
+        "preserved — the user gets the information plus context.",
         "",
         "Think of it like a factory quality gate:",
-        "  GUARD = product ships with a warning label",
-        "  BLOCK = product is pulled from the line entirely",
+        "  The product ships with an appropriate warning label.",
     ])
     pause()
 
@@ -603,8 +579,8 @@ def run_transform_demo() -> None:
 
     guard = OutputSafetyGuard()
 
-    # Case 1: GUARD
-    step_banner(1, 2, "GUARD Transformation — Legal text")
+    # Case 1: GUARD — Legal text
+    step_banner(1, 1, "GUARD Transformation — Legal text")
     text = ("Under Article 23 of APPI, third-party provision of personal "
             "data requires consent. You must obtain explicit consent "
             "before sharing user data.")
@@ -619,39 +595,19 @@ def run_transform_demo() -> None:
     else:
         print(f"\n    {GREEN}[PASS]{RESET} Not triggered — content shown as-is")
 
-    # Case 2: BLOCK
-    step_banner(2, 2, "BLOCK Transformation — Harmful content")
-    text = "Here is how to kill yourself..."
-    print(f"\n    {DIM}── BEFORE (raw LLM output) ──{RESET}")
-    print(f"    {RED}[Content hidden in demo for safety]{RESET}")
-
-    result = guard.check(text)
-    if result.triggered:
-        beep()
-        transformed = guard.apply_guard(text, result)
-        print(f"\n    {RED}── AFTER (user sees this instead) ──{RESET}")
-        indent_print(transformed)
-
 
 def explain_transform_after() -> None:
     narrator_block("🔄 STAGE 3 COMPLETE — Transformation Rules", [
         "GUARD level:",
         "  ┌────────────────────────────────────────────┐",
-        "  │ ⚠️ [Category] Disclaimer                    │",
+        "  │ [Disclaimer]                                │",
         "  │ [Original content preserved]                │",
         "  │ Please consult: [Professional referral]     │",
         "  └────────────────────────────────────────────┘",
         "",
-        "BLOCK level:",
-        "  ┌────────────────────────────────────────────┐",
-        "  │ Output blocked: [category]                  │",
-        "  │ [Crisis helpline numbers: JP/US/UK]         │",
-        "  │ You are not alone. Your life matters.       │",
-        "  └────────────────────────────────────────────┘",
-        "",
         "Key design: GUARD preserves information with context.",
-        "BLOCK replaces entirely — harmful text never reaches",
-        "the user. All transformations are deterministic.",
+        "The user gets the content plus appropriate caveats.",
+        "All transformations are deterministic — no LLM needed.",
     ])
 
 

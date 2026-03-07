@@ -80,12 +80,6 @@ andon-for-llm-agents/
 │   ├── andon_cli.py                   # Pack management CLI
 │   └── safety_patterns/               # Pack 0 guard pattern definitions
 │       ├── upl.yaml                   #   Unauthorized Practice of Law
-│       ├── upm.yaml                   #   Unauthorized Practice of Medicine
-│       ├── illegal.yaml               #   Illegal Activity Facilitation
-│       ├── self_harm.yaml             #   Self-Harm / Suicide (with helplines)
-│       ├── violence.yaml              #   Violence / Harm
-│       ├── discrimination.yaml        #   Discrimination / Hate Speech
-│       ├── human_rights.yaml          #   Human Rights Violations
 │       └── unqualified.yaml           #   Unauthorized Professional Practice
 ├── packs/                             # Knowledge Packs
 │   ├── andon-pack-japan-legal/        # Japanese law compliance (e-Gov API)
@@ -96,7 +90,7 @@ andon-for-llm-agents/
 │       ├── SKILL.md                   # Full skill documentation
 │       └── references/
 ├── tests/                             # Test suite
-│   └── test_output_safety_guard.py    # 38 tests for Pack 0 + classifier + loader
+│   └── test_output_safety_guard.py    # Tests for Pack 0 + classifier + loader
 ├── examples/                          # Integration examples
 │   ├── demo-run.py                    # Interactive demo (try it now!)
 │   ├── sample-pack/                   # Sample Knowledge Pack (Web API Security)
@@ -109,26 +103,23 @@ andon-for-llm-agents/
 
 ## Pack 0: Output Safety Guard
 
-Bundled with the core runtime.  Detects and mitigates harmful LLM output
-across 8 categories before it reaches users.
+Bundled with the core runtime.  Detects unauthorized professional practice
+in LLM coding agent outputs and injects appropriate disclaimers.
 
 | # | Category | Level | Action |
 |---|----------|-------|--------|
 | 1 | Unauthorized Practice of Law | GUARD | Disclaimer + attorney referral |
-| 2 | Unauthorized Practice of Medicine | GUARD | Disclaimer + physician referral |
-| 3 | Illegal Activity Facilitation | BLOCK | Output replaced with refusal |
-| 4 | Self-Harm / Suicide | BLOCK | Refusal + helpline numbers (JP/US/UK) |
-| 5 | Violence / Harm | BLOCK | Output replaced with refusal |
-| 6 | Discrimination / Hate Speech | BLOCK | Output replaced with refusal |
-| 7 | Human Rights Violations | BLOCK | Output replaced with refusal |
-| 8 | Unauthorized Professional Practice | GUARD | Disclaimer + specialist referral |
+| 2 | Unauthorized Professional Practice | GUARD | Disclaimer + specialist referral |
 
-**Guard levels**: BLOCK replaces output entirely. GUARD injects disclaimers.
-WARN appends advisory notes.
+**Guard levels**: GUARD injects disclaimers while preserving the original
+output. WARN appends advisory notes. The framework also supports BLOCK
+(replace output entirely) for use by Knowledge Packs.
 
-Motivated by the growing risk of LLM agents providing unguarded professional
-advice (legal, medical, financial) without appropriate disclaimers — a
-liability exposure that Pack 0 is designed to mitigate.
+Content moderation (violence, self-harm, discrimination, etc.) is
+intentionally out of scope — the underlying LLM's own safety layer handles
+those categories. Pack 0 focuses on professional practice concerns specific
+to LLM coding agents that may generate legal, financial, or architectural
+advice in documentation or comments.
 
 ---
 

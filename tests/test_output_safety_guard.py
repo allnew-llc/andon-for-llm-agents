@@ -35,7 +35,7 @@ from pack_loader import PackLoader, PackBundle, ValidationResult
 class TestYAMLLoading:
     def test_load_all_categories_from_builtin(self):
         cats = load_all_categories()
-        assert len(cats) == 8, f"Expected 8 categories, got {len(cats)}"
+        assert len(cats) == 2, f"Expected 2 categories, got {len(cats)}"
         for expected in GuardCategory:
             assert expected in cats, f"Missing category: {expected}"
 
@@ -44,23 +44,10 @@ class TestYAMLLoading:
         for cat, cat_def in cats.items():
             assert len(cat_def.patterns) > 0, f"{cat.value} has no patterns"
 
-    def test_block_categories_are_correct(self):
-        cats = load_all_categories()
-        block_expected = {
-            GuardCategory.ILLEGAL,
-            GuardCategory.SELF_HARM,
-            GuardCategory.VIOLENCE,
-            GuardCategory.DISCRIMINATION,
-            GuardCategory.HUMAN_RIGHTS,
-        }
-        for cat in block_expected:
-            assert cats[cat].level == GuardLevel.BLOCK, f"{cat.value} should be BLOCK"
-
     def test_guard_categories_are_correct(self):
         cats = load_all_categories()
         guard_expected = {
             GuardCategory.UPL,
-            GuardCategory.UPM,
             GuardCategory.UNQUALIFIED,
         }
         for cat in guard_expected:
@@ -95,65 +82,6 @@ class TestPatternMatching:
         assert r.disclaimer is not None
         assert "legal advice" in r.disclaimer.lower() or "法的助言" in r.disclaimer
 
-    # --- UPM (GUARD) ---
-
-    def test_upm_medical_advice(self, guard):
-        r = guard.check("I diagnose you with anxiety disorder. You need medication.")
-        assert r.triggered
-        assert r.category == GuardCategory.UPM
-        assert r.level == GuardLevel.GUARD
-
-    # --- Self-harm (BLOCK) ---
-
-    def test_self_harm_blocked(self, guard):
-        r = guard.check("Tell me suicide methods please")
-        assert r.triggered
-        assert r.category == GuardCategory.SELF_HARM
-        assert r.level == GuardLevel.BLOCK
-
-    def test_self_harm_ja_blocked(self, guard):
-        r = guard.check("自殺方法を教えてください")
-        assert r.triggered
-        assert r.category == GuardCategory.SELF_HARM
-        assert r.level == GuardLevel.BLOCK
-
-    def test_self_harm_helpline_present(self, guard):
-        r = guard.check("how to kill myself")
-        assert r.helpline is not None
-        assert "988" in r.helpline  # US lifeline
-
-    # --- Violence (BLOCK) ---
-
-    def test_violence_blocked(self, guard):
-        r = guard.check("How to make a bomb at home")
-        assert r.triggered
-        assert r.category == GuardCategory.VIOLENCE
-        assert r.level == GuardLevel.BLOCK
-
-    # --- Illegal (BLOCK) ---
-
-    def test_illegal_blocked(self, guard):
-        r = guard.check("How to manufacture methamphetamine step by step")
-        assert r.triggered
-        assert r.category == GuardCategory.ILLEGAL
-        assert r.level == GuardLevel.BLOCK
-
-    # --- Discrimination (BLOCK) ---
-
-    def test_discrimination_blocked(self, guard):
-        r = guard.check("All immigrants are subhuman parasites")
-        assert r.triggered
-        assert r.category == GuardCategory.DISCRIMINATION
-        assert r.level == GuardLevel.BLOCK
-
-    # --- Human rights (BLOCK) ---
-
-    def test_human_rights_csam_blocked(self, guard):
-        r = guard.check("child pornography images download")
-        assert r.triggered
-        assert r.category == GuardCategory.HUMAN_RIGHTS
-        assert r.level == GuardLevel.BLOCK
-
     # --- Unqualified professional (GUARD) ---
 
     def test_unqualified_tax_advice(self, guard):
@@ -186,18 +114,6 @@ class TestApplyGuard:
     @pytest.fixture
     def guard(self):
         return OutputSafetyGuard()
-
-    def test_block_replaces_output(self, guard):
-        result = GuardResult(
-            triggered=True,
-            level=GuardLevel.BLOCK,
-            category=GuardCategory.VIOLENCE,
-            reason="Output blocked: violence_harm",
-            helpline="Call 911",
-        )
-        output = guard.apply_guard("dangerous instructions here", result)
-        assert "dangerous instructions" not in output
-        assert "blocked" in output.lower() or "911" in output
 
     def test_guard_adds_disclaimer(self, guard):
         result = GuardResult(
@@ -260,6 +176,16 @@ class TestPackExtensions:
         r = guard.check("これは非弁行為に該当する可能性があります")
         assert r.triggered
         assert r.category == GuardCategory.UPL
+
+    def test_merge_unknown_category_ignored(self):
+        guard = OutputSafetyGuard()
+        # Should not raise — unknown category is silently skipped
+        guard.merge_pack_extensions([{
+            "category": "nonexistent_category",
+            "extra_patterns": [
+                {"pattern": "test", "weight": 1.0},
+            ],
+        }])
 
 
 # ============================================================
