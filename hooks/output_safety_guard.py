@@ -16,67 +16,19 @@ Licensed under Apache License 2.0
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
-from enum import Enum
 from pathlib import Path
 from typing import Any
 
 import yaml  # PyYAML — listed in requirements
 
-# ============================================================
-# Enums & Data
-# ============================================================
-
-class GuardLevel(Enum):
-    """Severity of the guard action."""
-    BLOCK = "block"   # Refuse output entirely
-    GUARD = "guard"   # Allow info but inject disclaimer + referral
-    WARN  = "warn"    # Append advisory note
-
-
-class GuardCategory(Enum):
-    """Categories of output safety concern.
-
-    Scoped to unauthorized professional practice — categories relevant
-    to LLM coding agents that may generate professional-domain text.
-    Content moderation (violence, self-harm, etc.) is out of scope;
-    the underlying LLM handles those.
-    """
-    UPL        = "unauthorized_practice_of_law"
-    UNQUALIFIED    = "unauthorized_professional_practice"
-
-
-@dataclass
-class GuardResult:
-    """Result of a safety check against one or more categories."""
-    triggered: bool = False
-    level: GuardLevel | None = None
-    category: GuardCategory | None = None
-    reason: str = ""
-    matched_pattern: str = ""
-    disclaimer: str | None = None
-    professional_referral: str | None = None
-    helpline: str | None = None
-
-
-@dataclass
-class PatternEntry:
-    """A single detection pattern inside a category."""
-    regex: re.Pattern[str]
-    weight: float = 1.0
-    source: str = "builtin"
-
-
-@dataclass
-class CategoryDef:
-    """Full definition for one guard category."""
-    category: GuardCategory
-    level: GuardLevel
-    patterns: list[PatternEntry] = field(default_factory=list)
-    disclaimer: str = ""
-    professional_referral: str = ""
-    helpline: str = ""
-
+# Re-export data types from models.py for backward compatibility
+from models import (  # noqa: F401
+    CategoryDef,
+    GuardCategory,
+    GuardLevel,
+    GuardResult,
+    PatternEntry,
+)
 
 # ============================================================
 # YAML loader

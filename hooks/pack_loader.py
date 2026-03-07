@@ -11,11 +11,16 @@ Licensed under Apache License 2.0
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 import yaml
+
+# Re-export data types from models.py for backward compatibility
+from models import (  # noqa: F401
+    PackBundle,
+    PackManifest,
+    ValidationResult,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -26,48 +31,6 @@ REGULATED_DOMAINS = frozenset({
 })
 
 PACK_0_NAME = "output-safety-guard"
-
-
-@dataclass
-class PackManifest:
-    """Parsed knowledge-pack.yaml manifest."""
-    name: str = ""
-    version: str = "0.0.0"
-    description: str = ""
-    author: str = ""
-    license: str = ""
-    tags: list[str] = field(default_factory=list)
-    requires: list[dict[str, str]] = field(default_factory=list)
-    domains: list[dict[str, Any]] = field(default_factory=list)
-    classification_rules: list[dict[str, Any]] = field(default_factory=list)
-    cause_to_domain: dict[str, str] = field(default_factory=dict)
-    skill_map: dict[str, Any] = field(default_factory=dict)
-    safety_extensions: list[dict[str, Any]] = field(default_factory=list)
-    quality_criteria: list[str] = field(default_factory=list)
-    path: Path = field(default_factory=lambda: Path("."))
-
-
-@dataclass
-class PackBundle:
-    """Merged result of all loaded packs."""
-    packs: list[PackManifest] = field(default_factory=list)
-    extra_keywords: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
-    skill_map: dict[str, dict[str, list[dict[str, str]]]] = field(default_factory=dict)
-    classification_rules: list[dict[str, Any]] = field(default_factory=list)
-    cause_to_domain: dict[str, str] = field(default_factory=dict)
-    safety_extensions: list[dict[str, Any]] = field(default_factory=list)
-
-    @classmethod
-    def empty(cls) -> PackBundle:
-        return cls()
-
-
-@dataclass
-class ValidationResult:
-    """Result of pack validation."""
-    valid: bool = True
-    errors: list[str] = field(default_factory=list)
-    warnings: list[str] = field(default_factory=list)
 
 
 class PackLoader:
