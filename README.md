@@ -101,6 +101,9 @@ andon-for-llm-agents/
 │   └── test_output_safety_guard.py    # Tests for Pack 0 + classifier + loader
 └── examples/                          # Integration examples
     ├── demo-run.py                    # Interactive demo (try it now!)
+    ├── locales/                       # i18n locale files
+    │   ├── en.json                    #   English (default)
+    │   └── ja.json                    #   Japanese
     ├── sample-pack/                   # Sample Knowledge Pack (Web API Security)
     ├── claude-code-settings.json      # Hook registration example
     └── minimal-setup.md               # Quick start with 3 files

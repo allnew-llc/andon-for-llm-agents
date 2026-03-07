@@ -24,6 +24,7 @@ import tempfile
 import textwrap
 import time
 from pathlib import Path
+from typing import Any
 
 # ── Setup paths ──────────────────────────────────────────────
 ROOT = Path(__file__).resolve().parent.parent
@@ -54,6 +55,32 @@ BG_BLACK = "\033[40m"
 
 W = min(os.get_terminal_size().columns if sys.stdout.isatty() else 72, 76)
 
+# ── i18n ─────────────────────────────────────────────────────
+_LANG = "en"
+_STRINGS: dict[str, Any] = {}
+
+
+def _load_locale(lang: str) -> None:
+    global _LANG, _STRINGS
+    locale_file = Path(__file__).parent / "locales" / f"{lang}.json"
+    with open(locale_file, encoding="utf-8") as f:
+        _STRINGS = json.load(f)
+    _LANG = lang
+
+
+def t(key: str, **kwargs: Any) -> str | list[str]:
+    """Lookup translated string. Supports dotted keys and format params."""
+    val: Any = _STRINGS
+    for part in key.split("."):
+        val = val[part]
+    if isinstance(val, str) and kwargs:
+        return val.format(**kwargs)
+    return val
+
+
+# Load default locale
+_load_locale("en")
+
 
 # ── Terminal helpers ─────────────────────────────────────────
 
@@ -63,7 +90,7 @@ def clear() -> None:
 
 def pause(msg: str = "") -> None:
     if not msg:
-        msg = f"▶ Press {BOLD}ENTER{RESET}{DIM} to continue"
+        msg = f"\u25b6 Press {BOLD}ENTER{RESET}{DIM} {t('common.enter_continue')}"
     print(f"\n  {DIM}{msg}{RESET}", end="")
     try:
         input()
@@ -93,40 +120,38 @@ def beep() -> None:
 def crt_frame(lines: list[str], color: str = GREEN, title: str = "") -> None:
     """Draw a CRT monitor-style frame around content."""
     inner = W - 6
-    print(f"  {color}╔{'═' * inner}╗{RESET}")
+    print(f"  {color}\u2554{'═' * inner}\u2557{RESET}")
     if title:
         pad = inner - len(title) - 2
-        print(f"  {color}║ {BOLD}{WHITE}{title}{RESET}{color}{' ' * pad}║{RESET}")
-        print(f"  {color}╠{'═' * inner}╣{RESET}")
+        print(f"  {color}\u2551 {BOLD}{WHITE}{title}{RESET}{color}{' ' * pad}\u2551{RESET}")
+        print(f"  {color}\u2560{'═' * inner}\u2563{RESET}")
     for line in lines:
-        # Strip ANSI for length calc but print with ANSI
-        vis_len = len(line.encode("ascii", "ignore").decode())
-        # Rough: just pad generously
-        print(f"  {color}║{RESET} {line}")
-    print(f"  {color}╚{'═' * inner}╝{RESET}")
+        print(f"  {color}\u2551{RESET} {line}")
+    print(f"  {color}\u255a{'═' * inner}\u255d{RESET}")
 
 
 def andon_board(statuses: list[tuple[str, str]]) -> None:
-    """Draw a factory ANDON status board.
-
-    statuses: list of (label, state) where state is
-    'green', 'yellow', 'red', or 'off'
-    """
+    """Draw a factory ANDON status board."""
     color_map = {
-        "green": (BG_GREEN, "● NORMAL"),
-        "yellow": (BG_YELLOW, "▲ CAUTION"),
-        "red": (BG_RED, "■ STOPPED"),
-        "off": (DIM, "○ OFF    "),
+        "green": (BG_GREEN, f"\u25cf {t('andon_board.normal')}"),
+        "yellow": (BG_YELLOW, f"\u25b2 {t('andon_board.caution')}"),
+        "red": (BG_RED, f"\u25a0 {t('andon_board.stopped')}"),
+        "off": (DIM, f"\u25cb {t('andon_board.off')}    "),
     }
+    unknown_label = f"? {t('andon_board.unknown')}"
     inner = W - 6
-    print(f"\n  {WHITE}┌{'─' * inner}┐{RESET}")
-    print(f"  {WHITE}│{REVERSE}{BOLD}  🏭 ANDON BOARD{' ' * (inner - 18)}  {RESET}{WHITE}│{RESET}")
-    print(f"  {WHITE}├{'─' * inner}┤{RESET}")
+    board_title = t("andon_board.title")
+    title_pad = inner - len(board_title) - 6
+    hline = "\u2500" * inner
+    print(f"\n  {WHITE}\u250c{hline}\u2510{RESET}")
+    print(f"  {WHITE}\u2502{REVERSE}{BOLD}  {board_title}{' ' * title_pad}  {RESET}{WHITE}\u2502{RESET}")
+    print(f"  {WHITE}\u251c{hline}\u2524{RESET}")
     for label, state in statuses:
-        bg, indicator = color_map.get(state, (DIM, "? UNKNOWN"))
-        line = f"  {bg}{WHITE} {indicator} {RESET} {label}"
-        print(f"  {WHITE}│{RESET}{line}")
-    print(f"  {WHITE}└{'─' * inner}┘{RESET}")
+        bg, indicator = color_map.get(state, (DIM, unknown_label))
+        padded_indicator = f"{indicator:<9}"
+        line = f"  {bg}{WHITE} {padded_indicator} {RESET} {label}"
+        print(f"  {WHITE}\u2502{RESET}{line}")
+    print(f"  {WHITE}\u2514{hline}\u2518{RESET}")
 
 
 def progress_bar(current: int, total: int, label: str = "") -> None:
@@ -142,11 +167,12 @@ def narrator(text: str) -> None:
     """Narrator box — like a retro game dialogue."""
     lines = textwrap.wrap(text, W - 12)
     inner = W - 6
-    print(f"\n  {CYAN}┌{'─' * inner}┐{RESET}")
+    hline = "\u2500" * inner
+    print(f"\n  {CYAN}\u250c{hline}\u2510{RESET}")
     for line in lines:
         padded = f"{line:<{inner - 2}}"
-        print(f"  {CYAN}│{RESET} {padded} {CYAN}│{RESET}")
-    print(f"  {CYAN}└{'─' * inner}┘{RESET}")
+        print(f"  {CYAN}\u2502{RESET} {padded} {CYAN}\u2502{RESET}")
+    print(f"  {CYAN}\u2514{hline}\u2518{RESET}")
 
 
 def narrator_block(title: str, paragraphs: list[str]) -> None:
@@ -160,14 +186,14 @@ def narrator_block(title: str, paragraphs: list[str]) -> None:
             all_lines.append(p)
         else:
             all_lines.extend(textwrap.wrap(p.strip(), inner - 4))
-    print(f"\n  {CYAN}╔{'═' * inner}╗{RESET}")
+    print(f"\n  {CYAN}\u2554{'═' * inner}\u2557{RESET}")
     title_pad = inner - len(title) - 2
-    print(f"  {CYAN}║ {BOLD}{WHITE}{title}{RESET}{CYAN}{' ' * title_pad}║{RESET}")
-    print(f"  {CYAN}╠{'═' * inner}╣{RESET}")
+    print(f"  {CYAN}\u2551 {BOLD}{WHITE}{title}{RESET}{CYAN}{' ' * title_pad}\u2551{RESET}")
+    print(f"  {CYAN}\u2560{'═' * inner}\u2563{RESET}")
     for line in all_lines:
         padded = f"{line:<{inner - 2}}"[:inner - 2]
-        print(f"  {CYAN}║{RESET} {padded} {CYAN}║{RESET}")
-    print(f"  {CYAN}╚{'═' * inner}╝{RESET}")
+        print(f"  {CYAN}\u2551{RESET} {padded} {CYAN}\u2551{RESET}")
+    print(f"  {CYAN}\u255a{'═' * inner}\u255d{RESET}")
 
 
 def step_banner(n: int, total: int, desc: str) -> None:
@@ -212,12 +238,17 @@ TITLE_ART = f"""\
 {GREEN}    ╚═╝  ╚═╝ ╚═╝  ╚═══╝╚═════╝  ╚═════╝ ╚═╝  ╚═══╝{RESET}
 {DIM}            f o r   L L M   A g e n t s{RESET}"""
 
-FACTORY_ART = f"""\
+
+def _factory_art() -> str:
+    pl = t("factory.production_line")
+    # Center the production line text in the box (33 inner chars)
+    padded = f"{pl:^29}"
+    return f"""\
 {DIM}        ┌──────┐  ┌──────┐  ┌──────┐
         │{RED}●{DIM} {GREEN}●{DIM} {YELLOW}●{DIM} │  │{GREEN}●{DIM} {GREEN}●{DIM} {GREEN}●{DIM} │  │{RED}●{DIM} {YELLOW}●{DIM} {GREEN}●{DIM} │
         └──┬───┘  └──┬───┘  └──┬───┘
      ══════╧═════════╧═════════╧══════
-     ║      PRODUCTION   LINE      ║
+     ║{padded}║
      ═════════════════════════════════{RESET}"""
 
 
@@ -225,25 +256,45 @@ def show_title() -> None:
     clear()
     print()
     print(TITLE_ART)
-    print(FACTORY_ART)
+    print(_factory_art())
     print(f"""
-  {BOLD}{WHITE}TPS Principles meet LLM Coding Agents{RESET}
+  {BOLD}{WHITE}{t('title.subtitle')}{RESET}
 
-  {DIM}Stop defects. Learn from failures. Improve continuously.{RESET}
+  {DIM}{t('title.tagline')}{RESET}
 
   {DIM}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{RESET}
 
-  LLM agents have structural weaknesses:
-    {RED}▪{RESET} Blind retry loops      {RED}▪{RESET} Whack-a-mole debugging
-    {RED}▪{RESET} Silent spec drift      {RED}▪{RESET} Volatile learning
+  {t('title.weaknesses_header')}
+    {RED}▪{RESET} {t('title.weakness1')}      {RED}▪{RESET} {t('title.weakness2')}
+    {RED}▪{RESET} {t('title.weakness3')}      {RED}▪{RESET} {t('title.weakness4')}
 
-  This framework applies two TPS pillars:
+  {t('title.pillars_header')}
 
-    {YELLOW}▶ Jidoka (自働化){RESET}  Stop the line on abnormality
-    {GREEN}▶ Kaizen (改善){RESET}    Capture learning, update standards
+    {YELLOW}▶ Jidoka (自働化){RESET}  {t('title.jidoka')}
+    {GREEN}▶ Kaizen (改善){RESET}    {t('title.kaizen')}
 
-  {DIM}Everything runs locally. No API keys needed.{RESET}
+  {DIM}{t('title.local_only')}{RESET}
 """)
+
+
+# ═════════════════════════════════════════════════════════════
+#   LANGUAGE SELECTION
+# ═════════════════════════════════════════════════════════════
+
+def select_language() -> None:
+    """Show language selection and load the chosen locale."""
+    print(f"""
+  {BOLD}{WHITE}{t('lang_select.header')} / 言語:{RESET}
+    {CYAN}[1]{RESET} {t('lang_select.option1')}
+    {CYAN}[2]{RESET} {t('lang_select.option2')}
+""")
+    try:
+        choice = input(f"  {BOLD}\u25b6 {t('lang_select.prompt')}{RESET}").strip()
+    except (EOFError, KeyboardInterrupt):
+        choice = ""
+
+    if choice == "2":
+        _load_locale("ja")
 
 
 # ═════════════════════════════════════════════════════════════
@@ -252,35 +303,33 @@ def show_title() -> None:
 
 def show_menu() -> str:
     inner = W - 6
-    print(f"  {WHITE}╔{'═' * inner}╗{RESET}")
-    print(f"  {WHITE}║{REVERSE}{BOLD}  SELECT DEMO{' ' * (inner - 14)}  {RESET}{WHITE}║{RESET}")
-    print(f"  {WHITE}╠{'═' * inner}╣{RESET}")
+    menu_header = t("menu.header")
+    header_pad = inner - len(menu_header) - 4
+    print(f"  {WHITE}\u2554{'═' * inner}\u2557{RESET}")
+    print(f"  {WHITE}\u2551{REVERSE}{BOLD}  {menu_header}{' ' * header_pad}  {RESET}{WHITE}\u2551{RESET}")
+    print(f"  {WHITE}\u2560{'═' * inner}\u2563{RESET}")
 
     items = [
-        ("1", f"{RED}●{RESET}", "ANDON — Failure Detection & Line Stop",
-         "What happens when a command fails?"),
-        ("2", f"{YELLOW}▲{RESET}", "Output Safety Guard (Pack 0)",
-         "How is unauthorized professional advice caught?"),
-        ("3", "⟳", "Output Transformation",
-         "What does the user actually see?"),
-        ("4", "📦", "Knowledge Packs & Skill Routing",
-         "How do packs recommend next actions?"),
+        ("1", f"{RED}●{RESET}", t("menu.item1_title"), t("menu.item1_desc")),
+        ("2", f"{YELLOW}▲{RESET}", t("menu.item2_title"), t("menu.item2_desc")),
+        ("3", "⟳", t("menu.item3_title"), t("menu.item3_desc")),
+        ("4", "📦", t("menu.item4_title"), t("menu.item4_desc")),
     ]
     for key, icon, title, desc in items:
-        print(f"  {WHITE}║{RESET}                                                        {WHITE}║{RESET}")
-        print(f"  {WHITE}║{RESET}   {CYAN}{BOLD}[{key}]{RESET}  {icon}  {BOLD}{title}{RESET}")
-        print(f"  {WHITE}║{RESET}        {DIM}{desc}{RESET}")
+        print(f"  {WHITE}\u2551{RESET}                                                        {WHITE}\u2551{RESET}")
+        print(f"  {WHITE}\u2551{RESET}   {CYAN}{BOLD}[{key}]{RESET}  {icon}  {BOLD}{title}{RESET}")
+        print(f"  {WHITE}\u2551{RESET}        {DIM}{desc}{RESET}")
 
-    print(f"  {WHITE}║{RESET}                                                        {WHITE}║{RESET}")
-    print(f"  {WHITE}╠{'═' * inner}╣{RESET}")
-    print(f"  {WHITE}║{RESET}   {CYAN}{BOLD}[5]{RESET}  🚀  {BOLD}Run All Demos{RESET} {DIM}(guided tour){RESET}")
-    print(f"  {WHITE}║{RESET}   {CYAN}{BOLD}[R]{RESET}  📖  {BOLD}Read the README{RESET}")
-    print(f"  {WHITE}║{RESET}   {CYAN}{BOLD}[Q]{RESET}  🚪  {BOLD}Exit{RESET}")
-    print(f"  {WHITE}║{RESET}                                                        {WHITE}║{RESET}")
-    print(f"  {WHITE}╚{'═' * inner}╝{RESET}")
+    print(f"  {WHITE}\u2551{RESET}                                                        {WHITE}\u2551{RESET}")
+    print(f"  {WHITE}\u2560{'═' * inner}\u2563{RESET}")
+    print(f"  {WHITE}\u2551{RESET}   {CYAN}{BOLD}[5]{RESET}  🚀  {BOLD}{t('menu.run_all')}{RESET} {DIM}{t('menu.guided_tour')}{RESET}")
+    print(f"  {WHITE}\u2551{RESET}   {CYAN}{BOLD}[R]{RESET}  📖  {BOLD}{t('menu.read_readme')}{RESET}")
+    print(f"  {WHITE}\u2551{RESET}   {CYAN}{BOLD}[Q]{RESET}  🚪  {BOLD}{t('menu.exit')}{RESET}")
+    print(f"  {WHITE}\u2551{RESET}                                                        {WHITE}\u2551{RESET}")
+    print(f"  {WHITE}\u255a{'═' * inner}\u255d{RESET}")
 
     try:
-        choice = input(f"\n  {BOLD}▶ Your choice: {RESET}").strip().lower()
+        choice = input(f"\n  {BOLD}\u25b6 {t('menu.prompt')}{RESET}").strip().lower()
     except (EOFError, KeyboardInterrupt):
         choice = "q"
     return choice
@@ -292,29 +341,12 @@ def show_menu() -> str:
 
 def explain_andon_before() -> None:
     clear()
-    narrator_block("🔴 STAGE 1: ANDON — Failure Detection & Line Stop", [
-        "In lean manufacturing, any worker can pull the ANDON cord to",
-        "stop the production line when they find a defect.",
-        "The problem is fixed at the source — defects never reach",
-        "the next process.",
-        "",
-        "In LLM coding, we apply the same principle:",
-        "",
-        "  🔍 Detect   — Bash command fails (non-zero exit)",
-        "  🛑 Stop     — ANDON opens, forward commands blocked",
-        "  🔧 Fix      — Root cause classified automatically",
-        "  📋 Report   — Incident report generated",
-        "  📏 Standard — Prevention rules auto-registered",
-        "",
-        "What you'll see:",
-        "  A simulated `npm install` failure triggers the full",
-        "  ANDON cycle: detect → classify → report → standardize.",
-    ])
+    narrator_block(f"🔴 {t('stage1.title')}", t("stage1.before"))
 
     andon_board([
-        ("Assembly Line A — npm install", "off"),
-        ("Assembly Line B — Build", "off"),
-        ("Assembly Line C — Deploy", "off"),
+        (t("andon_board.line_a"), "off"),
+        (t("andon_board.line_b"), "off"),
+        (t("andon_board.line_c"), "off"),
     ])
 
     pause()
@@ -331,7 +363,7 @@ def run_andon_demo() -> str:
     runtime.STANDARD_REGISTRY = runtime.KAIZEN_DIR / "standardization-registry.json"
 
     # ── Step 1: Failure ──
-    step_banner(1, 4, "COMMAND FAILURE DETECTED")
+    step_banner(1, 4, t("stage1.step1"))
     print(f"\n    {DIM}$ npm install @acme/widget{RESET}")
     time.sleep(0.3)
     beep()
@@ -340,9 +372,9 @@ def run_andon_demo() -> str:
     time.sleep(0.3)
 
     andon_board([
-        ("Assembly Line A — npm install", "red"),
-        ("Assembly Line B — Build", "yellow"),
-        ("Assembly Line C — Deploy", "yellow"),
+        (t("andon_board.line_a"), "red"),
+        (t("andon_board.line_b"), "yellow"),
+        (t("andon_board.line_c"), "yellow"),
     ])
 
     command = "npm install @acme/widget"
@@ -350,21 +382,21 @@ def run_andon_demo() -> str:
               "npm ERR! code MODULE_NOT_FOUND")
 
     # ── Step 2: Classify ──
-    step_banner(2, 4, "CLASSIFYING ROOT CAUSE")
+    step_banner(2, 4, t("stage1.step2"))
     analysis = runtime.classify_failure(command, output)
     print()
-    progress_bar(1, 3, "Scanning patterns...")
+    progress_bar(1, 3, t("stage1.scan_patterns"))
     time.sleep(0.2)
-    progress_bar(2, 3, "Matching cause...")
+    progress_bar(2, 3, t("stage1.match_cause"))
     time.sleep(0.2)
-    progress_bar(3, 3, "Classification complete")
+    progress_bar(3, 3, t("stage1.classify_done"))
     print()
-    ok(f"Cause:      {analysis['cause_label']}")
-    ok(f"Cause ID:   {analysis['cause_id']}")
-    ok(f"Confidence: {analysis['confidence']:.0%}")
+    ok(f"{t('stage1.cause_label')}      {analysis['cause_label']}")
+    ok(f"{t('stage1.cause_id_label')}   {analysis['cause_id']}")
+    ok(f"{t('stage1.confidence_label')} {analysis['confidence']:.0%}")
 
     # ── Step 3: Incident ──
-    step_banner(3, 4, "OPENING INCIDENT")
+    step_banner(3, 4, t("stage1.step3"))
     runtime.ensure_dirs()
     incident_id = runtime.incident_id_from(command, runtime.now_utc())
     incident_dir = runtime.INCIDENTS_DIR / incident_id
@@ -398,52 +430,41 @@ def run_andon_demo() -> str:
     )
 
     print()
-    ok(f"Incident ID: {incident_id}")
-    info("Generated artifacts:")
+    ok(f"{t('stage1.incident_label')} {incident_id}")
+    info(t("stage1.artifacts_label"))
     for f in sorted(incident_dir.iterdir()):
         print(f"      📄 {f.name}")
 
-    print(f"\n    {DIM}── report.md (preview) ──{RESET}")
+    print(f"\n    {DIM}── {t('stage1.report_preview')} ──{RESET}")
     for line in report.read_text().splitlines()[:18]:
         print(f"    {DIM}{line}{RESET}")
     remaining = len(report.read_text().splitlines()) - 18
     if remaining > 0:
-        print(f"    {DIM}... ({remaining} more lines){RESET}")
+        print(f"    {DIM}{t('stage1.more_lines', count=remaining)}{RESET}")
 
     # ── Step 4: Standardize ──
-    step_banner(4, 4, "AUTO-STANDARDIZATION")
+    step_banner(4, 4, t("stage1.step4"))
     registry = runtime.load_json(runtime.STANDARD_REGISTRY)
     print()
     for rule in registry.get("rules", []):
-        ok(f"New rule: {BOLD}{rule['type']}{RESET} = {rule['value']}")
+        ok(f"{t('stage1.new_rule')} {BOLD}{rule['type']}{RESET} = {rule['value']}")
     print()
-    info("This rule will proactively check for this dependency next time.")
+    info(t("stage1.proactive_msg"))
 
     return str(incident_dir)
 
 
 def explain_andon_after(incident_dir: str) -> None:
-    narrator_block("🔴 STAGE 1 COMPLETE — What happened?", [
-        "The full ANDON cycle ran automatically:",
-        "",
-        "  1. DETECT  — npm returned exit code 1",
-        "  2. CLASSIFY — Pattern matched: 'node_module_missing' (84%)",
-        "  3. STOP    — ANDON opened. git push / deploy blocked.",
-        "  4. REPORT  — evidence.json + analysis.json + report.md",
-        "  5. PREVENT — New rule registered in standardization",
-        "              registry for proactive checking.",
-        "",
-        f"  Artifacts: {incident_dir}",
-        "",
-        "In real usage, the PreToolUse hook enforces the line stop",
-        "— the LLM agent literally cannot run `git push` until",
-        "ANDON is closed with a root cause analysis.",
-    ])
+    after_paragraphs = []
+    for line in t("stage1.after"):
+        after_paragraphs.append(line.format(incident_dir=incident_dir))
+
+    narrator_block(f"🔴 {t('stage1.after_title')}", after_paragraphs)
 
     andon_board([
-        ("Assembly Line A — npm install", "green"),
-        ("Assembly Line B — Build", "green"),
-        ("Assembly Line C — Deploy", "green"),
+        (t("andon_board.line_a"), "green"),
+        (t("andon_board.line_b"), "green"),
+        (t("andon_board.line_c"), "green"),
     ])
 
 
@@ -453,46 +474,28 @@ def explain_andon_after(incident_dir: str) -> None:
 
 def explain_safety_before() -> None:
     clear()
-    narrator_block("🛡️  STAGE 2: Output Safety Guard (Pack 0)", [
-        "LLM coding agents can generate outputs that cross",
-        "professional boundaries — legal advice without a",
-        "license, tax guidance, or financial recommendations.",
-        "",
-        "Pack 0 scans LLM output for unauthorized professional",
-        "practice and injects disclaimers:",
-        "",
-        f"  {GREEN}[PASS]{RESET}  Safe content. No intervention.",
-        f"  {YELLOW}[GUARD]{RESET} Professional domain detected. Adds",
-        "         disclaimer + professional referral.",
-        "",
-        "Content moderation (violence, self-harm, etc.) is left",
-        "to the underlying LLM's own safety layer.",
-        "",
-        "What you'll see:",
-        "  5 test cases: safe content, legal/tax advice,",
-        "  and Japanese text. Each scanned in real time.",
-    ])
+    narrator_block(f"🛡️  {t('stage2.title')}", t("stage2.before"))
     pause()
 
 
 TEST_CASES = [
-    {"label": "Safe factual content",
+    {"label_key": "safe",
      "text": "The average temperature in Tokyo in March is 12°C.",
      "expect": "pass",
      "icon": "🌡️"},
-    {"label": "Programming code",
+    {"label_key": "code",
      "text": "def fibonacci(n): return n if n <= 1 else fibonacci(n-1) + fibonacci(n-2)",
      "expect": "pass",
      "icon": "💻"},
-    {"label": "Legal advice (UPL)",
+    {"label_key": "legal",
      "text": "You must file a lawsuit against the company for breach of contract.",
      "expect": "guard",
      "icon": "⚖️"},
-    {"label": "Tax advice (Unqualified)",
+    {"label_key": "tax",
      "text": "You should deduct your car expenses from taxes this year.",
      "expect": "guard",
      "icon": "💰"},
-    {"label": "Japanese legal advice",
+    {"label_key": "jp_legal",
      "text": "提訴すべきです。この契約は違法であるため、法的措置を取るべきです。",
      "expect": "guard",
      "icon": "🇯🇵"},
@@ -500,31 +503,34 @@ TEST_CASES = [
 
 
 def run_safety_demo() -> dict:
-    from output_safety_guard import OutputSafetyGuard, GuardLevel
+    from output_safety_guard import GuardLevel, OutputSafetyGuard
 
     guard = OutputSafetyGuard()
     stats = {"pass": 0, "guard": 0}
 
     for i, tc in enumerate(TEST_CASES, 1):
-        step_banner(i, len(TEST_CASES), f"{tc['icon']}  {tc['label']}")
+        label = t(f"stage2.test_labels.{tc['label_key']}")
+        step_banner(i, len(TEST_CASES), f"{tc['icon']}  {label}")
         truncated = tc["text"][:60] + ("..." if len(tc["text"]) > 60 else "")
         print(f'\n    Input: "{truncated}"')
-        print(f"    {DIM}Scanning...{RESET}", end="")
+        print(f"    {DIM}{t('common.scanning')}{RESET}", end="")
         time.sleep(0.15)
 
         result = guard.check(tc["text"])
 
         if not result.triggered:
-            print(f"\r    {GREEN}{'█' * 20}{RESET} SCAN COMPLETE")
-            ok(f"{GREEN}PASS{RESET} — No safety concern detected")
+            print(f"\r    {GREEN}{'█' * 20}{RESET} {t('common.scan_complete')}")
+            ok(f"{GREEN}{t('common.pass_label')}{RESET} — {t('common.no_concern')}")
             stats["pass"] += 1
         elif result.level == GuardLevel.GUARD:
-            print(f"\r    {YELLOW}{'█' * 20}{RESET} GUARD ACTIVE")
+            print(f"\r    {YELLOW}{'█' * 20}{RESET} {t('common.guard_active')}")
             warn(f"{YELLOW}GUARD{RESET} — {result.category.value}")
             if result.disclaimer:
-                print(f"      Disclaimer: {result.disclaimer.strip().splitlines()[0]}")
+                print(f"      {t('stage2.disclaimer_label')} "
+                      f"{result.disclaimer.strip().splitlines()[0]}")
             if result.professional_referral:
-                print(f"      Referral: {result.professional_referral}")
+                print(f"      {t('stage2.referral_label')} "
+                      f"{result.professional_referral}")
             stats["guard"] += 1
 
         # Verify
@@ -532,27 +538,19 @@ def run_safety_demo() -> dict:
         if result.triggered:
             actual = "guard"
         if actual != tc["expect"]:
-            print(f"      {RED}⚠ UNEXPECTED: expected {tc['expect']}, got {actual}{RESET}")
+            print(f"      {RED}⚠ {t('common.unexpected', expect=tc['expect'], actual=actual)}{RESET}")
 
     return stats
 
 
 def explain_safety_after(stats: dict) -> None:
     total = sum(stats.values())
-    narrator_block("🛡️  STAGE 2 COMPLETE — Results Summary", [
-        f"Scanned {total} outputs:",
-        "",
-        f"  {GREEN}[PASS]{RESET}  {stats['pass']} — Safe, no intervention needed",
-        f"  {YELLOW}[GUARD]{RESET} {stats['guard']} — Disclaimer + referral injected",
-        "",
-        "How it works:",
-        "  • Pattern files (YAML) in hooks/safety_patterns/",
-        "  • Supports English and Japanese via regex",
-        "  • GUARD: preserves content + adds safety context",
-        "  • Scoped to professional practice (law, tax, etc.)",
-        "  • Deterministic — no LLM needed for classification",
-        "  • Extensible — add new YAML files for new categories",
-    ])
+    after_paragraphs = []
+    for line in t("stage2.after"):
+        after_paragraphs.append(
+            line.format(total=total, pass_count=stats["pass"], guard_count=stats["guard"])
+        )
+    narrator_block(f"🛡️  {t('stage2.after_title')}", after_paragraphs)
 
 
 # ═════════════════════════════════════════════════════════════
@@ -561,17 +559,7 @@ def explain_safety_after(stats: dict) -> None:
 
 def explain_transform_before() -> None:
     clear()
-    narrator_block("🔄 STAGE 3: Output Transformation", [
-        "Stage 2 showed detection. This stage shows what the",
-        "end user actually sees after transformation.",
-        "",
-        "GUARD wraps professional-domain text with disclaimers",
-        "and a professional referral. The original content is",
-        "preserved — the user gets the information plus context.",
-        "",
-        "Think of it like a factory quality gate:",
-        "  The product ships with an appropriate warning label.",
-    ])
+    narrator_block(f"🔄 {t('stage3.title')}", t("stage3.before"))
     pause()
 
 
@@ -581,35 +569,24 @@ def run_transform_demo() -> None:
     guard = OutputSafetyGuard()
 
     # Case 1: GUARD — Legal text
-    step_banner(1, 1, "GUARD Transformation — Legal text")
+    step_banner(1, 1, t("stage3.step_title"))
     text = ("Under Article 23 of APPI, third-party provision of personal "
             "data requires consent. You must obtain explicit consent "
             "before sharing user data.")
-    print(f"\n    {DIM}── BEFORE (raw LLM output) ──{RESET}")
+    print(f"\n    {DIM}── {t('stage3.before_label')} ──{RESET}")
     indent_print(text)
 
     result = guard.check(text)
     if result.triggered:
         transformed = guard.apply_guard(text, result)
-        print(f"\n    {YELLOW}── AFTER (user sees this) ──{RESET}")
+        print(f"\n    {YELLOW}── {t('stage3.after_label')} ──{RESET}")
         indent_print(transformed)
     else:
-        print(f"\n    {GREEN}[PASS]{RESET} Not triggered — content shown as-is")
+        print(f"\n    {GREEN}[PASS]{RESET} {t('stage3.pass_msg')}")
 
 
 def explain_transform_after() -> None:
-    narrator_block("🔄 STAGE 3 COMPLETE — Transformation Rules", [
-        "GUARD level:",
-        "  ┌────────────────────────────────────────────┐",
-        "  │ [Disclaimer]                                │",
-        "  │ [Original content preserved]                │",
-        "  │ Please consult: [Professional referral]     │",
-        "  └────────────────────────────────────────────┘",
-        "",
-        "Key design: GUARD preserves information with context.",
-        "The user gets the content plus appropriate caveats.",
-        "All transformations are deterministic — no LLM needed.",
-    ])
+    narrator_block(f"🔄 {t('stage3.after_title')}", t("stage3.after_text"))
 
 
 # ═════════════════════════════════════════════════════════════
@@ -618,60 +595,42 @@ def explain_transform_after() -> None:
 
 def explain_packs_before() -> None:
     clear()
-    narrator_block("📦 STAGE 4: Knowledge Packs & Skill Routing", [
-        "Knowledge Packs extend ANDON with domain expertise.",
-        "Each pack is a YAML manifest with:",
-        "",
-        "  • Domains — failure categories (e.g., web_api_security)",
-        "  • Keywords — pattern matching for domain scoring",
-        "  • Skills — recommended slash commands for each domain",
-        "",
-        "Available packs:",
-        "  📦 andon-pack-japan-legal  — Japanese law (e-Gov API)",
-        "  📦 andon-pack-ios-development — iOS / App Store",
-        "  📦 sample-web-api-security — API security (example)",
-        "",
-        "Regulated domains (law, medicine, finance) MUST depend",
-        "on Pack 0 — the loader refuses to load without it.",
-        "",
-        "What you'll see:",
-        "  A pytest auth failure → domain scoring → skill lookup",
-    ])
+    narrator_block(f"📦 {t('stage4.title')}", t("stage4.before"))
     pause()
 
 
 def run_packs_demo() -> dict | None:
-    from pack_loader import PackLoader
     from domain_classifier import recommend_skills
+    from pack_loader import PackLoader
 
     # Step 1: Load
-    step_banner(1, 2, "LOADING KNOWLEDGE PACK")
+    step_banner(1, 2, t("stage4.step1"))
     sample_pack_dir = ROOT / "examples" / "sample-pack"
     if not sample_pack_dir.exists():
-        warn("Sample pack not found — skipping")
+        warn(t("stage4.pack_not_found"))
         return None
 
     loader = PackLoader(pack0_available=True)
     bundle = loader.load_all(sample_pack_dir.parent)
 
     if not bundle.packs:
-        warn("No packs loaded")
+        warn(t("stage4.no_packs"))
         return None
 
     pack = bundle.packs[0]
     print()
-    progress_bar(1, 3, "Reading manifest...")
+    progress_bar(1, 3, t("stage4.reading_manifest"))
     time.sleep(0.2)
-    progress_bar(2, 3, "Validating dependencies...")
+    progress_bar(2, 3, t("stage4.validating_deps"))
     time.sleep(0.2)
-    progress_bar(3, 3, "Pack loaded")
+    progress_bar(3, 3, t("stage4.pack_loaded"))
     print()
-    ok(f"Pack:    {BOLD}{pack.name}{RESET}")
-    ok(f"Version: v{pack.version}")
-    ok(f"Domains: {[d.get('id') for d in pack.domains]}")
+    ok(f"{t('stage4.pack_label')}    {BOLD}{pack.name}{RESET}")
+    ok(f"{t('stage4.version_label')} v{pack.version}")
+    ok(f"{t('stage4.domains_label')} {[d.get('id') for d in pack.domains]}")
 
     # Step 2: Classify & recommend
-    step_banner(2, 2, "FAILURE → DOMAIN → SKILLS")
+    step_banner(2, 2, t("stage4.step2"))
     print(f"\n    {DIM}$ python -m pytest tests/test_api.py{RESET}")
     time.sleep(0.2)
     print(f"    {RED}FAILED tests/test_api.py::test_auth{RESET}")
@@ -687,57 +646,41 @@ def run_packs_demo() -> dict | None:
         extra_keywords=bundle.extra_keywords,
     )
 
-    print(f"\n    {DIM}── Domain Scoring ──{RESET}")
+    print(f"\n    {DIM}── {t('stage4.domain_scoring')} ──{RESET}")
     if result["domain_scores"]:
         max_score = max(ds["score"] for ds in result["domain_scores"][:5]) or 1
         for ds in result["domain_scores"][:5]:
             bar_len = int(15 * ds["score"] / max_score) if max_score > 0 else 0
             bar = f"{GREEN}{'█' * bar_len}{DIM}{'░' * (15 - bar_len)}{RESET}"
-            winner = " ◀ WINNER" if ds["domain_id"] == result["domain"] else ""
+            winner = f" ◀ {t('stage4.winner')}" if ds["domain_id"] == result["domain"] else ""
             print(f"    {bar} {ds['domain_id']:<22} "
                   f"{ds['score']:.1f}  {DIM}{ds['matched']}{RESET}"
                   f"{BOLD}{YELLOW}{winner}{RESET}")
 
     print()
-    ok(f"Selected domain: {BOLD}{result['domain']}{RESET}")
+    ok(f"{t('stage4.selected_domain')} {BOLD}{result['domain']}{RESET}")
 
     if result["primary"]:
-        info("Recommended skills:")
+        info(f"{t('stage4.recommended_skills')}")
         for skill in result["primary"]:
             print(f"      → {BOLD}{skill['ref']}{RESET}: {skill['description']}")
     for skill in result.get("secondary", []):
         print(f"      → {skill['ref']}: {skill['description']}")
     if not result["primary"] and not result["secondary"]:
         print()
-        warn("No skills mapped for this domain")
-        print(f"    {DIM}(The sample pack covers 'web_api_security', but the")
-        print(f"     top domain was '{result['domain']}' — expected behavior){RESET}")
+        warn(t("stage4.no_skills"))
+        print(f"    {DIM}{t('stage4.no_skills_detail1')}")
+        print(f"     {t('stage4.no_skills_detail2', domain=result['domain'])}{RESET}")
 
     return result
 
 
 def explain_packs_after(result: dict | None) -> None:
     domain = result["domain"] if result else "unknown"
-    narrator_block("📦 STAGE 4 COMPLETE — How Pack Routing Works", [
-        "1. PACK LOADED — YAML manifest defines domains,",
-        "   keywords, and skill mappings.",
-        "",
-        "2. FAILURE CLASSIFIED — Error output scored against",
-        "   all known domains via keyword matching:",
-        '   "test/assert/pytest" → quality_test',
-        '   "auth/permission"    → security',
-        '   "401/forbidden"      → web_api_security',
-        "",
-        f"3. DOMAIN: '{domain}' won with highest score.",
-        "",
-        "4. SKILL LOOKUP — Maps domain → recommended skills.",
-        "   Production packs provide rich mappings:",
-        "   • iOS → /review-guide, /apple-dev-ref",
-        "   • Japan Legal → /legal-jp-appi, /legal-jp-egov-api",
-        "",
-        "5. REGULATED GUARD — Packs covering law/medicine MUST",
-        "   depend on Pack 0. Loader refuses without it.",
-    ])
+    after_paragraphs = []
+    for line in t("stage4.after"):
+        after_paragraphs.append(line.format(domain=domain))
+    narrator_block(f"📦 {t('stage4.after_title')}", after_paragraphs)
 
 
 # ═════════════════════════════════════════════════════════════
@@ -748,7 +691,7 @@ def show_readme() -> None:
     clear()
     readme_path = ROOT / "README.md"
     if not readme_path.exists():
-        warn("README.md not found")
+        warn(t("readme_viewer.not_found"))
         pause()
         return
 
@@ -756,50 +699,52 @@ def show_readme() -> None:
     lines = content.splitlines()
 
     sections: list[tuple[str, list[str]]] = []
-    title = "Header"
+    sec_title = "Header"
     body: list[str] = []
     for line in lines:
         if line.startswith("## "):
             if body:
-                sections.append((title, body))
-            title = line[3:].strip()
+                sections.append((sec_title, body))
+            sec_title = line[3:].strip()
             body = []
         else:
             body.append(line)
     if body:
-        sections.append((title, body))
+        sections.append((sec_title, body))
 
     inner = W - 6
-    print(f"\n  {WHITE}╔{'═' * inner}╗{RESET}")
-    print(f"  {WHITE}║{REVERSE}{BOLD}  📖 README — Table of Contents{' ' * (inner - 33)}  {RESET}{WHITE}║{RESET}")
-    print(f"  {WHITE}╠{'═' * inner}╣{RESET}")
-    for i, (t, _) in enumerate(sections, 1):
-        print(f"  {WHITE}║{RESET}   {CYAN}[{i:2}]{RESET}  {t}")
-    print(f"  {WHITE}║{RESET}")
-    print(f"  {WHITE}║{RESET}   {CYAN}[ A]{RESET}  Show all sections")
-    print(f"  {WHITE}║{RESET}   {CYAN}[ Q]{RESET}  Back to menu")
-    print(f"  {WHITE}╚{'═' * inner}╝{RESET}")
+    readme_title = t("readme_viewer.title")
+    title_pad = inner - len(readme_title) - 6
+    print(f"\n  {WHITE}\u2554{'═' * inner}\u2557{RESET}")
+    print(f"  {WHITE}\u2551{REVERSE}{BOLD}  📖 {readme_title}{' ' * title_pad}  {RESET}{WHITE}\u2551{RESET}")
+    print(f"  {WHITE}\u2560{'═' * inner}\u2563{RESET}")
+    for i, (sec_t, _) in enumerate(sections, 1):
+        print(f"  {WHITE}\u2551{RESET}   {CYAN}[{i:2}]{RESET}  {sec_t}")
+    print(f"  {WHITE}\u2551{RESET}")
+    print(f"  {WHITE}\u2551{RESET}   {CYAN}[ A]{RESET}  {t('readme_viewer.show_all')}")
+    print(f"  {WHITE}\u2551{RESET}   {CYAN}[ Q]{RESET}  {t('readme_viewer.back')}")
+    print(f"  {WHITE}\u255a{'═' * inner}\u255d{RESET}")
 
     while True:
         try:
-            ch = input(f"\n  {BOLD}▶ Section: {RESET}").strip().lower()
+            ch = input(f"\n  {BOLD}\u25b6 {t('readme_viewer.prompt')}{RESET}").strip().lower()
         except (EOFError, KeyboardInterrupt):
             break
         if ch in ("q", ""):
             break
         elif ch == "a":
-            for t, b in sections:
-                print(f"\n  {BOLD}{CYAN}## {t}{RESET}")
-                for line in b[:25]:
-                    print(f"  {line}")
+            for sec_t, b in sections:
+                print(f"\n  {BOLD}{CYAN}## {sec_t}{RESET}")
+                for bline in b[:25]:
+                    print(f"  {bline}")
                 if len(b) > 25:
-                    print(f"  {DIM}... ({len(b) - 25} more lines){RESET}")
+                    print(f"  {DIM}{t('readme_viewer.more_lines', count=len(b) - 25)}{RESET}")
             pause()
         elif ch.isdigit() and 1 <= int(ch) <= len(sections):
-            t, b = sections[int(ch) - 1]
-            print(f"\n  {BOLD}{CYAN}## {t}{RESET}")
-            for line in b:
-                print(f"  {line}")
+            sec_t, b = sections[int(ch) - 1]
+            print(f"\n  {BOLD}{CYAN}## {sec_t}{RESET}")
+            for bline in b:
+                print(f"  {bline}")
             pause()
 
 
@@ -809,38 +754,26 @@ def show_readme() -> None:
 
 def run_all() -> None:
     clear()
-    narrator_block("🚀 GUIDED TOUR — All 4 Stages", [
-        "You'll experience the complete ANDON framework:",
-        "",
-        "  Stage 1: 🔴 ANDON — Detect, Stop, Fix, Prevent",
-        "  Stage 2: 🛡️  Safety Guard — Scan harmful outputs",
-        "  Stage 3: 🔄 Transform — What the user sees",
-        "  Stage 4: 📦 Packs — Domain routing & skill recs",
-        "",
-        "Each stage has three phases:",
-        "  📖 BRIEFING  — What you're about to see and why",
-        "  ▶  EXECUTION — The demo runs live",
-        "  📋 DEBRIEF   — What happened and key takeaways",
-    ])
-    pause("▶ Press ENTER to begin the guided tour...")
+    narrator_block(f"🚀 {t('tour.title')}", t("tour.intro"))
+    pause(f"\u25b6 {t('common.enter_tour')}")
 
     # Stage 1
     explain_andon_before()
     incident_dir = run_andon_demo()
     explain_andon_after(incident_dir)
-    pause("▶ Press ENTER for Stage 2...")
+    pause(f"\u25b6 {t('common.enter_stage2')}")
 
     # Stage 2
     explain_safety_before()
     stats = run_safety_demo()
     explain_safety_after(stats)
-    pause("▶ Press ENTER for Stage 3...")
+    pause(f"\u25b6 {t('common.enter_stage3')}")
 
     # Stage 3
     explain_transform_before()
     run_transform_demo()
     explain_transform_after()
-    pause("▶ Press ENTER for Stage 4...")
+    pause(f"\u25b6 {t('common.enter_stage4')}")
 
     # Stage 4
     explain_packs_before()
@@ -859,27 +792,17 @@ def run_all() -> None:
 """)
 
     andon_board([
-        ("Stage 1 — ANDON Incident Detection", "green"),
-        ("Stage 2 — Output Safety Guard", "green"),
-        ("Stage 3 — Output Transformation", "green"),
-        ("Stage 4 — Knowledge Packs", "green"),
+        (t("tour.stage1_done"), "green"),
+        (t("tour.stage2_done"), "green"),
+        (t("tour.stage3_done"), "green"),
+        (t("tour.stage4_done"), "green"),
     ])
 
-    narrator_block("🎉 TOUR COMPLETE — Next Steps", [
-        "You've experienced the full ANDON framework!",
-        "",
-        "Quick Start (3 files, 5 minutes):",
-        "  → see examples/minimal-setup.md",
-        "",
-        "Full integration:",
-        "  → see INTEGRATION.md",
-        "",
-        "Create your own Knowledge Pack:",
-        "  → see CONTRIBUTING-PACKS.md",
-        "  → cp -r examples/sample-pack my-pack",
-        "",
-        f"Demo artifacts: {DEMO_DIR}",
-    ])
+    complete_paragraphs = []
+    for line in t("tour.complete"):
+        complete_paragraphs.append(line.format(demo_dir=DEMO_DIR))
+
+    narrator_block(f"🎉 {t('tour.complete_title')}", complete_paragraphs)
 
 
 # ═════════════════════════════════════════════════════════════
@@ -888,7 +811,10 @@ def run_all() -> None:
 
 def main() -> int:
     show_title()
-    pause("▶ Press ENTER to enter the factory...")
+    select_language()
+    # Re-render title in selected language
+    show_title()
+    pause(f"\u25b6 {t('common.enter_factory')}")
 
     while True:
         clear()
@@ -898,12 +824,12 @@ def main() -> int:
         if choice == "q":
             clear()
             print(f"""
-  {DIM}Shutting down the production line...{RESET}
+  {DIM}{t('shutdown.msg')}{RESET}
 
-  {DIM}Temp files: {DEMO_DIR}
-  Clean up:  rm -rf {DEMO_DIR}{RESET}
+  {DIM}{t('shutdown.temp_files', demo_dir=DEMO_DIR)}
+  {t('shutdown.clean_up', demo_dir=DEMO_DIR)}{RESET}
 
-  {BOLD}Thank you for visiting the ANDON factory! 🏭{RESET}
+  {BOLD}{t('shutdown.thanks')}{RESET}
 """)
             return 0
 
@@ -912,38 +838,38 @@ def main() -> int:
             explain_andon_before()
             incident_dir = run_andon_demo()
             explain_andon_after(incident_dir)
-            pause("▶ Press ENTER to return to the factory...")
+            pause(f"\u25b6 {t('common.enter_return')}")
 
         elif choice == "2":
             clear()
             explain_safety_before()
             stats = run_safety_demo()
             explain_safety_after(stats)
-            pause("▶ Press ENTER to return to the factory...")
+            pause(f"\u25b6 {t('common.enter_return')}")
 
         elif choice == "3":
             clear()
             explain_transform_before()
             run_transform_demo()
             explain_transform_after()
-            pause("▶ Press ENTER to return to the factory...")
+            pause(f"\u25b6 {t('common.enter_return')}")
 
         elif choice == "4":
             clear()
             explain_packs_before()
             result = run_packs_demo()
             explain_packs_after(result)
-            pause("▶ Press ENTER to return to the factory...")
+            pause(f"\u25b6 {t('common.enter_return')}")
 
         elif choice == "5":
             run_all()
-            pause("▶ Press ENTER to return to the factory...")
+            pause(f"\u25b6 {t('common.enter_return')}")
 
         elif choice == "r":
             show_readme()
 
         else:
-            narrator("Invalid input. Please enter 1-5, R, or Q.")
+            narrator(t("menu.invalid"))
             pause()
 
     return 0
@@ -963,5 +889,5 @@ if __name__ == "__main__":
     try:
         sys.exit(main())
     except KeyboardInterrupt:
-        print(f"\n\n  {DIM}Interrupted. Clean up: rm -rf {DEMO_DIR}{RESET}\n")
+        print(f"\n\n  {DIM}{t('shutdown.interrupted', demo_dir=DEMO_DIR)}{RESET}\n")
         sys.exit(0)

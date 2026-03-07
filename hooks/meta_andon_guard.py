@@ -18,7 +18,6 @@ import os
 from pathlib import Path
 from typing import Any
 
-
 META_ANDON_FAILURE_THRESHOLD = int(
     os.environ.get("META_ANDON_FAILURE_THRESHOLD", "3")
 )
