@@ -173,16 +173,14 @@ safety_extensions:
 
 #### Valid Categories
 
+Built-in categories shipped with Pack 0:
+
 | Category | Guard Level | Description |
 |----------|------------|-------------|
 | `unauthorized_practice_of_law` | GUARD | Legal advice without license |
-| `unauthorized_practice_of_medicine` | GUARD | Medical advice without license |
-| `illegal_activity_facilitation` | BLOCK | Instructions for illegal acts |
-| `self_harm_suicide` | BLOCK | Self-harm or suicide content |
-| `violence_harm` | BLOCK | Violence instructions |
-| `discrimination_hate` | BLOCK | Discriminatory content |
-| `human_rights_violation` | BLOCK | Human rights violations |
 | `unauthorized_professional_practice` | GUARD | Unlicensed professional advice |
+
+Community packs may define additional categories via `safety_extensions`.
 
 #### Guard Levels
 

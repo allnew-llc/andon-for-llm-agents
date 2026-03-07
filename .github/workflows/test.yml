@@ -31,7 +31,7 @@ jobs:
         run: python -m pytest tests/ -q
 
       - name: Verify Python syntax (hooks)
-        run: python -m py_compile hooks/output_safety_guard.py hooks/domain_classifier.py hooks/pack_loader.py hooks/andon_cli.py hooks/meta_andon_guard.py
+        run: python -m py_compile hooks/output_safety_guard.py hooks/domain_classifier.py hooks/pack_loader.py hooks/andon_cli.py hooks/meta_andon_guard.py hooks/tps-kaizen-runtime.py
 
       - name: Verify shell syntax (hooks)
         run: |

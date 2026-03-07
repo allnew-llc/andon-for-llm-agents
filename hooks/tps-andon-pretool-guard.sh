@@ -11,7 +11,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-STATE_FILE="$(cd "$SCRIPT_DIR/../.." && pwd)/.claude/state/andon-open.json"
+_WORKSPACE="${ANDON_WORKSPACE:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
+STATE_FILE="$_WORKSPACE/.claude/state/andon-open.json"
 INPUT_JSON="$(cat)"
 
 INPUT_JSON="$INPUT_JSON" python3 - "$STATE_FILE" <<'PYEOF'

@@ -7,7 +7,7 @@ If you discover a security vulnerability, please do **NOT** open a public issue.
 Instead, report it privately using one of the following methods:
 
 1. **GitHub Security Advisories** (preferred): Use the "Report a vulnerability" button on the Security tab of this repository.
-2. **Direct contact**: Email the maintainers at the address listed in the repository's GitHub profile.
+2. **Direct contact**: Open a confidential issue via [GitHub Security Advisories](https://github.com/allnew-llc/andon-for-llm-agents/security/advisories).
 
 We will acknowledge your report within 48 hours and provide an estimated timeline for a fix.
 

@@ -63,7 +63,15 @@ Prevention levels (always aim for L1-L2):
 andon-for-llm-agents/
 ├── README.md                          # This file
 ├── LICENSE                            # Apache-2.0
+├── NOTICE                             # Copyright & patent notice
+├── CONTRIBUTING.md                    # Contribution guide & CLA
 ├── CONTRIBUTING-PACKS.md              # Knowledge Pack specification
+├── CODE_OF_CONDUCT.md                 # Contributor Covenant
+├── SECURITY.md                        # Vulnerability reporting policy
+├── INTEGRATION.md                     # Full integration guide
+├── pyproject.toml                     # PEP 621 project metadata
+├── .github/                           # CI & community templates
+│   └── workflows/test.yml            # GitHub Actions CI
 ├── rules/                             # CLAUDE.md / AGENTS.md rule modules
 │   ├── 70-kaizen-learning.md          # Core ANDON + Kaizen rules
 │   └── 45-quality-driven-execution.md # Gate-gaming prevention
@@ -91,12 +99,11 @@ andon-for-llm-agents/
 │       └── references/
 ├── tests/                             # Test suite
 │   └── test_output_safety_guard.py    # Tests for Pack 0 + classifier + loader
-├── examples/                          # Integration examples
-│   ├── demo-run.py                    # Interactive demo (try it now!)
-│   ├── sample-pack/                   # Sample Knowledge Pack (Web API Security)
-│   ├── claude-code-settings.json      # Hook registration example
-│   └── minimal-setup.md              # Quick start with 3 files
-└── INTEGRATION.md                     # Full integration guide
+└── examples/                          # Integration examples
+    ├── demo-run.py                    # Interactive demo (try it now!)
+    ├── sample-pack/                   # Sample Knowledge Pack (Web API Security)
+    ├── claude-code-settings.json      # Hook registration example
+    └── minimal-setup.md               # Quick start with 3 files
 ```
 
 ---

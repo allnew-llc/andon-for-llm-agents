@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # Copyright 2026 AllNew LLC
 # Licensed under Apache License 2.0
+# code-health: threshold-exception (interactive demo — self-contained by design)
 """demo-run.py — ANDON for LLM Agents: Interactive Guided Demo
 
 A retro-game-style, menu-driven demo inspired by factory ANDON boards
@@ -949,17 +950,15 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    # Register hyphenated module name for import (in-memory, no file write)
     runtime_src = HOOKS / "tps-kaizen-runtime.py"
-    runtime_link = HOOKS / "tps_kaizen_runtime.py"
-    if runtime_src.exists() and not runtime_link.exists():
-        runtime_link.write_text(
-            f'# Auto-generated import wrapper\nimport importlib.util, sys\n'
-            f'spec = importlib.util.spec_from_file_location("tps_kaizen_runtime", r"{runtime_src}")\n'
-            f'mod = importlib.util.module_from_spec(spec)\n'
-            f'sys.modules["tps_kaizen_runtime"] = mod\n'
-            f'spec.loader.exec_module(mod)\n',
-            encoding="utf-8",
-        )
+    if runtime_src.exists():
+        import importlib.util
+
+        _spec = importlib.util.spec_from_file_location("tps_kaizen_runtime", str(runtime_src))
+        _mod = importlib.util.module_from_spec(_spec)
+        sys.modules["tps_kaizen_runtime"] = _mod
+        _spec.loader.exec_module(_mod)
 
     try:
         sys.exit(main())

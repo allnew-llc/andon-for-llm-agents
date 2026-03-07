@@ -1,9 +1,6 @@
 __pycache__/
 .pytest_cache/
 
-# Auto-generated import wrapper for hyphenated module name
-hooks/tps_kaizen_runtime.py
-
 # Planning drafts
 PLAN.md
 

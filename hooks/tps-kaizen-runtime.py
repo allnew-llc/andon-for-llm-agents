@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# code-health: threshold-exception (monolithic runtime — safety-critical, not safe to split)
 """tps-kaizen-runtime.py — ANDON Runtime Engine for LLM Agent Hooks
 
 Runtime engine for TPS/ANDON hooks:
@@ -41,7 +42,7 @@ def _init_packs() -> None:
 
         _safety_guard = OutputSafetyGuard()
 
-        packs_dir = Path(__file__).parent / "packs"
+        packs_dir = Path(__file__).parent.parent / "packs"
         loader = PackLoader(pack0_available=True)
         if packs_dir.is_dir():
             _pack_bundle = loader.load_all(packs_dir)
