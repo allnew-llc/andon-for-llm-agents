@@ -90,7 +90,7 @@ def clear() -> None:
 
 def pause(msg: str = "") -> None:
     if not msg:
-        msg = f"\u25b6 Press {BOLD}ENTER{RESET}{DIM} {t('common.enter_continue')}"
+        msg = f"\u25b6 {t('common.enter_continue')}"
     print(f"\n  {DIM}{msg}{RESET}", end="")
     try:
         input()
@@ -595,9 +595,10 @@ def run_transform_demo() -> None:
 
     # Case 1: GUARD — Legal text
     step_banner(1, 1, t("stage3.step_title"))
-    text = ("Under Article 23 of APPI, third-party provision of personal "
-            "data requires consent. You must obtain explicit consent "
-            "before sharing user data.")
+    text = ("Under Article 23 of APPI, sharing personal data without "
+            "explicit consent constitutes a violation of privacy law. "
+            "You should file a complaint with the PPC if your data "
+            "was shared without authorization.")
     print(f"\n    {DIM}── {t('stage3.before_label')} ──{RESET}")
     indent_print(text)
 
