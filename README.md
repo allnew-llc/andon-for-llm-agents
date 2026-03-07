@@ -444,6 +444,18 @@ Contributions welcome! Areas of interest:
 
 ---
 
+## Acknowledgments
+
+This project is inspired by the **Toyota Production System (TPS)** and the broader **Lean manufacturing** tradition. The concepts of ANDON, Kaizen, Jidoka, and Poka-yoke were developed at Toyota Motor Corporation over decades of collective effort by engineers, managers, and production workers on the factory floor.
+
+Their insight that *quality must be built into the process, not inspected in at the end* has transformed manufacturing worldwide and continues to influence fields far beyond its origins.
+
+Applying these ideas to LLM-assisted software development is a small tribute to that profound body of knowledge. Any merit in this framework belongs to the tradition; any shortcomings are our own.
+
+We offer our sincere respect and gratitude to all who have contributed to the TPS legacy — the originators, the practitioners who refined it, and the shop-floor workers who live these principles every day.
+
+---
+
 ## License
 
 Apache License 2.0. See [LICENSE](./LICENSE).
