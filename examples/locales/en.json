@@ -18,8 +18,8 @@
     "kaizen": "Capture learning, update standards",
     "local_only": "Everything runs locally. No API keys needed."
   },
-  "factory": {
-    "production_line": "PRODUCTION   LINE"
+  "pipeline": {
+    "banner_text": "P  I  P  E  L  I  N  E"
   },
   "menu": {
     "header": "SELECT DEMO",
@@ -40,8 +40,8 @@
   },
   "common": {
     "enter_continue": "Press ENTER to continue",
-    "enter_factory": "Press ENTER to enter the factory...",
-    "enter_return": "Press ENTER to return to the factory...",
+    "enter_start": "Press ENTER to start the demo...",
+    "enter_return": "Press ENTER to return to the menu...",
     "enter_tour": "Press ENTER to begin the guided tour...",
     "enter_stage2": "Press ENTER for Stage 2...",
     "enter_stage3": "Press ENTER for Stage 3...",
@@ -60,17 +60,17 @@
     "stopped": "STOPPED",
     "off": "OFF",
     "unknown": "UNKNOWN",
-    "line_a": "Assembly Line A \u2014 npm install",
-    "line_b": "Assembly Line B \u2014 Build",
-    "line_c": "Assembly Line C \u2014 Deploy"
+    "line_a": "Stage A \u2014 npm install",
+    "line_b": "Stage B \u2014 Build",
+    "line_c": "Stage C \u2014 Deploy"
   },
   "stage1": {
     "title": "STAGE 1: ANDON \u2014 Failure Detection & Line Stop",
     "before": [
-      "In lean manufacturing, any worker can pull the ANDON cord to",
-      "stop the production line when they find a defect.",
+      "In lean manufacturing, anyone can trigger ANDON to",
+      "stop the pipeline when they find a defect.",
       "The problem is fixed at the source \u2014 defects never reach",
-      "the next process.",
+      "the next stage.",
       "",
       "In LLM coding, we apply the same principle:",
       "",
@@ -174,8 +174,8 @@
       "and a professional referral. The original content is",
       "preserved \u2014 the user gets the information plus context.",
       "",
-      "Think of it like a factory quality gate:",
-      "  The product ships with an appropriate warning label."
+      "Think of it like a CI quality gate:",
+      "  The output ships with an appropriate disclaimer."
     ],
     "step_title": "GUARD Transformation \u2014 Legal text",
     "before_label": "BEFORE (raw LLM output)",
@@ -300,10 +300,10 @@
     "stage4_done": "Stage 4 \u2014 Knowledge Packs"
   },
   "shutdown": {
-    "msg": "Shutting down the production line...",
+    "msg": "Shutting down the demo...",
     "temp_files": "Temp files: {demo_dir}",
     "clean_up": "Clean up:  rm -rf {demo_dir}",
-    "thanks": "Thank you for visiting the ANDON factory!",
+    "thanks": "Thank you for trying ANDON!",
     "interrupted": "Interrupted. Clean up: rm -rf {demo_dir}"
   }
 }

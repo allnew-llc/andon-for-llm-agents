@@ -4,7 +4,7 @@
 # code-health: threshold-exception (interactive demo — self-contained by design)
 """demo-run.py — ANDON for LLM Agents: Interactive Guided Demo
 
-A retro-game-style, menu-driven demo inspired by factory ANDON boards
+A retro-game-style, menu-driven demo inspired by ANDON status boards
 and classic PC adventure games. Each demo is explained before running,
 then summarized after.
 
@@ -110,7 +110,7 @@ def slow(text: str, delay: float = 0.012) -> None:
 
 
 def beep() -> None:
-    """Terminal bell — like a factory alarm."""
+    """Terminal bell — audible alert."""
     sys.stdout.write("\a")
     sys.stdout.flush()
 
@@ -131,7 +131,7 @@ def crt_frame(lines: list[str], color: str = GREEN, title: str = "") -> None:
 
 
 def andon_board(statuses: list[tuple[str, str]]) -> None:
-    """Draw a factory ANDON status board."""
+    """Draw an ANDON-style status board."""
     color_map = {
         "green": (BG_GREEN, f"\u25cf {t('andon_board.normal')}"),
         "yellow": (BG_YELLOW, f"\u25b2 {t('andon_board.caution')}"),
@@ -239,10 +239,35 @@ TITLE_ART = f"""\
 {DIM}            f o r   L L M   A g e n t s{RESET}"""
 
 
+def _visual_width(s: str) -> int:
+    """Calculate visual width accounting for CJK double-width chars."""
+    width = 0
+    for ch in s:
+        cp = ord(ch)
+        # CJK Unified Ideographs + Katakana + Hiragana + Fullwidth
+        if (0x3000 <= cp <= 0x9FFF or 0xF900 <= cp <= 0xFAFF
+                or 0xFF01 <= cp <= 0xFF60):
+            width += 2
+        else:
+            width += 1
+    return width
+
+
+def _visual_center(s: str, total: int) -> str:
+    """Center string to total visual width, accounting for CJK chars."""
+    vw = _visual_width(s)
+    pad = total - vw
+    if pad <= 0:
+        return s
+    left = pad // 2
+    right = pad - left
+    return " " * left + s + " " * right
+
+
 def _factory_art() -> str:
-    pl = t("factory.production_line")
-    # Center the production line text in the box (33 inner chars)
-    padded = f"{pl:^29}"
+    pl = t("pipeline.banner_text")
+    # Center the text in the box (29 visual columns)
+    padded = _visual_center(pl, 29)
     return f"""\
 {DIM}        ┌──────┐  ┌──────┐  ┌──────┐
         │{RED}●{DIM} {GREEN}●{DIM} {YELLOW}●{DIM} │  │{GREEN}●{DIM} {GREEN}●{DIM} {GREEN}●{DIM} │  │{RED}●{DIM} {YELLOW}●{DIM} {GREEN}●{DIM} │
@@ -814,7 +839,7 @@ def main() -> int:
     select_language()
     # Re-render title in selected language
     show_title()
-    pause(f"\u25b6 {t('common.enter_factory')}")
+    pause(f"\u25b6 {t('common.enter_start')}")
 
     while True:
         clear()
