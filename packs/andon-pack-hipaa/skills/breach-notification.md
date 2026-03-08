@@ -112,4 +112,4 @@ not be required (but document the analysis).
 | Incomplete individual notification | Missing required elements | Notification template |
 | No forensic evidence preservation | Cannot complete investigation | Incident response plan |
 
-**This guide covers technical patterns only, NOT legal advice.**
+**This guide covers technical patterns only, NOT medical or legal advice.**

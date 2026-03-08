@@ -129,4 +129,4 @@ For each system component:
 | No MFA for remote access | §164.312(d) | Implement MFA |
 | Unencrypted ePHI in transit | §164.312(e)(1) | TLS 1.2+ |
 
-**This guide covers technical patterns only, NOT legal advice.**
+**This guide covers technical patterns only, NOT medical or legal advice.**

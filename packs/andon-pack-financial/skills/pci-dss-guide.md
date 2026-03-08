@@ -100,4 +100,4 @@ MUST NEVER LOG:
 | Shared admin accounts | Req. 8.2.1 | Unique ID per user |
 | No MFA for admin access to CDE | Req. 8.4.2 | Implement MFA |
 
-**This guide is NOT financial or legal advice. Consult a QSA for PCI compliance.**
+**This guide covers technical patterns only, NOT financial, investment, or legal advice. Consult a QSA, compliance officer, or licensed financial advisor.**

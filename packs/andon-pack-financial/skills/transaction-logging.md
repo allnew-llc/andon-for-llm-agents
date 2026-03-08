@@ -91,4 +91,4 @@ MUST NOT:
 | No correlation ID | Cannot trace distributed transactions | Add correlation ID across services |
 | Logs on same server as app | Single point of failure | Separate log infrastructure |
 
-**This guide covers technical patterns only, NOT regulatory strategy.**
+**This guide covers technical patterns only, NOT financial, investment, or legal advice. Consult a QSA, compliance officer, or licensed financial advisor.**

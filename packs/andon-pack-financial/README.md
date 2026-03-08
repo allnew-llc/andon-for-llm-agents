@@ -57,6 +57,13 @@ tax, or legal advice. All outputs should be reviewed by qualified
 professionals (QSA, compliance officer, licensed financial advisor)
 before use in compliance decision-making.
 
+## Trademark Notice
+
+PCI DSS is a registered trademark of the PCI Security Standards Council, LLC.
+References to PCI DSS in this pack are for informational purposes only and
+do not imply endorsement by or affiliation with the PCI Security Standards
+Council.
+
 ## License
 
 Apache-2.0

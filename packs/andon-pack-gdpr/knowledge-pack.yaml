@@ -90,11 +90,11 @@ domains:
       - pattern: "(special.?categor|sensitive.?data|health.?data|biometric|genetic)"
         weight: 0.9
 
-  - id: "legal"
+  - id: "eu_legal_general"
     keywords:
       - pattern: "(data.?protection.?law|privacy.?regulation|EU.?regulation)"
         weight: 0.6
-      - pattern: "(compliance|regulatory|legal.?review)"
+      - pattern: "(EU.?compliance|GDPR.?regulatory|data.?protection.?review)"
         weight: 0.5
 
 # Failure classification rules
@@ -119,7 +119,7 @@ classification_rules:
     confidence: 0.75
     pattern: "(DPIA.?not|impact.?assessment.?missing|high.?risk.?no.?assessment|Art.?35.?not)"
 
-  - cause_id: "breach_response_failure"
+  - cause_id: "gdpr_breach_response_failure"
     label: "Data breach notification procedure not followed"
     confidence: 0.80
     pattern: "(breach.?not.?notif|72.?hour.?miss|supervisory.?not.?inform|breach.?unreported)"
@@ -165,7 +165,7 @@ cause_to_domain:
   data_subject_rights_gap: "eu_legal"
   cross_border_transfer_violation: "eu_legal"
   dpia_missing: "eu_legal"
-  breach_response_failure: "eu_legal"
+  gdpr_breach_response_failure: "eu_legal"
   privacy_by_design_gap: "eu_legal"
   special_category_violation: "eu_legal"
   processor_compliance_gap: "eu_legal"
@@ -203,7 +203,7 @@ skill_map:
       - ref: "cookie-eprivacy"
         path: "skills/cookie-eprivacy.md"
         description: "Cookie consent and ePrivacy compliance"
-  legal:
+  eu_legal_general:
     primary:
       - ref: "gdpr-orchestrator"
         path: "skills/gdpr-orchestrator.md"

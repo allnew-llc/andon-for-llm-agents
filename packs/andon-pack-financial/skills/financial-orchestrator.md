@@ -50,9 +50,9 @@ Regardless of specific regulation, all financial systems must:
 
 ## When to Escalate
 
-- Determining whether a service requires financial regulatory registration
-- Interpreting specific regulatory requirements for your jurisdiction
-- Designing AML transaction monitoring rules
-- PCI-DSS scope determination for complex architectures
+- Determining whether a service requires financial regulatory registration — consult a **licensed securities or financial regulatory attorney**
+- Interpreting specific regulatory requirements for your jurisdiction — consult a **compliance officer or regulatory counsel**
+- Designing AML transaction monitoring rules — consult a **certified anti-money laundering specialist (CAMS)**
+- PCI-DSS scope determination for complex architectures — consult a **Qualified Security Assessor (QSA)**
 
-**This guide is NOT financial or legal advice. Consult qualified professionals.**
+**This guide covers technical patterns only, NOT financial, investment, or legal advice. Consult a QSA, compliance officer, or licensed financial advisor.**

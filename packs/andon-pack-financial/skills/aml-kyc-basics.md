@@ -107,4 +107,4 @@ NEVER tip off the customer about a suspicious report.
 | Using outdated sanctions lists | False negatives | Subscribe to real-time updates |
 | Manual-only screening | Scale and speed issues | Automate with human review for matches |
 
-**This guide covers technical patterns only, NOT regulatory strategy.**
+**This guide covers technical patterns only, NOT financial, investment, or legal advice. Consult a QSA, compliance officer, or licensed financial advisor.**

@@ -94,7 +94,7 @@ classification_rules:
     confidence: 0.82
     pattern: "(no.?RBAC.*health|shared.?password.*PHI|no.?audit.*patient|anonymous.*access.*health)"
 
-  - cause_id: "breach_response_failure"
+  - cause_id: "hipaa_breach_response_failure"
     label: "Breach notification procedures not implemented"
     confidence: 0.80
     pattern: "(no.?breach.*notif|breach.*no.?report|PHI.*breach.*undetect)"
@@ -126,7 +126,7 @@ cause_to_domain:
   minimum_necessary_violation: "medical"
   baa_missing: "medical"
   access_control_gap: "medical"
-  breach_response_failure: "medical"
+  hipaa_breach_response_failure: "medical"
   deidentification_failure: "medical"
   audit_trail_gap: "medical"
   medical_advice_detected: "medical"
@@ -171,6 +171,10 @@ safety_extensions:
         weight: 0.9
       - pattern: "(あなたの病気は|診断として|この薬を飲むべき|治療として推奨)"
         weight: 1.0
+      - pattern: "(as.?your.?doctor|in.?my.?medical.?opinion|clinically.?speaking)"
+        weight: 1.0
+      - pattern: "(I.?diagnose|my.?diagnosis.?is|the.?diagnosis.?is)"
+        weight: 0.9
     jurisdiction: "US"
     disclaimer_override:
       text: |
@@ -182,14 +186,6 @@ safety_extensions:
         healthcare provider. If you have a medical emergency, contact
         emergency services immediately.
       source_attribution: "General health information compliance guidance"
-
-  - category: "unauthorized_professional_practice"
-    extra_patterns:
-      - pattern: "(as.?your.?doctor|in.?my.?medical.?opinion|clinically.?speaking)"
-        weight: 1.0
-      - pattern: "(I.?diagnose|my.?diagnosis.?is|the.?diagnosis.?is)"
-        weight: 0.9
-    jurisdiction: "US"
 
 quality_criteria:
   - "All HIPAA guidance references specific rule sections (§164.xxx)"

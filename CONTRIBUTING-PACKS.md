@@ -271,11 +271,14 @@ Result: VALID (1 warning)
 
 ## Example Packs
 
-| Pack | Domain | Regulated | Skills |
-|------|--------|-----------|--------|
-| `sample-web-api-security` | API security | No | 3 |
-| `andon-pack-japan-legal` | Japanese law (e-Gov) | Yes | 6 |
-| `andon-pack-ios-development` | iOS/App Store | No | 5 |
+| Pack | Domain | Regulated | Skills | Status |
+|------|--------|-----------|--------|--------|
+| `sample-web-api-security` | API security | No | 3 | Example |
+| `andon-pack-japan-legal` | Japanese law (e-Gov) | Yes | 6 | Stable |
+| `andon-pack-ios-development` | iOS/App Store | No | 5 | Stable |
+| `andon-pack-gdpr` | EU GDPR | Yes | 8 | Alpha |
+| `andon-pack-financial` | Financial services (PCI-DSS, AML/KYC) | Yes | 6 | Alpha |
+| `andon-pack-hipaa` | HIPAA healthcare compliance | Yes | 7 | Alpha |
 
 ## Legal Considerations for Pack Authors
 

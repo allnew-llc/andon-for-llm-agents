@@ -145,4 +145,4 @@ After de-identification, verify:
 | No re-identification risk check | Combinations may re-identify | k-anonymity analysis |
 | Calling it "anonymized" vs "de-identified" | Legal terminology matters | Use "de-identified" per HIPAA |
 
-**This guide covers technical patterns only, NOT legal advice.**
+**This guide covers technical patterns only, NOT medical or legal advice.**

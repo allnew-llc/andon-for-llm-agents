@@ -26,6 +26,10 @@ The European Commission has determined the country provides adequate protection.
 | Israel | Jan 2011 | |
 | EU-US Data Privacy Framework | Jul 2023 | Self-certification required |
 
+> **Note**: This table is non-exhaustive. Check the [European Commission's
+> adequacy decisions page](https://commission.europa.eu/law/law-topic/data-protection/international-dimension-data-protection/adequacy-decisions_en)
+> for the current list. Table last verified: March 2026.
+
 If destination country has adequacy decision → transfer permitted (no further
 safeguards needed).
 

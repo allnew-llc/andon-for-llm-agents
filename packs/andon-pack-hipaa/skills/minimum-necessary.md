@@ -117,4 +117,4 @@ For incoming PHI requests:
 | No purpose tracking | Cannot audit minimum necessary | Log access purpose |
 | Bulk data exports without filtering | Excessive PHI disclosure | Field-level export controls |
 
-**This guide covers technical patterns only, NOT legal advice.**
+**This guide covers technical patterns only, NOT medical or legal advice.**

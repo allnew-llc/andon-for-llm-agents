@@ -113,4 +113,4 @@ Before integrating a service that may handle PHI:
 | BAA not reviewed by legal | May have inadequate terms | Legal review of all BAAs |
 | No termination provisions | Cannot enforce compliance | Include termination clause |
 
-**This guide covers technical patterns only, NOT legal advice.**
+**This guide covers technical patterns only, NOT medical or legal advice.**

@@ -86,4 +86,4 @@ Disclaimer:
 - Insurance coverage recommendations
 - Loan or credit product comparisons with recommendations
 
-**This guide is NOT financial or legal advice. Consult qualified professionals.**
+**This guide covers technical patterns only, NOT financial, investment, or legal advice. Consult a QSA, compliance officer, or licensed financial advisor.**

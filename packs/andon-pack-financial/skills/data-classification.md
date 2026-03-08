@@ -115,4 +115,4 @@ For compliance, document where financial data flows:
 | No data flow documentation | Cannot audit or assess compliance | Map all data flows |
 | Log files containing restricted data | Unintended storage of sensitive data | Sanitize before logging |
 
-**This guide covers technical patterns only, NOT regulatory strategy.**
+**This guide covers technical patterns only, NOT financial, investment, or legal advice. Consult a QSA, compliance officer, or licensed financial advisor.**
