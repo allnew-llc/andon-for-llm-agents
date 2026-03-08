@@ -198,16 +198,16 @@ skill recommendations.  Packs are self-contained plugins defined by a
 
 ```bash
 # List installed packs
-python3 hooks/andon_cli.py pack list
+andon pack list
 
 # Validate a pack
-python3 hooks/andon_cli.py pack validate packs/andon-pack-japan-legal
+andon pack validate packs/andon-pack-japan-legal
 
 # Show pack details
-python3 hooks/andon_cli.py pack info andon-pack-japan-legal
+andon pack info andon-pack-japan-legal
 
 # Install a pack
-python3 hooks/andon_cli.py pack install ./my-custom-pack
+andon pack install ./my-custom-pack
 ```
 
 ### Creating Your Own Pack
@@ -218,7 +218,7 @@ See [CONTRIBUTING-PACKS.md](./CONTRIBUTING-PACKS.md) for the full specification.
 # Start from the sample
 cp -r examples/sample-pack my-pack
 # Edit knowledge-pack.yaml, add skills to skills/
-python3 hooks/andon_cli.py pack validate ./my-pack
+andon pack validate ./my-pack
 ```
 
 ### Regulated Domain Enforcement

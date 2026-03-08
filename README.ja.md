@@ -181,16 +181,16 @@ andon-for-llm-agents/
 
 ```bash
 # インストール済み Pack の一覧
-python3 hooks/andon_cli.py pack list
+andon pack list
 
 # Pack の検証
-python3 hooks/andon_cli.py pack validate packs/andon-pack-japan-legal
+andon pack validate packs/andon-pack-japan-legal
 
 # Pack の詳細表示
-python3 hooks/andon_cli.py pack info andon-pack-japan-legal
+andon pack info andon-pack-japan-legal
 
 # Pack のインストール
-python3 hooks/andon_cli.py pack install ./my-custom-pack
+andon pack install ./my-custom-pack
 ```
 
 ### 独自 Pack の作成
@@ -201,7 +201,7 @@ python3 hooks/andon_cli.py pack install ./my-custom-pack
 # サンプルからスタート
 cp -r examples/sample-pack my-pack
 # knowledge-pack.yaml を編集し、skills/ にスキルを追加
-python3 hooks/andon_cli.py pack validate ./my-pack
+andon pack validate ./my-pack
 ```
 
 ### 規制ドメインの強制
