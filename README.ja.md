@@ -83,7 +83,7 @@ ANDON は異なるギャップに対応します：**失敗から学び、再発
 | 仕様逸脱の防止 | **ANDON** | 主要な解決策 |
 | ドメイン固有の失敗分類 | **ANDON（Knowledge Packs）** | 拡張可能なプラグインシステム |
 
-ANDON はフックやコールバックをサポートする任意の LLM コーディングエージェント — Claude Code、Codex、Cursor、Windsurf、カスタムエージェント — と連携できます。
+ANDON はフックやコールバックをサポートする任意の LLM コーディングエージェント — Claude Code、Codex、AutoGPT/LangChain 等のカスタム実装、独自 CLI エージェント — と連携できます。
 
 学術研究もこのニーズを裏付けています：UC Berkeley の MAST 分類体系（2025）は、マルチエージェント LLM システムの**失敗率が 41〜86.7%** に達し、失敗の 79% がオーケストレーション起因であることを明らかにしました。ANDON の構造的アプローチ — 検知・停止・分析・標準化 — は、個々のエージェントの性能最適化ではなく、こうしたシステミックな失敗に直接対処します。
 
@@ -221,6 +221,20 @@ python3 examples/demo-run.py
 ## クイックスタート（3 ファイル、5 分）
 
 失敗時の ANDON ライン停止を実現する最小構成：
+
+### インストール
+
+```bash
+pip install andon-for-llm-agents
+```
+
+ソースからインストールする場合：
+
+```bash
+git clone https://github.com/allnew-llc/andon-for-llm-agents.git
+cd andon-for-llm-agents
+pip install .
+```
 
 ### 1. フックをコピー
 

@@ -88,7 +88,7 @@ ANDON addresses a different gap: **learning from failures and preventing recurre
 | Domain-specific failure classification | **ANDON (Knowledge Packs)** | Extensible plugin system |
 
 ANDON works with any LLM coding agent that supports hooks or callbacks —
-Claude Code, Codex, Cursor, Windsurf, or custom agents.
+Claude Code, Codex, custom AutoGPT/LangChain implementations, or bespoke CLI agents.
 
 Academic research supports the need: UC Berkeley's MAST taxonomy (2025) found
 **41–86.7% failure rates** in multi-agent LLM systems, with 79% of failures
@@ -243,6 +243,20 @@ pattern detection.
 ## Quick Start (3 files, 5 minutes)
 
 For the minimal setup that gives you ANDON line-stop on failures:
+
+### Install
+
+```bash
+pip install andon-for-llm-agents
+```
+
+Or install from source:
+
+```bash
+git clone https://github.com/allnew-llc/andon-for-llm-agents.git
+cd andon-for-llm-agents
+pip install .
+```
 
 ### 1. Copy the hooks
 
