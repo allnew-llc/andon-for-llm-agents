@@ -325,8 +325,8 @@ Detects when the agent is stuck in a whack-a-mole loop:
 
 **Triggers:**
 - 3+ consecutive full-run failures (even at different phases)
-- 2+ ANDON opens in one session at different phases
-- Fix → run → different failure → fix → run → different failure (2 cycles)
+- 2+ ANDON opens in one session at different phases *(planned)*
+- Fix → run → different failure → fix → run → different failure, 2 cycles *(planned)*
 
 **Response:**
 0. **Plan Mode** — enter `EnterPlanMode` immediately (read-only exploration, no implementation)

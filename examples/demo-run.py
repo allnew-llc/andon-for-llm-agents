@@ -341,39 +341,18 @@ def main() -> int:
 """)
             return 0
 
-        elif choice == "1":
+        elif choice in ("1", "2", "3", "4", "5"):
+            _stages = {
+                "1": (explain_andon_before, lambda: run_andon_demo(DEMO_DIR), explain_andon_after),
+                "2": (explain_safety_before, run_safety_demo, explain_safety_after),
+                "3": (explain_transform_before, run_transform_demo, lambda *_: explain_transform_after()),
+                "4": (explain_packs_before, run_packs_demo, explain_packs_after),
+                "5": (explain_meta_andon_before, lambda: run_meta_andon_demo(DEMO_DIR), explain_meta_andon_after),
+            }
+            before_fn, run_fn, after_fn = _stages[choice]
             clear()
-            explain_andon_before()
-            incident_dir = run_andon_demo(DEMO_DIR)
-            explain_andon_after(incident_dir)
-            pause(f"▶ {t('common.enter_return')}")
-
-        elif choice == "2":
-            clear()
-            explain_safety_before()
-            stats = run_safety_demo()
-            explain_safety_after(stats)
-            pause(f"▶ {t('common.enter_return')}")
-
-        elif choice == "3":
-            clear()
-            explain_transform_before()
-            run_transform_demo()
-            explain_transform_after()
-            pause(f"▶ {t('common.enter_return')}")
-
-        elif choice == "4":
-            clear()
-            explain_packs_before()
-            result = run_packs_demo()
-            explain_packs_after(result)
-            pause(f"▶ {t('common.enter_return')}")
-
-        elif choice == "5":
-            clear()
-            explain_meta_andon_before()
-            meta_result = run_meta_andon_demo(DEMO_DIR)
-            explain_meta_andon_after(meta_result)
+            before_fn()
+            after_fn(run_fn())
             pause(f"▶ {t('common.enter_return')}")
 
         elif choice == "6":

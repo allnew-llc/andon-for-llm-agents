@@ -72,8 +72,7 @@
     "before": [
       "In lean manufacturing, anyone can trigger ANDON to",
       "stop the pipeline when they find a defect.",
-      "The problem is fixed at the source \u2014 defects never reach",
-      "the next stage.",
+      "The problem is fixed at the source \u2014 defects never reach the next stage.",
       "",
       "In LLM coding, we apply the same principle:",
       "",
