@@ -1,0 +1,199 @@
+# ANDON Knowledge Pack: HIPAA Compliance
+#
+# Provides domain classification, failure detection, and skill
+# recommendations for HIPAA compliance in LLM coding agents.
+# Covers PHI handling, Security Rule, Privacy Rule, Breach Notification,
+# BAA requirements, and technical safeguards.
+#
+# IMPORTANT: This pack covers a regulated domain and REQUIRES Pack 0.
+
+apiVersion: andon/v1
+kind: KnowledgePack
+metadata:
+  name: "andon-pack-hipaa"
+  version: "1.0.0"
+  description: "HIPAA compliance skills for LLM coding agents"
+  author: "AllNew LLC"
+  license: "Apache-2.0"
+  homepage: "https://github.com/allnew-llc/andon-for-llm-agents"
+  tags: ["hipaa", "healthcare", "phi", "compliance", "regulated"]
+
+# Pack 0 dependency — mandatory for regulated domains
+requires:
+  - name: "output-safety-guard"
+    version: ">=1.0.0"
+    reason: "Regulated domain (medical) — requires disclaimer guards"
+
+# Domain keywords — merged into domain_classifier at load time
+domains:
+  - id: "medical"
+    keywords:
+      # HIPAA general
+      - pattern: "(HIPAA|Health.?Insurance.?Portability)"
+        weight: 1.0
+      - pattern: "(covered.?entity|business.?associate|BAA)"
+        weight: 0.9
+      - pattern: "(protected.?health.?information|PHI|ePHI)"
+        weight: 1.0
+
+      # Privacy Rule
+      - pattern: "(Privacy.?Rule|minimum.?necessary|patient.?consent)"
+        weight: 0.9
+      - pattern: "(Notice.?of.?Privacy.?Practices|NPP|authorization.?form)"
+        weight: 0.8
+      - pattern: "(de.?identification|limited.?data.?set|safe.?harbor.?method)"
+        weight: 0.9
+
+      # Security Rule
+      - pattern: "(Security.?Rule|administrative.?safeguard|physical.?safeguard)"
+        weight: 0.9
+      - pattern: "(technical.?safeguard|access.?control.*health|audit.?control.*health)"
+        weight: 0.9
+      - pattern: "(encryption.*health|integrity.?control.*PHI)"
+        weight: 0.8
+
+      # Breach Notification
+      - pattern: "(breach.?notification.*health|HITECH|HHS.?notification)"
+        weight: 0.9
+      - pattern: "(unsecured.?PHI|breach.?risk.?assessment|OCR.?reporting)"
+        weight: 0.8
+
+      # Healthcare identifiers
+      - pattern: "(patient.?record|medical.?record|health.?record|EHR|EMR)"
+        weight: 0.8
+      - pattern: "(diagnosis.?code|ICD.?10|CPT.?code|NPI|DEA.?number)"
+        weight: 0.7
+      - pattern: "(HL7|FHIR|DICOM|CDA|CCDA)"
+        weight: 0.8
+
+# Failure classification rules
+classification_rules:
+  - cause_id: "phi_exposure"
+    label: "Protected Health Information exposed in logs, output, or storage"
+    confidence: 0.92
+    pattern: "(PHI.*log|patient.*name.*output|medical.?record.*plain|health.*data.*unencrypt)"
+
+  - cause_id: "phi_encryption_gap"
+    label: "ePHI transmitted or stored without required encryption"
+    confidence: 0.88
+    pattern: "(ePHI.*unencrypt|health.*plain.?text|no.?TLS.*health|HTTP.*patient)"
+
+  - cause_id: "minimum_necessary_violation"
+    label: "More PHI accessed or disclosed than minimum necessary"
+    confidence: 0.80
+    pattern: "(all.?patient.*record|full.?medical.*history.*dump|SELECT.?\\*.*patient)"
+
+  - cause_id: "baa_missing"
+    label: "Business Associate Agreement missing for PHI sharing"
+    confidence: 0.78
+    pattern: "(no.?BAA|without.?business.?associate|third.?party.*PHI.*no.?agreement)"
+
+  - cause_id: "access_control_gap"
+    label: "Inadequate access controls for PHI"
+    confidence: 0.82
+    pattern: "(no.?RBAC.*health|shared.?password.*PHI|no.?audit.*patient|anonymous.*access.*health)"
+
+  - cause_id: "breach_response_failure"
+    label: "Breach notification procedures not implemented"
+    confidence: 0.80
+    pattern: "(no.?breach.*notif|breach.*no.?report|PHI.*breach.*undetect)"
+
+  - cause_id: "deidentification_failure"
+    label: "De-identification not properly applied"
+    confidence: 0.75
+    pattern: "(partial.*de.?ident|zip.?code.*full.*health|date.?of.?birth.*research)"
+
+  - cause_id: "audit_trail_gap"
+    label: "Missing audit trail for PHI access"
+    confidence: 0.77
+    pattern: "(no.?audit.*trail.*health|PHI.*access.*unlogged|patient.*record.*no.?log)"
+
+  - cause_id: "medical_advice_detected"
+    label: "Unauthorized medical advice or diagnosis in output"
+    confidence: 0.85
+    pattern: "(you.?have.*disease|diagnos.*based.?on|prescri.*recommend|you.?should.?take.*medication)"
+
+  - cause_id: "disposal_failure"
+    label: "PHI not properly disposed of"
+    confidence: 0.72
+    pattern: "(PHI.*not.?deleted|patient.*data.*retained|health.*record.*no.?expir)"
+
+# Map cause IDs to domains
+cause_to_domain:
+  phi_exposure: "medical"
+  phi_encryption_gap: "medical"
+  minimum_necessary_violation: "medical"
+  baa_missing: "medical"
+  access_control_gap: "medical"
+  breach_response_failure: "medical"
+  deidentification_failure: "medical"
+  audit_trail_gap: "medical"
+  medical_advice_detected: "medical"
+  disposal_failure: "medical"
+
+# Skill recommendations
+skill_map:
+  medical:
+    primary:
+      - ref: "hipaa-orchestrator"
+        path: "skills/hipaa-orchestrator.md"
+        description: "HIPAA compliance audit entry point"
+      - ref: "phi-handling-guide"
+        path: "skills/phi-handling-guide.md"
+        description: "PHI identification and handling patterns"
+    secondary:
+      - ref: "security-rule-guide"
+        path: "skills/security-rule-guide.md"
+        description: "HIPAA Security Rule technical safeguards"
+      - ref: "breach-notification"
+        path: "skills/breach-notification.md"
+        description: "Breach notification procedures"
+      - ref: "baa-requirements"
+        path: "skills/baa-requirements.md"
+        description: "Business Associate Agreement requirements"
+      - ref: "minimum-necessary"
+        path: "skills/minimum-necessary.md"
+        description: "Minimum Necessary standard implementation"
+      - ref: "deidentification-guide"
+        path: "skills/deidentification-guide.md"
+        description: "PHI de-identification methods"
+
+# Safety extensions — extend Pack 0 for medical/HIPAA patterns
+safety_extensions:
+  - category: "unauthorized_professional_practice"
+    extra_patterns:
+      - pattern: "(you.?have.*disease|you.?are.?diagnosed|based.?on.*symptoms.*you.?have)"
+        weight: 1.0
+      - pattern: "(you.?should.?take.*medication|prescri.*this.?drug|recommend.*treatment)"
+        weight: 1.0
+      - pattern: "(this.?condition.?requires|your.?prognosis|medical.?opinion)"
+        weight: 0.9
+      - pattern: "(あなたの病気は|診断として|この薬を飲むべき|治療として推奨)"
+        weight: 1.0
+    jurisdiction: "US"
+    disclaimer_override:
+      text: |
+        ⚠️ Health Information Notice
+
+        This output provides general health information only and is NOT
+        medical advice, diagnosis, or treatment recommendation. Health
+        decisions should be made in consultation with a qualified
+        healthcare provider. If you have a medical emergency, contact
+        emergency services immediately.
+      source_attribution: "General health information compliance guidance"
+
+  - category: "unauthorized_professional_practice"
+    extra_patterns:
+      - pattern: "(as.?your.?doctor|in.?my.?medical.?opinion|clinically.?speaking)"
+        weight: 1.0
+      - pattern: "(I.?diagnose|my.?diagnosis.?is|the.?diagnosis.?is)"
+        weight: 0.9
+    jurisdiction: "US"
+
+quality_criteria:
+  - "All HIPAA guidance references specific rule sections (§164.xxx)"
+  - "No medical diagnoses or treatment recommendations"
+  - "Disclaimers clearly state output is not medical advice"
+  - "PHI examples use synthetic data, never real patient information"
+  - "Escalation to qualified healthcare professionals at decision points"
+  - "De-identification guidance references Safe Harbor or Expert Determination methods"

@@ -1,0 +1,189 @@
+# ANDON Knowledge Pack: Financial Services
+#
+# Provides domain classification, failure detection, and skill
+# recommendations for financial services compliance in LLM coding agents.
+# Focuses on PCI-DSS, financial advice detection, AML/KYC basics,
+# and secure transaction handling patterns.
+#
+# IMPORTANT: This pack covers a regulated domain and REQUIRES Pack 0.
+
+apiVersion: andon/v1
+kind: KnowledgePack
+metadata:
+  name: "andon-pack-financial"
+  version: "1.0.0"
+  description: "Financial services compliance skills for LLM coding agents"
+  author: "AllNew LLC"
+  license: "Apache-2.0"
+  homepage: "https://github.com/allnew-llc/andon-for-llm-agents"
+  tags: ["financial", "pci-dss", "compliance", "aml", "regulated"]
+
+# Pack 0 dependency — mandatory for regulated domains
+requires:
+  - name: "output-safety-guard"
+    version: ">=1.0.0"
+    reason: "Regulated domain (financial) — requires disclaimer guards"
+
+# Domain keywords — merged into domain_classifier at load time
+domains:
+  - id: "financial"
+    keywords:
+      # PCI-DSS
+      - pattern: "(PCI.?DSS|payment.?card|cardholder.?data|PAN|card.?number)"
+        weight: 1.0
+      - pattern: "(PCI.?compliance|PCI.?scope|self.?assessment|SAQ)"
+        weight: 0.9
+      - pattern: "(CVV|CVC|magnetic.?stripe|track.?data|PIN.?block)"
+        weight: 1.0
+
+      # Financial advice / investment
+      - pattern: "(investment.?advice|financial.?advice|投資助言|金融商品)"
+        weight: 1.0
+      - pattern: "(you.?should.?invest|recommend.*stock|buy.*sell.*securities)"
+        weight: 0.9
+      - pattern: "(financial.?planning|portfolio.?recommend|asset.?allocation.?advice)"
+        weight: 0.9
+
+      # AML / KYC
+      - pattern: "(AML|anti.?money.?laundering|マネーロンダリング|犯罪収益移転)"
+        weight: 1.0
+      - pattern: "(KYC|know.?your.?customer|本人確認|顧客確認)"
+        weight: 0.9
+      - pattern: "(suspicious.?transaction|疑わしい取引|STR|SAR)"
+        weight: 0.9
+
+      # Transaction security
+      - pattern: "(transaction.?log|取引ログ|audit.?trail|transaction.?integrity)"
+        weight: 0.8
+      - pattern: "(payment.?gateway|payment.?processor|決済)"
+        weight: 0.7
+
+      # Regulations
+      - pattern: "(金融商品取引法|FIEA|金商法)"
+        weight: 1.0
+      - pattern: "(Securities.?Exchange|Dodd.?Frank|SOX|Sarbanes)"
+        weight: 0.8
+      - pattern: "(資金決済法|Payment.?Services|PSD2)"
+        weight: 0.9
+
+      # Data classification
+      - pattern: "(sensitive.?authentication|cardholder.?data.?environment|CDE)"
+        weight: 0.9
+      - pattern: "(tokenization|data.?vault|encryption.?at.?rest)"
+        weight: 0.7
+
+# Failure classification rules
+classification_rules:
+  - cause_id: "pci_cardholder_exposure"
+    label: "Cardholder data exposed in logs, output, or storage"
+    confidence: 0.90
+    pattern: "(card.?number.*log|PAN.*plain|credit.?card.*output|CVV.*stor)"
+
+  - cause_id: "pci_encryption_gap"
+    label: "Payment data transmitted or stored without encryption"
+    confidence: 0.85
+    pattern: "(payment.*unencrypt|card.*plain.?text|no.?TLS.*payment|HTTP.*payment)"
+
+  - cause_id: "financial_advice_detected"
+    label: "Unauthorized financial or investment advice in output"
+    confidence: 0.82
+    pattern: "(you.?should.?invest|recommend.*buy|guaranteed.?return|risk.?free.?investment)"
+
+  - cause_id: "aml_kyc_gap"
+    label: "AML/KYC verification missing or incomplete"
+    confidence: 0.75
+    pattern: "(no.?identity.?verif|KYC.?skip|without.?verification|bypass.?kyc)"
+
+  - cause_id: "transaction_logging_gap"
+    label: "Financial transaction not properly logged or auditable"
+    confidence: 0.78
+    pattern: "(transaction.*no.?log|payment.*no.?audit|no.?trail.*transaction|unlogged.*payment)"
+
+  - cause_id: "pci_scope_violation"
+    label: "Cardholder data environment boundary violation"
+    confidence: 0.80
+    pattern: "(CDE.*boundary|scope.*creep.*card|cardholder.*outside.*scope|PAN.*non.?compliant)"
+
+  - cause_id: "key_management_failure"
+    label: "Encryption key management failure"
+    confidence: 0.77
+    pattern: "(key.*hard.?code|encryption.?key.*plain|key.*source.?code|API.?key.*commit)"
+
+  - cause_id: "authentication_weakness"
+    label: "Weak authentication in financial system"
+    confidence: 0.73
+    pattern: "(no.?MFA.*financial|single.?factor.*payment|weak.?password.*account|no.?2FA)"
+
+  - cause_id: "data_retention_financial"
+    label: "Financial data retained beyond regulatory requirement"
+    confidence: 0.70
+    pattern: "(retain.*indefinit.*transaction|no.?deletion.*financial|card.*data.*never.?delete)"
+
+# Map cause IDs to domains
+cause_to_domain:
+  pci_cardholder_exposure: "financial"
+  pci_encryption_gap: "financial"
+  financial_advice_detected: "financial"
+  aml_kyc_gap: "financial"
+  transaction_logging_gap: "financial"
+  pci_scope_violation: "financial"
+  key_management_failure: "financial"
+  authentication_weakness: "financial"
+  data_retention_financial: "financial"
+
+# Skill recommendations
+skill_map:
+  financial:
+    primary:
+      - ref: "financial-orchestrator"
+        path: "skills/financial-orchestrator.md"
+        description: "Financial compliance audit entry point"
+      - ref: "pci-dss-guide"
+        path: "skills/pci-dss-guide.md"
+        description: "PCI-DSS compliance patterns for developers"
+    secondary:
+      - ref: "financial-advice-guard"
+        path: "skills/financial-advice-guard.md"
+        description: "Detecting and guarding against unauthorized financial advice"
+      - ref: "aml-kyc-basics"
+        path: "skills/aml-kyc-basics.md"
+        description: "AML/KYC implementation basics"
+      - ref: "transaction-logging"
+        path: "skills/transaction-logging.md"
+        description: "Financial transaction logging and audit trail"
+      - ref: "data-classification"
+        path: "skills/data-classification.md"
+        description: "Financial data classification and handling"
+
+# Safety extensions — extend Pack 0 for financial patterns
+safety_extensions:
+  - category: "unauthorized_professional_practice"
+    extra_patterns:
+      - pattern: "(you.?should.?invest.?in|recommend.?buying|guaranteed.?return)"
+        weight: 1.0
+      - pattern: "(this.?stock.?will|profit.?guaranteed|risk.?free.?investment)"
+        weight: 1.0
+      - pattern: "(投資すべき|買い推奨|確実に儲かる|元本保証)"
+        weight: 1.0
+      - pattern: "(as.?your.?financial.?advisor|in.?my.?professional.?financial.?opinion)"
+        weight: 0.9
+      - pattern: "(tax.?advice.*specific|file.?your.?taxes.?this.?way|確定申告.*すべき)"
+        weight: 0.9
+    jurisdiction: "GLOBAL"
+    disclaimer_override:
+      text: |
+        ⚠️ Financial Information Notice
+
+        This output provides general information only and is NOT financial,
+        investment, or tax advice. Financial decisions should be made with
+        the guidance of a qualified financial advisor, certified public
+        accountant, or licensed securities professional.
+      source_attribution: "General financial compliance guidance"
+
+quality_criteria:
+  - "All PCI-DSS guidance references specific requirement numbers"
+  - "No investment recommendations or specific financial advice"
+  - "Disclaimers clearly state output is not financial advice"
+  - "Code patterns focus on security, not business logic"
+  - "Escalation to licensed professionals at decision points"
+  - "AML/KYC guidance limited to technical implementation patterns"

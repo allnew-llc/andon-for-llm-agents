@@ -59,6 +59,41 @@ Prevention levels (always aim for L1-L2):
 
 ---
 
+## Where ANDON Fits
+
+ANDON is not a replacement for your coding agent — it's the safety and learning
+layer that wraps around it.
+
+Major AI companies have introduced safety mechanisms for coding agents: sandbox
+isolation (OpenAI Codex), hook systems (Anthropic Claude Code), planning critics
+(Google Jules), security scanning (GitHub Copilot), and iteration limits (Amazon Q).
+These focus on making agents **smarter** or making environments **safer**.
+
+ANDON addresses a different gap: **learning from failures and preventing recurrence**.
+
+| Concern | Addressed By | ANDON's Role |
+|---------|-------------|--------------|
+| Code generation quality | Codex (RL-trained), Jules (Planning Critic) | Complementary — not addressed |
+| Code security scanning | Copilot (CodeQL), Claude Code Security | Complementary — not addressed |
+| Sandbox isolation | Codex (containers), GitHub Actions | Complementary — not addressed |
+| Failure → line stop → root cause | **ANDON** | Primary solution |
+| Repeated failure pattern detection | **ANDON (Meta-ANDON)** | Primary solution (no equivalent elsewhere) |
+| Failure → standardized prevention | **ANDON (Kaizen)** | Primary solution (no equivalent elsewhere) |
+| Output safety for professional practice | **ANDON (Pack 0)** | Primary solution for coding agents |
+| Specification drift prevention | **ANDON** | Primary solution |
+| Domain-specific failure classification | **ANDON (Knowledge Packs)** | Extensible plugin system |
+
+ANDON works with any LLM coding agent that supports hooks or callbacks —
+Claude Code, Codex, Cursor, Windsurf, or custom agents.
+
+Academic research supports the need: UC Berkeley's MAST taxonomy (2025) found
+**41–86.7% failure rates** in multi-agent LLM systems, with 79% of failures
+stemming from orchestration issues. ANDON's structural approach — detect, stop,
+analyze, standardize — directly addresses these systemic failures rather than
+optimizing individual agent performance.
+
+---
+
 ## What's Included
 
 ```
@@ -93,7 +128,10 @@ andon-for-llm-agents/
 │       └── unqualified.yaml           #   Unauthorized Professional Practice
 ├── packs/                             # Knowledge Packs
 │   ├── andon-pack-japan-legal/        # Japanese law compliance (e-Gov API)
-│   └── andon-pack-ios-development/    # iOS app development & App Store
+│   ├── andon-pack-ios-development/    # iOS app development & App Store
+│   ├── andon-pack-gdpr/              # EU GDPR compliance
+│   ├── andon-pack-financial/         # Financial services (PCI-DSS, AML/KYC)
+│   └── andon-pack-hipaa/             # HIPAA healthcare compliance
 ├── skills/                            # Skill definitions (slash commands)
 │   └── tps-kaizen/
 │       ├── tps-kaizen.md              # Main skill entry point
@@ -147,6 +185,9 @@ skill recommendations.  Packs are self-contained plugins defined by a
 |------|--------|-----------|--------|
 | `andon-pack-japan-legal` | Japanese law (e-Gov API) | Yes | 6 |
 | `andon-pack-ios-development` | iOS / App Store | No | 5 |
+| `andon-pack-gdpr` | EU GDPR | Yes | 8 |
+| `andon-pack-financial` | Financial services (PCI-DSS, AML/KYC) | Yes | 6 |
+| `andon-pack-hipaa` | HIPAA healthcare | Yes | 7 |
 | `sample-web-api-security` | API security (example) | No | 3 |
 
 ### Pack CLI
@@ -189,8 +230,9 @@ from being deployed without output safety guards.
 python3 examples/demo-run.py
 ```
 
-Runs 4 interactive scenarios: ANDON incident detection, Pack 0 safety guards,
-output transformation, and Knowledge Pack skill recommendations.
+Runs 5 interactive scenarios: ANDON incident detection, Pack 0 safety guards,
+output transformation, Knowledge Pack skill recommendations, and Meta-ANDON
+pattern detection.
 
 ---
 

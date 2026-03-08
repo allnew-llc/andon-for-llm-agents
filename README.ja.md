@@ -59,6 +59,32 @@ LLM コーディングへの適用：
 
 ---
 
+## ANDON の位置づけ
+
+ANDON はコーディングエージェントの代替ではなく、その周囲を包む**安全と学習のレイヤー**です。
+
+主要 AI 企業はコーディングエージェントの安全メカニズムを導入しています：サンドボックス隔離（OpenAI Codex）、フックシステム（Anthropic Claude Code）、計画批評（Google Jules）、セキュリティスキャン（GitHub Copilot）、反復上限（Amazon Q）。これらはエージェントを**より賢く**するか、環境を**より安全に**する方向のアプローチです。
+
+ANDON は異なるギャップに対応します：**失敗から学び、再発を防止する**仕組みです。
+
+| 課題 | 対応する既存手法 | ANDON の役割 |
+|------|----------------|-------------|
+| コード生成品質 | Codex（RL 学習）、Jules（Planning Critic） | 補完 — 対象外 |
+| コードセキュリティスキャン | Copilot（CodeQL）、Claude Code Security | 補完 — 対象外 |
+| サンドボックス隔離 | Codex（コンテナ）、GitHub Actions | 補完 — 対象外 |
+| 失敗 → ライン停止 → 根本原因分析 | **ANDON** | 主要な解決策 |
+| 反復失敗パターン検知 | **ANDON（Meta-ANDON）** | 主要な解決策（他に同等機能なし） |
+| 失敗 → 標準化された再発防止 | **ANDON（Kaizen）** | 主要な解決策（他に同等機能なし） |
+| 専門業務の出力安全ガード | **ANDON（Pack 0）** | コーディングエージェント向けの主要な解決策 |
+| 仕様逸脱の防止 | **ANDON** | 主要な解決策 |
+| ドメイン固有の失敗分類 | **ANDON（Knowledge Packs）** | 拡張可能なプラグインシステム |
+
+ANDON はフックやコールバックをサポートする任意の LLM コーディングエージェント — Claude Code、Codex、Cursor、Windsurf、カスタムエージェント — と連携できます。
+
+学術研究もこのニーズを裏付けています：UC Berkeley の MAST 分類体系（2025）は、マルチエージェント LLM システムの**失敗率が 41〜86.7%** に達し、失敗の 79% がオーケストレーション起因であることを明らかにしました。ANDON の構造的アプローチ — 検知・停止・分析・標準化 — は、個々のエージェントの性能最適化ではなく、こうしたシステミックな失敗に直接対処します。
+
+---
+
 ## 同梱内容
 
 ```
@@ -94,7 +120,10 @@ andon-for-llm-agents/
 │       └── unqualified.yaml           #   無資格専門業務
 ├── packs/                             # Knowledge Packs
 │   ├── andon-pack-japan-legal/        # 日本法コンプライアンス（e-Gov API）
-│   └── andon-pack-ios-development/    # iOS アプリ開発 & App Store
+│   ├── andon-pack-ios-development/    # iOS アプリ開発 & App Store
+│   ├── andon-pack-gdpr/              # EU GDPR コンプライアンス
+│   ├── andon-pack-financial/         # 金融サービス（PCI-DSS, AML/KYC）
+│   └── andon-pack-hipaa/             # HIPAA ヘルスケアコンプライアンス
 ├── skills/                            # スキル定義（スラッシュコマンド）
 │   └── tps-kaizen/
 │       ├── tps-kaizen.md              # メインスキルエントリーポイント
@@ -139,6 +168,9 @@ andon-for-llm-agents/
 |------|---------|---------|---------|
 | `andon-pack-japan-legal` | 日本法（e-Gov API） | はい | 6 |
 | `andon-pack-ios-development` | iOS / App Store | いいえ | 5 |
+| `andon-pack-gdpr` | EU GDPR | はい | 8 |
+| `andon-pack-financial` | 金融サービス（PCI-DSS, AML/KYC） | はい | 6 |
+| `andon-pack-hipaa` | HIPAA ヘルスケア | はい | 7 |
 | `sample-web-api-security` | API セキュリティ（サンプル） | いいえ | 3 |
 
 ### Pack CLI
@@ -178,7 +210,7 @@ python3 hooks/andon_cli.py pack validate ./my-pack
 python3 examples/demo-run.py
 ```
 
-4 つのインタラクティブシナリオを実行します：ANDON インシデント検知、Pack 0 安全ガード、出力変換、Knowledge Pack スキル推奨。
+5 つのインタラクティブシナリオを実行します：ANDON インシデント検知、Pack 0 安全ガード、出力変換、Knowledge Pack スキル推奨、Meta-ANDON パターン検知。
 
 ---
 

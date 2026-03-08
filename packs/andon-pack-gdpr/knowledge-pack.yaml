@@ -1,0 +1,250 @@
+# ANDON Knowledge Pack: GDPR Deep
+#
+# Provides domain classification, failure detection, and skill
+# recommendations for EU General Data Protection Regulation compliance.
+# Covers GDPR (Regulation (EU) 2016/679) and ePrivacy Directive.
+#
+# IMPORTANT: This pack covers a regulated domain and REQUIRES Pack 0.
+
+apiVersion: andon/v1
+kind: KnowledgePack
+metadata:
+  name: "andon-pack-gdpr"
+  version: "1.0.0"
+  description: "EU GDPR compliance skills for LLM coding agents"
+  author: "AllNew LLC"
+  license: "Apache-2.0"
+  homepage: "https://github.com/allnew-llc/andon-for-llm-agents"
+  tags: ["legal", "gdpr", "eu", "privacy", "data-protection", "regulated"]
+
+# Pack 0 dependency — mandatory for regulated domains
+requires:
+  - name: "output-safety-guard"
+    version: ">=1.0.0"
+    reason: "Regulated domain (eu_legal) — requires UPL/disclaimer guards"
+
+# Domain keywords — merged into domain_classifier at load time
+domains:
+  - id: "eu_legal"
+    keywords:
+      # GDPR core
+      - pattern: "(GDPR|General.?Data.?Protection|Regulation.*2016.?679)"
+        weight: 1.0
+      - pattern: "(data.?protection|Datenschutz|protection.?des.?donn[ée]es)"
+        weight: 0.9
+      - pattern: "(DSGVO|RGPD)"
+        weight: 1.0
+
+      # Lawful basis (Art. 6)
+      - pattern: "(lawful.?basis|legal.?basis|consent|legitimate.?interest)"
+        weight: 0.8
+      - pattern: "(data.?subject.?consent|explicit.?consent|withdraw.?consent)"
+        weight: 0.9
+
+      # Data subject rights (Art. 12-22)
+      - pattern: "(right.?to.?erasure|right.?to.?be.?forgotten|data.?portability)"
+        weight: 0.9
+      - pattern: "(right.?of.?access|right.?to.?rectification|right.?to.?object)"
+        weight: 0.9
+      - pattern: "(subject.?access.?request|SAR|DSAR)"
+        weight: 0.8
+
+      # DPIA (Art. 35)
+      - pattern: "(DPIA|data.?protection.?impact|privacy.?impact.?assessment)"
+        weight: 0.9
+
+      # Cross-border transfers (Art. 44-49)
+      - pattern: "(adequacy.?decision|standard.?contractual|SCC|BCR)"
+        weight: 0.9
+      - pattern: "(cross.?border.?transfer|third.?country.?transfer|data.?transfer)"
+        weight: 0.8
+      - pattern: "(Schrems|Privacy.?Shield|Trans-Atlantic)"
+        weight: 0.8
+
+      # Breach notification (Art. 33-34)
+      - pattern: "(data.?breach|breach.?notification|72.?hour|supervisory.?authority)"
+        weight: 0.9
+
+      # DPO and accountability (Art. 37-39, Art. 5(2))
+      - pattern: "(DPO|data.?protection.?officer|accountability.?principle)"
+        weight: 0.8
+
+      # ePrivacy / Cookies
+      - pattern: "(ePrivacy|cookie.?consent|cookie.?banner|tracking.?consent)"
+        weight: 0.8
+      - pattern: "(PECR|ePrivacy.?Directive|2002.?58)"
+        weight: 0.7
+
+      # Fines
+      - pattern: "(administrative.?fine|supervisory.?authority|DPA)"
+        weight: 0.7
+
+      # Privacy by Design (Art. 25)
+      - pattern: "(privacy.?by.?design|data.?protection.?by.?design|by.?default)"
+        weight: 0.8
+      - pattern: "(data.?minimization|purpose.?limitation|storage.?limitation)"
+        weight: 0.8
+
+      # Special categories (Art. 9)
+      - pattern: "(special.?categor|sensitive.?data|health.?data|biometric|genetic)"
+        weight: 0.9
+
+  - id: "legal"
+    keywords:
+      - pattern: "(data.?protection.?law|privacy.?regulation|EU.?regulation)"
+        weight: 0.6
+      - pattern: "(compliance|regulatory|legal.?review)"
+        weight: 0.5
+
+# Failure classification rules
+classification_rules:
+  - cause_id: "consent_violation"
+    label: "Processing without valid lawful basis or consent"
+    confidence: 0.82
+    pattern: "(without.?consent|no.?lawful.?basis|missing.?consent|consent.?not.?obtained|processing.?unlawful)"
+
+  - cause_id: "data_subject_rights_gap"
+    label: "Data subject rights not implemented or incomplete"
+    confidence: 0.78
+    pattern: "(right.?to.?erasure.?not|deletion.?not.?implement|portability.?missing|access.?request.?fail|DSAR.?not)"
+
+  - cause_id: "cross_border_transfer_violation"
+    label: "Personal data transferred outside EEA without adequate safeguards"
+    confidence: 0.85
+    pattern: "(transfer.?to.?third.?country|no.?adequacy|without.?SCC|cross.?border.?without|US.?transfer.?no)"
+
+  - cause_id: "dpia_missing"
+    label: "High-risk processing without Data Protection Impact Assessment"
+    confidence: 0.75
+    pattern: "(DPIA.?not|impact.?assessment.?missing|high.?risk.?no.?assessment|Art.?35.?not)"
+
+  - cause_id: "breach_response_failure"
+    label: "Data breach notification procedure not followed"
+    confidence: 0.80
+    pattern: "(breach.?not.?notif|72.?hour.?miss|supervisory.?not.?inform|breach.?unreported)"
+
+  - cause_id: "privacy_by_design_gap"
+    label: "Privacy by design / data minimization not applied"
+    confidence: 0.72
+    pattern: "(collect.?all|excessive.?data|no.?minimization|privacy.?not.?design|default.?collect)"
+
+  - cause_id: "special_category_violation"
+    label: "Special category data processed without Art. 9 basis"
+    confidence: 0.88
+    pattern: "(health.?data.?without|biometric.?no.?consent|genetic.?data.?process|special.?categor.?no)"
+
+  - cause_id: "processor_compliance_gap"
+    label: "Data processor operating without Art. 28 agreement"
+    confidence: 0.76
+    pattern: "(processor.?no.?agreement|Art.?28.?missing|DPA.?not.?signed|sub.?processor.?unauthori)"
+
+  - cause_id: "retention_violation"
+    label: "Personal data retained beyond purpose limitation"
+    confidence: 0.74
+    pattern: "(retention.?exceed|stored.?indefinitely|no.?deletion.?polic|purpose.?limitation.?violat)"
+
+  - cause_id: "cookie_consent_gap"
+    label: "Tracking cookies set without valid consent"
+    confidence: 0.70
+    pattern: "(cookie.?without.?consent|tracking.?no.?consent|analytics.?before.?consent|banner.?missing)"
+
+  - cause_id: "children_data_violation"
+    label: "Children's data processed without parental consent (Art. 8)"
+    confidence: 0.83
+    pattern: "(child.?data.?no|minor.?without.?parent|age.?verification.?missing|under.?16.?consent)"
+
+  - cause_id: "automated_decision_violation"
+    label: "Automated decision-making without Art. 22 safeguards"
+    confidence: 0.79
+    pattern: "(automated.?decision.?no|profiling.?without|Art.?22.?not|no.?human.?review.?automat)"
+
+# Map cause IDs to domains
+cause_to_domain:
+  consent_violation: "eu_legal"
+  data_subject_rights_gap: "eu_legal"
+  cross_border_transfer_violation: "eu_legal"
+  dpia_missing: "eu_legal"
+  breach_response_failure: "eu_legal"
+  privacy_by_design_gap: "eu_legal"
+  special_category_violation: "eu_legal"
+  processor_compliance_gap: "eu_legal"
+  retention_violation: "eu_legal"
+  cookie_consent_gap: "eu_legal"
+  children_data_violation: "eu_legal"
+  automated_decision_violation: "eu_legal"
+
+# Skill recommendations
+skill_map:
+  eu_legal:
+    primary:
+      - ref: "gdpr-orchestrator"
+        path: "skills/gdpr-orchestrator.md"
+        description: "GDPR compliance audit entry point and routing"
+      - ref: "lawful-basis-guide"
+        path: "skills/lawful-basis-guide.md"
+        description: "Art. 5-6 lawful basis selection guide"
+    secondary:
+      - ref: "data-subject-rights"
+        path: "skills/data-subject-rights.md"
+        description: "Art. 12-22 data subject rights implementation"
+      - ref: "dpia-guide"
+        path: "skills/dpia-guide.md"
+        description: "Data Protection Impact Assessment guide"
+      - ref: "cross-border-transfer"
+        path: "skills/cross-border-transfer.md"
+        description: "Art. 44-49 cross-border transfer mechanisms"
+      - ref: "breach-notification"
+        path: "skills/breach-notification.md"
+        description: "Art. 33-34 breach notification procedures"
+      - ref: "privacy-by-design"
+        path: "skills/privacy-by-design.md"
+        description: "Art. 25 privacy by design implementation"
+      - ref: "cookie-eprivacy"
+        path: "skills/cookie-eprivacy.md"
+        description: "Cookie consent and ePrivacy compliance"
+  legal:
+    primary:
+      - ref: "gdpr-orchestrator"
+        path: "skills/gdpr-orchestrator.md"
+        description: "GDPR compliance audit entry point and routing"
+    secondary:
+      - ref: "lawful-basis-guide"
+        path: "skills/lawful-basis-guide.md"
+        description: "Art. 5-6 lawful basis selection guide"
+
+# Safety extensions — extend Pack 0 for EU-specific patterns
+safety_extensions:
+  - category: "unauthorized_practice_of_law"
+    extra_patterns:
+      - pattern: "(as.?your.?data.?protection.?counsel|DPO.?advice.*binding)"
+        weight: 1.0
+      - pattern: "(GDPR.?requires.?you.?must|legally.?obligated.?to|you.?are.?in.?violation)"
+        weight: 0.9
+      - pattern: "(file.?a.?complaint.?with.?the.?DPA|lodge.?complaint.?supervisory)"
+        weight: 0.8
+    jurisdiction: "EU"
+    disclaimer_override:
+      text: |
+        ⚠️ Data Protection Legal Notice
+
+        This output provides general information about GDPR requirements
+        and is NOT legal advice. Data protection law varies by EU/EEA
+        Member State. Consult a qualified data protection lawyer or your
+        Data Protection Officer for binding guidance.
+      source_attribution: "Reference: Regulation (EU) 2016/679 (GDPR)"
+
+  - category: "unauthorized_professional_practice"
+    extra_patterns:
+      - pattern: "(I.?certify.?complian|this.?system.?is.?GDPR.?compliant|guaranteed.?complian)"
+        weight: 1.0
+      - pattern: "(no.?risk.?of.?fine|safe.?from.?enforcement|DPA.?will.?not)"
+        weight: 0.9
+    jurisdiction: "EU"
+
+quality_criteria:
+  - "All skills reference GDPR articles with precise numbering"
+  - "No compliance conclusions — only structured guidance and checklists"
+  - "Disclaimers clearly state output is not legal or DPO advice"
+  - "Article-level citations (e.g., Art. 6(1)(a), Recital 32)"
+  - "Escalation to qualified DPO or data protection lawyer at decision points"
+  - "Member State variations acknowledged where applicable"
