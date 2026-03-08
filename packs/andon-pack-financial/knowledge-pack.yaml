@@ -16,6 +16,7 @@ metadata:
   author: "AllNew LLC"
   license: "Apache-2.0"
   homepage: "https://github.com/allnew-llc/andon-for-llm-agents"
+  status: "alpha"
   tags: ["financial", "pci-dss", "compliance", "aml", "regulated"]
 
 # Pack 0 dependency — mandatory for regulated domains

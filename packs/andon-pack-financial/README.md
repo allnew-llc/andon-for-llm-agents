@@ -1,5 +1,11 @@
 # andon-pack-financial
 
+> **Alpha** — This pack has not been verified by qualified financial
+> compliance professionals. Classification rules and skill content may
+> contain errors or omissions. Review all outputs with a QSA, compliance
+> officer, or licensed financial advisor before use in compliance
+> decision-making.
+
 ANDON Knowledge Pack for financial services compliance in LLM coding agent
 workflows. Covers PCI-DSS, financial advice detection, AML/KYC basics,
 and secure transaction handling patterns.

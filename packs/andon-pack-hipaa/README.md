@@ -1,5 +1,10 @@
 # andon-pack-hipaa
 
+> **Alpha** — This pack has not been verified by qualified HIPAA compliance
+> professionals. Classification rules and skill content may contain errors
+> or omissions. Review all outputs with a HIPAA compliance officer or
+> healthcare attorney before use in compliance decision-making.
+
 ANDON Knowledge Pack for HIPAA compliance in LLM coding agent workflows.
 Covers PHI handling, Security Rule, Privacy Rule, Breach Notification,
 Business Associate Agreements, and de-identification methods.

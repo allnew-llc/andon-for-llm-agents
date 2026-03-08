@@ -1,5 +1,10 @@
 # andon-pack-gdpr
 
+> **Alpha** — This pack has not been verified by qualified data protection
+> professionals. Classification rules and skill content may contain errors
+> or omissions. Review all outputs with a qualified DPO or data protection
+> lawyer before use in compliance decision-making.
+
 ANDON Knowledge Pack for EU General Data Protection Regulation (GDPR)
 compliance in LLM coding agent workflows.
 

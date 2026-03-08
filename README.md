@@ -181,14 +181,14 @@ skill recommendations.  Packs are self-contained plugins defined by a
 
 ### Available Packs
 
-| Pack | Domain | Regulated | Skills |
-|------|--------|-----------|--------|
-| `andon-pack-japan-legal` | Japanese law (e-Gov API) | Yes | 6 |
-| `andon-pack-ios-development` | iOS / App Store | No | 5 |
-| `andon-pack-gdpr` | EU GDPR | Yes | 8 |
-| `andon-pack-financial` | Financial services (PCI-DSS, AML/KYC) | Yes | 6 |
-| `andon-pack-hipaa` | HIPAA healthcare | Yes | 7 |
-| `sample-web-api-security` | API security (example) | No | 3 |
+| Pack | Domain | Regulated | Skills | Status |
+|------|--------|-----------|--------|--------|
+| `andon-pack-japan-legal` | Japanese law (e-Gov API) | Yes | 6 | Stable |
+| `andon-pack-ios-development` | iOS / App Store | No | 5 | Stable |
+| `andon-pack-gdpr` | EU GDPR | Yes | 8 | Alpha |
+| `andon-pack-financial` | Financial services (PCI-DSS, AML/KYC) | Yes | 6 | Alpha |
+| `andon-pack-hipaa` | HIPAA healthcare | Yes | 7 | Alpha |
+| `sample-web-api-security` | API security (example) | No | 3 | Example |
 
 ### Pack CLI
 

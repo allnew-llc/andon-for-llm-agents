@@ -164,14 +164,14 @@ andon-for-llm-agents/
 
 ### 利用可能な Pack
 
-| Pack | ドメイン | 規制対象 | スキル数 |
-|------|---------|---------|---------|
-| `andon-pack-japan-legal` | 日本法（e-Gov API） | はい | 6 |
-| `andon-pack-ios-development` | iOS / App Store | いいえ | 5 |
-| `andon-pack-gdpr` | EU GDPR | はい | 8 |
-| `andon-pack-financial` | 金融サービス（PCI-DSS, AML/KYC） | はい | 6 |
-| `andon-pack-hipaa` | HIPAA ヘルスケア | はい | 7 |
-| `sample-web-api-security` | API セキュリティ（サンプル） | いいえ | 3 |
+| Pack | ドメイン | 規制対象 | スキル数 | ステータス |
+|------|---------|---------|---------|-----------|
+| `andon-pack-japan-legal` | 日本法（e-Gov API） | はい | 6 | Stable |
+| `andon-pack-ios-development` | iOS / App Store | いいえ | 5 | Stable |
+| `andon-pack-gdpr` | EU GDPR | はい | 8 | Alpha |
+| `andon-pack-financial` | 金融サービス（PCI-DSS, AML/KYC） | はい | 6 | Alpha |
+| `andon-pack-hipaa` | HIPAA ヘルスケア | はい | 7 | Alpha |
+| `sample-web-api-security` | API セキュリティ（サンプル） | いいえ | 3 | Example |
 
 ### Pack CLI
 
