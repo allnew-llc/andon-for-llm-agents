@@ -189,7 +189,8 @@ def show_menu() -> str:
 
 def show_readme() -> None:
     clear()
-    readme_path = ROOT / "README.md"
+    import demo_ui
+    readme_path = ROOT / ("README.ja.md" if demo_ui._LANG == "ja" else "README.md")
     if not readme_path.exists():
         warn(t("readme_viewer.not_found"))
         pause()
