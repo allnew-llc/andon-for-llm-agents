@@ -32,6 +32,11 @@ DEMO_DIR = Path(tempfile.mkdtemp(prefix="andon-demo-"))
 os.environ["ANDON_WORKSPACE"] = str(DEMO_DIR)
 os.environ["ANDON_STATE_DIR"] = str(DEMO_DIR / ".claude" / "state")
 
+from demo_meta_andon import (  # noqa: E402
+    explain_meta_andon_after,
+    explain_meta_andon_before,
+    run_meta_andon_demo,
+)
 from demo_stages import (  # noqa: E402
     explain_andon_after,
     explain_andon_before,
@@ -156,6 +161,7 @@ def show_menu() -> str:
         ("2", f"{YELLOW}▲{RESET}", t("menu.item2_title"), t("menu.item2_desc")),
         ("3", "⟳", t("menu.item3_title"), t("menu.item3_desc")),
         ("4", "📦", t("menu.item4_title"), t("menu.item4_desc")),
+        ("5", "\U0001f6a8", t("menu.item5_title"), t("menu.item5_desc")),
     ]
     for key, icon, title, desc in items:
         print(f"  {WHITE}║{RESET}                                                        {WHITE}║{RESET}")
@@ -164,7 +170,7 @@ def show_menu() -> str:
 
     print(f"  {WHITE}║{RESET}                                                        {WHITE}║{RESET}")
     print(f"  {WHITE}╠{'═' * inner}╣{RESET}")
-    print(f"  {WHITE}║{RESET}   {CYAN}{BOLD}[5]{RESET}  🚀  {BOLD}{t('menu.run_all')}{RESET} {DIM}{t('menu.guided_tour')}{RESET}")
+    print(f"  {WHITE}║{RESET}   {CYAN}{BOLD}[6]{RESET}  🚀  {BOLD}{t('menu.run_all')}{RESET} {DIM}{t('menu.guided_tour')}{RESET}")
     print(f"  {WHITE}║{RESET}   {CYAN}{BOLD}[R]{RESET}  📖  {BOLD}{t('menu.read_readme')}{RESET}")
     print(f"  {WHITE}║{RESET}   {CYAN}{BOLD}[Q]{RESET}  🚪  {BOLD}{t('menu.exit')}{RESET}")
     print(f"  {WHITE}║{RESET}                                                        {WHITE}║{RESET}")
@@ -273,6 +279,12 @@ def run_all() -> None:
     explain_packs_before()
     result = run_packs_demo()
     explain_packs_after(result)
+    pause(f"▶ {t('common.enter_stage5')}")
+
+    # Stage 5
+    explain_meta_andon_before()
+    meta_result = run_meta_andon_demo(DEMO_DIR)
+    explain_meta_andon_after(meta_result)
 
     # Finale
     clear()
@@ -290,6 +302,7 @@ def run_all() -> None:
         (t("tour.stage2_done"), "green"),
         (t("tour.stage3_done"), "green"),
         (t("tour.stage4_done"), "green"),
+        (t("tour.stage5_done"), "green"),
     ])
 
     complete_paragraphs = []
@@ -356,6 +369,13 @@ def main() -> int:
             pause(f"▶ {t('common.enter_return')}")
 
         elif choice == "5":
+            clear()
+            explain_meta_andon_before()
+            meta_result = run_meta_andon_demo(DEMO_DIR)
+            explain_meta_andon_after(meta_result)
+            pause(f"▶ {t('common.enter_return')}")
+
+        elif choice == "6":
             run_all()
             pause(f"▶ {t('common.enter_return')}")
 

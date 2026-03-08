@@ -36,7 +36,9 @@
     "read_readme": "Read the README",
     "exit": "Exit",
     "prompt": "Your choice: ",
-    "invalid": "Invalid input. Please enter 1-5, R, or Q."
+    "item5_title": "Meta-ANDON \u2014 Pattern Detection",
+    "item5_desc": "What stops whack-a-mole debugging loops?",
+    "invalid": "Invalid input. Please enter 1-6, R, or Q."
   },
   "common": {
     "enter_continue": "Press ENTER to continue",
@@ -46,6 +48,7 @@
     "enter_stage2": "Press ENTER for Stage 2...",
     "enter_stage3": "Press ENTER for Stage 3...",
     "enter_stage4": "Press ENTER for Stage 4...",
+    "enter_stage5": "Press ENTER for Stage 5...",
     "scanning": "Scanning...",
     "scan_complete": "SCAN COMPLETE",
     "guard_active": "GUARD ACTIVE",
@@ -255,6 +258,64 @@
       "   depend on Pack 0. Loader refuses without it."
     ]
   },
+  "stage5": {
+    "title": "STAGE 5: Meta-ANDON \u2014 Pattern Detection",
+    "before": [
+      "Individual ANDON catches single failures. But what if",
+      "the agent keeps failing at DIFFERENT points each time?",
+      "",
+      "Meta-ANDON detects whack-a-mole patterns:",
+      "",
+      "  Trigger 1 \u2014 3+ consecutive full-run failures",
+      "  Trigger 2 \u2014 2+ ANDON opens at different phases",
+      "  Trigger 3 \u2014 Fix\u2192run\u2192different failure \u00d7 2 cycles",
+      "",
+      "When triggered, Meta-ANDON BLOCKS further runs until:",
+      "  0. Enter Plan Mode (read-only, no implementation)",
+      "  1. Pattern Five Whys (structural root cause)",
+      "  2. Desk Walk-Through (all remaining phases)",
+      "  3. Batch Fix Plan (approved via ExitPlanMode)",
+      "  4. Implement (only after plan approval)",
+      "",
+      "What you'll see:",
+      "  3 simulated failures \u2192 blocked \u2192 artifacts \u2192 unblocked"
+    ],
+    "board_run1": "Run 1 \u2014 Phase 2a failure",
+    "board_run2": "Run 2 \u2014 Phase 2b failure",
+    "board_run3": "Run 3 \u2014 Phase 3 failure",
+    "step1": "SIMULATING CONSECUTIVE FAILURES",
+    "step2": "EVALUATING META-ANDON",
+    "step3": "CREATING REQUIRED ARTIFACTS",
+    "step4": "RE-EVALUATING AFTER ARTIFACTS",
+    "failure_at": "Run {n}: Failed at {phase}",
+    "consecutive": "consecutive failures: {n}",
+    "threshold_hit": "META-ANDON TRIGGERED \u2014 3 consecutive failures detected!",
+    "eval_blocked": "Blocked: {blocked}",
+    "missing_label": "Missing required artifacts:",
+    "artifacts_created": "{n} artifacts created (Five Whys / Risk Table / Sweep / Batch Plan)",
+    "eval_unblocked": "Blocked: {blocked} \u2014 All artifacts validated!",
+    "artifacts_dir": "Artifacts: {path}",
+    "after_title": "STAGE 5 COMPLETE \u2014 What happened?",
+    "after": [
+      "Meta-ANDON enforces structured analysis before retrying:",
+      "",
+      "  1. DETECT  \u2014 3 consecutive failures at different phases",
+      "  2. BLOCK   \u2014 Further runs prohibited (blocked=True)",
+      "  3. REQUIRE \u2014 4 mandatory artifacts with content validation:",
+      "     \u2022 meta-andon-five-whys.md (5 Why chain)",
+      "     \u2022 meta-andon-risk-table.md (all-phase risk table)",
+      "     \u2022 horizontal-sweep-report.md (cross-phase sweep)",
+      "     \u2022 meta-andon-batch-fix-plan.md (approved fix plan)",
+      "  4. VERIFY  \u2014 Re-evaluate: artifacts valid \u2192 unblocked",
+      "",
+      "In real usage, Meta-ANDON forces EnterPlanMode \u2014 the agent",
+      "can only read and analyze, not edit, until the user approves",
+      "the batch fix plan via ExitPlanMode.",
+      "",
+      "This prevents the #1 LLM anti-pattern: fix one thing,",
+      "break another, fix that, break something else, forever."
+    ]
+  },
   "readme_viewer": {
     "title": "README \u2014 Table of Contents",
     "show_all": "Show all sections",
@@ -264,7 +325,7 @@
     "more_lines": "... ({count} more lines)"
   },
   "tour": {
-    "title": "GUIDED TOUR \u2014 All 4 Stages",
+    "title": "GUIDED TOUR \u2014 All 5 Stages",
     "intro": [
       "You'll experience the complete ANDON framework:",
       "",
@@ -272,6 +333,7 @@
       "  Stage 2: Safety Guard \u2014 Scan harmful outputs",
       "  Stage 3: Transform \u2014 What the user sees",
       "  Stage 4: Packs \u2014 Domain routing & skill recs",
+      "  Stage 5: Meta-ANDON \u2014 Pattern detection & plan mode",
       "",
       "Each stage has three phases:",
       "  BRIEFING  \u2014 What you're about to see and why",
@@ -297,7 +359,8 @@
     "stage1_done": "Stage 1 \u2014 ANDON Incident Detection",
     "stage2_done": "Stage 2 \u2014 Output Safety Guard",
     "stage3_done": "Stage 3 \u2014 Output Transformation",
-    "stage4_done": "Stage 4 \u2014 Knowledge Packs"
+    "stage4_done": "Stage 4 \u2014 Knowledge Packs",
+    "stage5_done": "Stage 5 \u2014 Meta-ANDON Pattern Detection"
   },
   "shutdown": {
     "msg": "Shutting down the demo...",
