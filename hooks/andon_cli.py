@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """andon_cli.py — ANDON Knowledge Pack CLI
 
 Commands:

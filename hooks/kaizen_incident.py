@@ -1,3 +1,5 @@
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """kaizen_incident.py — Standardization registry and incident report generation.
 
 Manages the persistent standardization registry (auto-generated prevention

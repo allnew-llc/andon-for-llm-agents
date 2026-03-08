@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """meta_andon_guard.py — Meta-ANDON: Detect repeated failure patterns
 
 Detects when the agent is stuck in a whack-a-mole debugging loop by

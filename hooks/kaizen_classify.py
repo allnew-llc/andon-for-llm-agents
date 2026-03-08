@@ -1,3 +1,5 @@
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """kaizen_classify.py — Failure classification and domain routing.
 
 Pattern-based failure classification with confidence scoring.

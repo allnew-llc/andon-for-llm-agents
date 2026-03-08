@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """output_safety_guard.py — Pack 0: Output Safety Guard
 
 Detects unauthorized-professional-practice content in LLM coding agent

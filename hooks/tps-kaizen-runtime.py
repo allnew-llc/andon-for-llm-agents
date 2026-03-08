@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """tps-kaizen-runtime.py — ANDON Runtime Engine for LLM Agent Hooks
 
 CLI dispatcher and command orchestration. Core logic is split into:

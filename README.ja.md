@@ -2,6 +2,10 @@
 
 # ANDON for LLM Agents
 
+[![CI](https://github.com/allnew-llc/andon-for-llm-agents/actions/workflows/test.yml/badge.svg)](https://github.com/allnew-llc/andon-for-llm-agents/actions/workflows/test.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+
 **リーン生産方式（TPS）の原則を LLM 支援コーディングに適用。**
 
 不良を後工程に流さない。すべての失敗から学ぶ。改善を自動的に標準化する。

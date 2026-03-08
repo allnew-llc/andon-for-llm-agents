@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """domain_classifier.py — Domain Classification Engine for ANDON
 
 Scores failure output against knowledge domains and recommends

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """pack_loader.py — Knowledge Pack Loader
 
 Discovers, validates, and merges Knowledge Packs from the packs/ directory.

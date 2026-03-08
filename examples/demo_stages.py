@@ -1,3 +1,5 @@
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """demo_stages.py — Stage demos for the ANDON interactive guided demo.
 
 Four stage triplets (explain_before / run / explain_after):

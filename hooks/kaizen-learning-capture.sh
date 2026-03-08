@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 # kaizen-learning-capture.sh — PostToolUse hook for automated knowledge capture
 #
 # Triggered after every Bash tool use. Detects git commit commands with

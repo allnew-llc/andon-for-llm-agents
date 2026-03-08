@@ -1,3 +1,5 @@
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """kaizen_core.py — Configuration, JSON I/O, text sanitization, and hook output.
 
 Shared infrastructure for the ANDON/Kaizen runtime modules.

@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 # tps-andon-control.sh — ANDON control wrapper
 #
 # Usage:

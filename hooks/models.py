@@ -1,3 +1,5 @@
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """models.py — Shared data types for ANDON safety and pack systems.
 
 Enums and dataclasses used by output_safety_guard.py and pack_loader.py.

@@ -1,3 +1,5 @@
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """demo_ui.py — ANSI terminal UI components and i18n for the ANDON demo.
 
 Retro-game-style UI components: CRT frames, ANDON status boards,

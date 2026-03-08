@@ -1,3 +1,5 @@
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """kaizen_payload.py — Payload extraction, command parsing, and git context.
 
 Handles incoming hook payloads: extract commands, detect exit codes,

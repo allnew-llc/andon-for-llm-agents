@@ -1,3 +1,5 @@
+# Copyright 2026 AllNew LLC
+# Licensed under Apache License 2.0
 """demo_meta_andon.py — Stage 5: Meta-ANDON Pattern Detection demo.
 
 Demonstrates Meta-ANDON: detecting repeated failure patterns

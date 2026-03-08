@@ -2,6 +2,10 @@
 
 # ANDON for LLM Agents
 
+[![CI](https://github.com/allnew-llc/andon-for-llm-agents/actions/workflows/test.yml/badge.svg)](https://github.com/allnew-llc/andon-for-llm-agents/actions/workflows/test.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+
 **Lean manufacturing (TPS) principles applied to LLM-assisted coding.**
 
 Stop defects from flowing downstream. Learn from every failure. Standardize improvements automatically.
