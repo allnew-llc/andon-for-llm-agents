@@ -157,8 +157,10 @@ andon-for-llm-agents/
 
 ## Pack 0: Output Safety Guard
 
-Bundled with the core runtime.  Detects unauthorized professional practice
-in LLM coding agent outputs and injects appropriate disclaimers.
+Bundled with the core runtime.  A keyword-based heuristic filter that scans
+LLM coding agent outputs for patterns associated with professional practice
+domains (law, medicine, finance) and injects appropriate disclaimers.  This is
+a best-effort safety net, not a guarantee of detection or suppression.
 
 | # | Category | Level | Action |
 |---|----------|-------|--------|
@@ -227,6 +229,11 @@ Packs covering licensed professions (law, medicine, finance) MUST declare
 Pack 0 as a dependency.  The pack loader **refuses to load** packs that
 cover regulated domains without this dependency — preventing domain expertise
 from being deployed without output safety guards.
+
+> **Note**: Knowledge Packs do not guarantee legal compliance, regulatory
+> conformance, or professional practice standards.  They provide heuristic
+> failure detection and skill references only.  Consult qualified professionals
+> (attorneys, physicians, auditors) for authoritative guidance.
 
 ### Try the Demo
 
