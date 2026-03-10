@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-03-10
+
+### Fixed
+
+- Replace "compliance" terminology with "statute retrieval" across japan-legal pack
+  (README, knowledge-pack.yaml, all 6 skills, CONTRIBUTING-PACKS.md, CHANGELOG.md)
+- Remove incorrect "compatible with CC BY 4.0" claim from japan-legal pack README
+  (Government Standard Terms of Use v2.0 is a separate framework)
+- Reframe Pack 0 as keyword-based heuristic filter (not a guarantee of detection)
+- Add disclaimer to Knowledge Packs section clarifying no compliance guarantee
+
+## [0.1.1] - 2026-03-08
+
+### Fixed
+
+- Add CLI entry point (`andon` command) via `[project.scripts]`
+- Fix PEP 639 License classifier conflict with `license = "Apache-2.0"`
+- Fix setuptools flat-layout auto-detection error (explicit `packages = ["hooks"]`)
+
 ## [0.1.0] - 2026-03-08
 
 ### Added
@@ -45,4 +64,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - SECURITY.md — vulnerability disclosure policy
 - **CI/CD** — GitHub Actions workflow testing Python 3.10–3.14
 
+[0.1.2]: https://github.com/allnew-llc/andon-for-llm-agents/releases/tag/v0.1.2
+[0.1.1]: https://github.com/allnew-llc/andon-for-llm-agents/releases/tag/v0.1.1
 [0.1.0]: https://github.com/allnew-llc/andon-for-llm-agents/releases/tag/v0.1.0
