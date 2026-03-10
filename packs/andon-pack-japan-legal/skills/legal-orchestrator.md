@@ -1,13 +1,13 @@
 ---
 name: legal-orchestrator
-description: Multi-law compliance audit entry point for Japanese digital services.
+description: Multi-law statute reference entry point for Japanese digital services.
 ---
 
 # Japan Digital Service Legal Orchestrator
 
 ## Purpose
 
-Entry point for multi-law compliance audits.  Routes issues to the
+Entry point for multi-law statute reference reviews.  Routes issues to the
 relevant domain-law skills and ensures primary source evidence via e-Gov.
 
 ## Workflow
@@ -51,7 +51,7 @@ Record `law_id`, `law_revision_id`, and retrieval timestamp for citations.
 ### Step 4: Produce Integrated Report
 
 ```markdown
-## Compliance Audit Report
+## Statute Reference Report
 
 ### Facts
 - [Service description, data flows, monetization]

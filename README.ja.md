@@ -123,7 +123,7 @@ andon-for-llm-agents/
 │       ├── upl.yaml                   #   非弁行為
 │       └── unqualified.yaml           #   無資格専門業務
 ├── packs/                             # Knowledge Packs
-│   ├── andon-pack-japan-legal/        # 日本法コンプライアンス（e-Gov API）
+│   ├── andon-pack-japan-legal/        # 日本法の法令検索・e-Gov API 連携
 │   ├── andon-pack-ios-development/    # iOS アプリ開発 & App Store
 │   ├── andon-pack-gdpr/              # EU GDPR コンプライアンス
 │   ├── andon-pack-financial/         # 金融サービス（PCI-DSS, AML/KYC）

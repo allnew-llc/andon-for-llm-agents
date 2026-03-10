@@ -131,7 +131,7 @@ andon-for-llm-agents/
 │       ├── upl.yaml                   #   Unauthorized Practice of Law
 │       └── unqualified.yaml           #   Unauthorized Professional Practice
 ├── packs/                             # Knowledge Packs
-│   ├── andon-pack-japan-legal/        # Japanese law compliance (e-Gov API)
+│   ├── andon-pack-japan-legal/        # Japanese law statute retrieval (e-Gov API)
 │   ├── andon-pack-ios-development/    # iOS app development & App Store
 │   ├── andon-pack-gdpr/              # EU GDPR compliance
 │   ├── andon-pack-financial/         # Financial services (PCI-DSS, AML/KYC)

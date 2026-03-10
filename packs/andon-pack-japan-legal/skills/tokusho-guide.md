@@ -1,6 +1,6 @@
 ---
 name: tokusho-guide
-description: Specified Commercial Transactions Act (特定商取引法) compliance guide.
+description: Specified Commercial Transactions Act (特定商取引法) structured reference.
 ---
 
 # Specified Commercial Transactions Act Guide
@@ -57,7 +57,7 @@ Prohibited:
 - Unsubscribe mechanism required
 - Sender identification required
 
-## App Store Compliance Notes
+## App Store Implementation Notes
 
 | Requirement | iOS App Implementation |
 |-------------|----------------------|
@@ -78,6 +78,6 @@ curl -s 'https://laws.e-gov.go.jp/api/1/lawdata/351AC0000000057?elm=MainProvisio
 
 ## Guardrails
 
-- This guide provides structured compliance checks, NOT legal advice
+- This guide provides a structured reference checklist, NOT legal advice
 - Verify current text via e-Gov API — this law is amended frequently
-- Consult a licensed professional for binding compliance decisions
+- Consult a licensed professional for binding legal decisions

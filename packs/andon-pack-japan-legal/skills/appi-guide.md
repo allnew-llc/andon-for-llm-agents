@@ -1,9 +1,9 @@
 ---
 name: appi-guide
-description: Personal Information Protection Act (APPI) compliance guide.
+description: Personal Information Protection Act (APPI) structured reference.
 ---
 
-# APPI Compliance Guide
+# APPI Structured Reference
 
 ## Overview
 
@@ -22,7 +22,7 @@ Act No. 57 of 2003, as amended) is Japan's primary data protection law.
 | Anonymized Data | 匿名加工情報 | Art. 2(6) | De-identified data |
 | Business Operator | 個人情報取扱事業者 | Art. 16(2) | Entity handling personal data |
 
-## Compliance Checklist
+## Statutory Requirements Checklist
 
 ### Collection (取得)
 
@@ -78,6 +78,6 @@ curl -s 'https://laws.e-gov.go.jp/api/1/lawdata/415AC0000000057?elm=MainProvisio
 
 ## Guardrails
 
-- This guide provides structured compliance checks, NOT legal advice
-- Final compliance decisions require review by a licensed professional
+- This guide provides structured statute references, NOT legal advice
+- Final decisions require review by a licensed professional
 - Always verify against current statute text via e-Gov API

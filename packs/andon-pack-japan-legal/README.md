@@ -1,11 +1,11 @@
 # andon-pack-japan-legal
 
-ANDON Knowledge Pack for Japanese law compliance, powered by
+ANDON Knowledge Pack for Japanese law statute retrieval, powered by
 [e-Gov Law API v2](https://laws.e-gov.go.jp/apitop/).
 
 ## What This Pack Does
 
-When an LLM agent encounters a compliance-related failure, this pack:
+When an LLM agent encounters a legal-domain failure, this pack:
 
 1. **Classifies** the failure into Japan-specific legal domains
    (APPI, specified commercial transactions, consumer contract, etc.)
@@ -17,7 +17,7 @@ When an LLM agent encounters a compliance-related failure, this pack:
 
 | Skill | Description |
 |-------|-------------|
-| `legal-orchestrator` | Multi-law compliance audit entry point |
+| `legal-orchestrator` | Multi-law statute retrieval and audit entry point |
 | `egov-api-guide` | e-Gov Law API v2 usage guide |
 | `appi-guide` | Personal Information Protection Act (APPI) |
 | `tokusho-guide` | Specified Commercial Transactions Act |
@@ -31,9 +31,11 @@ When an LLM agent encounters a compliance-related failure, this pack:
 ## Legal Notice
 
 This pack provides structured access to primary legal sources via the
-Digital Agency's e-Gov Law API. It does NOT provide legal advice.
-All outputs should be reviewed by a licensed attorney (弁護士) before
-use in legal decision-making.
+Digital Agency's e-Gov Law API. It does **NOT** provide legal advice
+and does **NOT** guarantee legal compliance. All outputs are
+reference information derived from statute retrieval and should be
+reviewed by a licensed attorney (弁護士) before use in legal
+decision-making.
 
 The e-Gov Law API data is published under the
 [Government Standard Terms of Use (Version 2.0)](https://www.e-gov.go.jp/policy/terms.html),

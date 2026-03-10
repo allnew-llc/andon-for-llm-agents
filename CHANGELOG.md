@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Pack loader with validation, regulated domain enforcement (Pack 0 dependency)
   - CLI: `andon pack validate`, `andon pack list`
 - **Built-in Knowledge Packs**
-  - `andon-pack-japan-legal` — Japanese law compliance (e-Gov API) (Stable)
+  - `andon-pack-japan-legal` — Japanese law statute retrieval (e-Gov API) (Stable)
   - `andon-pack-ios-development` — iOS / App Store development (Stable)
   - `andon-pack-gdpr` — EU GDPR compliance (Alpha)
   - `andon-pack-financial` — PCI-DSS, AML/KYC (Alpha)

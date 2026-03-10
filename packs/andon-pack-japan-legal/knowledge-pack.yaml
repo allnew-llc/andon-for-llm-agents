@@ -1,7 +1,7 @@
 # ANDON Knowledge Pack: Japan Legal (e-Gov)
 #
 # Provides domain classification, failure detection, and skill
-# recommendations for Japanese law compliance tasks.
+# recommendations for Japanese law statute retrieval tasks.
 # Uses e-Gov Law API v2 for primary source access.
 #
 # IMPORTANT: This pack covers a regulated domain and REQUIRES Pack 0.
@@ -11,11 +11,11 @@ kind: KnowledgePack
 metadata:
   name: "andon-pack-japan-legal"
   version: "1.0.0"
-  description: "Japanese law compliance skills powered by e-Gov Law API v2"
+  description: "Japanese law statute retrieval skills powered by e-Gov Law API v2"
   author: "AllNew LLC"
   license: "Apache-2.0"
   homepage: "https://github.com/allnew-llc/andon-for-llm-agents"
-  tags: ["legal", "japan", "e-gov", "compliance", "regulated"]
+  tags: ["legal", "japan", "e-gov", "statute-retrieval", "regulated"]
 
 # Pack 0 dependency — mandatory for regulated domains
 requires:
@@ -78,8 +78,8 @@ domains:
 
 # Failure classification rules
 classification_rules:
-  - cause_id: "legal_compliance_gap"
-    label: "Legal compliance requirement not met"
+  - cause_id: "legal_statute_gap"
+    label: "Legal statute requirement not addressed"
     confidence: 0.75
     pattern: "(compliance|法令|規制|違反|non-compliant)"
 
@@ -99,23 +99,23 @@ classification_rules:
     pattern: "(非弁行為|弁護士法72条|unauthorized.*legal|legal.?advice)"
 
   - cause_id: "copyright_issue"
-    label: "Copyright compliance concern"
+    label: "Copyright statute concern"
     confidence: 0.70
     pattern: "(著作権侵害|copyright.?infringement|無断転載|無断使用)"
 
-  - cause_id: "telecom_compliance"
+  - cause_id: "telecom_regulation"
     label: "Telecommunications regulation concern"
     confidence: 0.70
     pattern: "(電気通信事業.*届出|通信の秘密|telecommunications.*registration)"
 
 # Map cause IDs to domains
 cause_to_domain:
-  legal_compliance_gap: "japan_legal"
+  legal_statute_gap: "japan_legal"
   privacy_violation: "japan_legal"
   consumer_protection_issue: "japan_legal"
   upl_risk: "japan_legal"
   copyright_issue: "japan_legal"
-  telecom_compliance: "japan_legal"
+  telecom_regulation: "japan_legal"
 
 # Skill recommendations
 skill_map:
@@ -123,7 +123,7 @@ skill_map:
     primary:
       - ref: "legal-orchestrator"
         path: "skills/legal-orchestrator.md"
-        description: "Multi-law compliance audit entry point"
+        description: "Multi-law statute retrieval and audit entry point"
       - ref: "egov-api-guide"
         path: "skills/egov-api-guide.md"
         description: "e-Gov Law API v2 usage guide"
@@ -144,7 +144,7 @@ skill_map:
     primary:
       - ref: "legal-orchestrator"
         path: "skills/legal-orchestrator.md"
-        description: "Multi-law compliance audit entry point"
+        description: "Multi-law statute retrieval and audit entry point"
     secondary:
       - ref: "egov-api-guide"
         path: "skills/egov-api-guide.md"

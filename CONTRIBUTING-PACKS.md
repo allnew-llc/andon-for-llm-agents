@@ -104,8 +104,8 @@ Map failure output to cause IDs with confidence scores.
 
 ```yaml
 classification_rules:
-  - cause_id: "legal_compliance_gap"
-    label: "Legal compliance requirement not met"
+  - cause_id: "legal_statute_gap"
+    label: "Legal statute requirement not addressed"
     confidence: 0.75
     pattern: "(compliance|法令|規制|違反)"
 ```
@@ -123,7 +123,7 @@ Map cause IDs to their primary domain.
 
 ```yaml
 cause_to_domain:
-  legal_compliance_gap: "japan_legal"
+  legal_statute_gap: "japan_legal"
   privacy_violation: "japan_legal"
 ```
 
@@ -138,7 +138,7 @@ skill_map:
     primary:
       - ref: "legal-orchestrator"
         path: "skills/legal-orchestrator.md"
-        description: "Multi-law compliance audit orchestrator"
+        description: "Multi-law statute retrieval and audit orchestrator"
     secondary:
       - ref: "appi-guide"
         path: "skills/appi-guide.md"

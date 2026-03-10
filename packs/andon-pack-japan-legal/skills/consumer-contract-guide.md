@@ -1,6 +1,6 @@
 ---
 name: consumer-contract-guide
-description: Consumer Contract Act (消費者契約法) compliance guide.
+description: Consumer Contract Act (消費者契約法) structured reference.
 ---
 
 # Consumer Contract Act Guide
@@ -73,7 +73,7 @@ curl -s 'https://laws.e-gov.go.jp/api/1/lawdata/412AC0000000061?elm=MainProvisio
 
 ## Guardrails
 
-- This guide provides structured compliance checks, NOT legal advice
+- This guide provides a structured reference checklist, NOT legal advice
 - The Act applies to ALL B2C contracts — including app subscriptions
 - Verify current text via e-Gov API
-- Consult a licensed professional for binding compliance decisions
+- Consult a licensed professional for binding legal decisions
