@@ -133,9 +133,9 @@ andon-for-llm-agents/
 ├── packs/                             # Knowledge Packs
 │   ├── andon-pack-japan-legal/        # Japanese law statute retrieval (e-Gov API)
 │   ├── andon-pack-ios-development/    # iOS app development & App Store
-│   ├── andon-pack-gdpr/              # EU GDPR compliance
+│   ├── andon-pack-gdpr/              # EU GDPR reference patterns
 │   ├── andon-pack-financial/         # Financial services (PCI-DSS, AML/KYC)
-│   └── andon-pack-hipaa/             # HIPAA healthcare compliance
+│   └── andon-pack-hipaa/             # HIPAA healthcare reference patterns
 ├── skills/                            # Skill definitions (slash commands)
 │   └── tps-kaizen/
 │       ├── tps-kaizen.md              # Main skill entry point

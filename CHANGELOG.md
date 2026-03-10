@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-03-10
+
+### Added
+
+- **Analysis Paralysis Guard** — detects consecutive Read/Grep/Glob without code changes
+  - Threshold 5 (normal) / 3 (ANDON open) consecutive read-only tool calls
+  - Warning injected via additionalContext (non-blocking)
+  - Counter state persisted in `~/.claude/state/andon-analysis-counter.json`
+- **Context Quality Monitor** — proxy-based context window degradation detection
+  - Tool call count as proxy metric (PEAK/GOOD/DEGRADING/POOR)
+  - Warnings at 60+ calls (DEGRADING) and 100+ calls (POOR)
+  - Additional warning when Five Whys runs in degraded context
+  - Warn-once semantics (no duplicate warnings per level transition)
+- **Self-Check Protocol Enhancement** — stronger validation on ANDON close
+  - File size minimum (10 bytes) for JSON artifacts
+  - JSON parse validation for evidence/analysis/actions
+  - Required key check for evidence.json (command, exit_code, output_snippet)
+  - Section header count check for report.md (minimum 2)
+- **Deviation Rules Hierarchy** — action level system for failure classifications
+  - Level 1 (auto_fix): auto-fix, log only, no ANDON open
+  - Level 2 (auto_fix_log): auto-fix + incident record (existing behavior)
+  - Level 3 (pause_propose): ANDON open + proposed fix injection
+  - Level 4 (stop_ask): ANDON open + complete block (user approval required)
+  - Pack-extensible: Knowledge Packs can override action levels per classification
+
 ## [0.1.2] - 2026-03-10
 
 ### Fixed
@@ -64,6 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - SECURITY.md — vulnerability disclosure policy
 - **CI/CD** — GitHub Actions workflow testing Python 3.10–3.14
 
+[0.2.0]: https://github.com/allnew-llc/andon-for-llm-agents/releases/tag/v0.2.0
 [0.1.2]: https://github.com/allnew-llc/andon-for-llm-agents/releases/tag/v0.1.2
 [0.1.1]: https://github.com/allnew-llc/andon-for-llm-agents/releases/tag/v0.1.1
 [0.1.0]: https://github.com/allnew-llc/andon-for-llm-agents/releases/tag/v0.1.0

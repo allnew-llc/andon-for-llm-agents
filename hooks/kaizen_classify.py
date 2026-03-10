@@ -15,6 +15,70 @@ import re
 from typing import Any
 
 # ============================================================
+# Action levels — deviation response hierarchy
+# ============================================================
+# Level 1: Auto-fix, log only (no ANDON open)
+# Level 2: Auto-fix + incident record (current behavior)
+# Level 3: ANDON open + propose fix in additionalContext
+# Level 4: ANDON open + complete block (user approval required)
+
+ACTION_LEVELS: dict[str, list[str]] = {
+    # Level 1: Auto-fix, log only
+    "auto_fix": [
+        "command_not_found",      # typo etc
+        "python_module_missing",  # pip install resolves
+        "node_module_missing",    # npm install resolves
+    ],
+    # Level 2: Auto-fix + incident record
+    "auto_fix_log": [
+        "permission_denied",      # chmod can fix but needs recording
+        "path_missing",           # path fix + record
+    ],
+    # Level 3: ANDON open + propose fix
+    "pause_propose": [
+        "timeout",                # timeout signals structural issue
+        "assertion_failure",      # test failure may indicate spec misunderstanding
+    ],
+    # Level 4: ANDON open + user approval required
+    "stop_ask": [
+        # Pack-extensible via classification_rules
+    ],
+}
+
+# Reverse lookup: classification -> level number (1-4)
+CLASSIFICATION_TO_LEVEL: dict[str, int] = {}
+for _i, (_level_name, _classifications) in enumerate(ACTION_LEVELS.items(), 1):
+    for _cls in _classifications:
+        CLASSIFICATION_TO_LEVEL[_cls] = _i
+
+
+def get_action_level(
+    classification: str, pack_overrides: dict[str, int] | None = None
+) -> int:
+    """Return the action level (1-4) for a given classification.
+
+    Args:
+        classification: The cause_id from classify_failure().
+        pack_overrides: Optional dict mapping classification -> level.
+            Allows Knowledge Packs to escalate or de-escalate
+            specific classifications.
+
+    Returns:
+        Action level 1-4.  Unknown classifications default to 2.
+    """
+    if pack_overrides and classification in pack_overrides:
+        raw = pack_overrides[classification]
+        try:
+            level = int(raw)
+        except (TypeError, ValueError):
+            return CLASSIFICATION_TO_LEVEL.get(classification, 2)
+        if not (1 <= level <= 4):
+            return max(1, min(4, level))
+        return level
+    return CLASSIFICATION_TO_LEVEL.get(classification, 2)
+
+
+# ============================================================
 # Built-in classification rules
 # ============================================================
 # (cause_id, label, confidence, regex_pattern)
@@ -44,6 +108,7 @@ def classify_failure(
     *,
     init_packs: Any = None,
     pack_bundle: Any = None,
+    pack_overrides: dict[str, int] | None = None,
 ) -> dict[str, Any]:
     """Classify a command failure and generate prevention/standardization actions.
 
@@ -114,6 +179,8 @@ def classify_failure(
         except ImportError:
             pass
 
+    action_level = get_action_level(cause_id, pack_overrides)
+
     return {
         "cause_id": cause_id,
         "cause_label": cause_label,
@@ -123,6 +190,7 @@ def classify_failure(
         "prevention_actions": prevention_actions,
         "standardization_actions": standardization_actions,
         "recommended_skills": recommended_skills,
+        "action_level": action_level,
     }
 
 

@@ -11,9 +11,11 @@ Licensed under Apache License 2.0
 from __future__ import annotations
 
 import datetime
+import fcntl
 import json
 import os
 import re
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -33,15 +35,22 @@ KAIZEN_DIR = STATE_DIR / "kaizen"
 INCIDENTS_DIR = KAIZEN_DIR / "incidents"
 HISTORY_DIR = STATE_DIR / "history"
 ANDON_FILE = STATE_DIR / "andon-open.json"
+ANALYSIS_COUNTER_FILE = STATE_DIR / "andon-analysis-counter.json"
 STANDARD_REGISTRY = KAIZEN_DIR / "standardization-registry.json"
 
 # Confidence thresholds
-CONFIDENCE_AUTOMATION_THRESHOLD = float(
-    os.environ.get("ANDON_CONFIDENCE_AUTO", "0.70")
-)
-CONFIDENCE_MANUAL_REVIEW_THRESHOLD = float(
-    os.environ.get("ANDON_CONFIDENCE_MANUAL", "0.70")
-)
+try:
+    CONFIDENCE_AUTOMATION_THRESHOLD = float(
+        os.environ.get("ANDON_CONFIDENCE_AUTO", "0.70")
+    )
+except ValueError:
+    CONFIDENCE_AUTOMATION_THRESHOLD = 0.70
+try:
+    CONFIDENCE_MANUAL_REVIEW_THRESHOLD = float(
+        os.environ.get("ANDON_CONFIDENCE_MANUAL", "0.70")
+    )
+except ValueError:
+    CONFIDENCE_MANUAL_REVIEW_THRESHOLD = 0.70
 
 
 # === Time ===
@@ -61,33 +70,68 @@ def ensure_dirs() -> None:
 # === JSON I/O ===
 
 def load_json(path: Path) -> dict[str, Any]:
-    if not path.exists():
-        return {}
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
+    except (json.JSONDecodeError, ValueError, OSError, UnicodeDecodeError,
+            FileNotFoundError):
         return {}
 
 
 def write_json(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    content = json.dumps(data, ensure_ascii=False, indent=2)
-    # Use explicit file mode (owner rw, group r, no other) to avoid
-    # umask-dependent world-readable permissions on incident data.
-    fd = os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o640)
+    content = json.dumps(data, ensure_ascii=False, indent=2).encode("utf-8")
+    # Atomic write via temp file + rename to avoid partial writes.
+    fd, tmp_path = tempfile.mkstemp(dir=str(path.parent), suffix=".tmp")
+    closed = False
     try:
-        os.write(fd, content.encode("utf-8"))
-    finally:
+        os.write(fd, content)
+        os.fchmod(fd, 0o640)
         os.close(fd)
+        closed = True
+        os.rename(tmp_path, str(path))
+    except BaseException:
+        if not closed:
+            os.close(fd)
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
 
 
 def append_json_event(path: Path, data: dict[str, Any]) -> None:
-    existing: dict[str, Any] = load_json(path)
-    events: list[dict[str, Any]] = []
-    if isinstance(existing.get("events"), list):
-        events = existing["events"]
-    events.append(data)
-    write_json(path, {"events": events})
+    """Append a JSON event to the events list in *path*.
+
+    Uses fcntl.flock to protect the read-modify-write cycle against
+    concurrent access from parallel hook invocations.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    fd = os.open(str(path), os.O_RDWR | os.O_CREAT, 0o640)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)
+
+        raw = os.read(fd, 10_000_000)
+        existing: dict[str, Any] = {}
+        if raw:
+            try:
+                existing = json.loads(raw.decode("utf-8"))
+            except (json.JSONDecodeError, ValueError, UnicodeDecodeError):
+                existing = {}
+
+        events: list[dict[str, Any]] = []
+        if isinstance(existing.get("events"), list):
+            events = existing["events"]
+        events.append(data)
+
+        os.lseek(fd, 0, os.SEEK_SET)
+        os.ftruncate(fd, 0)
+        content = json.dumps({"events": events}, ensure_ascii=False, indent=2)
+        os.write(fd, content.encode("utf-8"))
+
+        fcntl.flock(fd, fcntl.LOCK_UN)
+    finally:
+        os.close(fd)
 
 
 # === Text sanitization ===
@@ -124,6 +168,14 @@ _SECRET_PATTERNS: list[re.Pattern[str]] = [
         r'("(?:api_?key|secret|token|password|credential|auth)[^"]*"\s*:\s*")[^"]{8,}(")',
         re.IGNORECASE,
     ),
+    # Slack tokens
+    re.compile(r"(xox[bpsa]-)[A-Za-z0-9\-]{10,}"),
+    # PEM private key headers
+    re.compile(r"-----BEGIN [A-Z ]+ KEY-----"),
+    # Database connection strings (postgres, mysql, mongodb)
+    re.compile(
+        r"((?:postgres|mysql|mongodb)://[^:]+:)[^@]+(@)", re.IGNORECASE
+    ),
 ]
 
 
@@ -143,10 +195,11 @@ def redact_secrets(text: str) -> str:
 # === Hook output ===
 
 def print_hook_context(message: str, block: bool) -> None:
+    bounded_message = f"[ANDON_DATA_START]{message}[ANDON_DATA_END]"
     payload: dict[str, Any] = {
         "hookSpecificOutput": {
             "hookEventName": "PostToolUse",
-            "additionalContext": message,
+            "additionalContext": bounded_message,
         }
     }
     if block:

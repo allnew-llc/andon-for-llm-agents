@@ -27,12 +27,14 @@ def get_payload_from_env() -> dict[str, Any]:
     raw = os.environ.get("INPUT_JSON", "")
     if not raw:
         return {}
+    if len(raw) > 500_000:
+        return {}
     try:
         parsed = json.loads(raw)
         if isinstance(parsed, dict):
             return parsed
         return {}
-    except Exception:
+    except (json.JSONDecodeError, ValueError, TypeError, UnicodeDecodeError):
         return {}
 
 
@@ -56,7 +58,9 @@ def get_workdir(payload: dict[str, Any]) -> str:
 
 # === Exit code detection ===
 
-def find_exit_code(obj: Any) -> int | None:
+def find_exit_code(obj: Any, depth: int = 0) -> int | None:
+    if depth > 20:
+        return None
     if isinstance(obj, dict):
         for key in (
             "exit_code", "exitCode", "status_code",
@@ -68,12 +72,12 @@ def find_exit_code(obj: Any) -> int | None:
             if isinstance(value, str) and value.lstrip("-").isdigit():
                 return int(value)
         for value in obj.values():
-            child = find_exit_code(value)
+            child = find_exit_code(value, depth + 1)
             if child is not None:
                 return child
     elif isinstance(obj, list):
         for item in obj:
-            child = find_exit_code(item)
+            child = find_exit_code(item, depth + 1)
             if child is not None:
                 return child
     return None
@@ -106,7 +110,7 @@ def derive_exit_code(payload: dict[str, Any]) -> int | None:
     if match:
         try:
             return int(match.group(1))
-        except Exception:
+        except (ValueError, OverflowError):
             return None
     return None
 
@@ -126,7 +130,7 @@ def is_readonly_failure(command: str) -> bool:
     }
     try:
         argv = shlex.split(command, posix=True)
-    except Exception:
+    except ValueError:
         argv = command.split()
     first = os.path.basename(argv[0]) if argv else ""
     return first in readonly
@@ -144,7 +148,7 @@ def run_git(args: list[str], cwd: Path) -> str:
             timeout=6,
             check=False,
         )
-    except Exception:
+    except (subprocess.SubprocessError, FileNotFoundError, OSError):
         return ""
     out = (result.stdout or "").strip()
     err = (result.stderr or "").strip()
