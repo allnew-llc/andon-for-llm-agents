@@ -11,6 +11,7 @@ Licensed under Apache License 2.0
 from __future__ import annotations
 
 import datetime
+import fcntl
 import json
 import os
 import re
@@ -66,7 +67,7 @@ def load_json(path: Path) -> dict[str, Any]:
         return {}
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
+    except (json.JSONDecodeError, ValueError, OSError, UnicodeDecodeError):
         return {}
 
 
@@ -83,12 +84,38 @@ def write_json(path: Path, data: dict[str, Any]) -> None:
 
 
 def append_json_event(path: Path, data: dict[str, Any]) -> None:
-    existing: dict[str, Any] = load_json(path)
-    events: list[dict[str, Any]] = []
-    if isinstance(existing.get("events"), list):
-        events = existing["events"]
-    events.append(data)
-    write_json(path, {"events": events})
+    """Append a JSON event to the events list in *path*.
+
+    Uses fcntl.flock to protect the read-modify-write cycle against
+    concurrent access from parallel hook invocations.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    fd = os.open(str(path), os.O_RDWR | os.O_CREAT, 0o640)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)
+
+        raw = os.read(fd, 10_000_000)
+        existing: dict[str, Any] = {}
+        if raw:
+            try:
+                existing = json.loads(raw.decode("utf-8"))
+            except (json.JSONDecodeError, ValueError, UnicodeDecodeError):
+                existing = {}
+
+        events: list[dict[str, Any]] = []
+        if isinstance(existing.get("events"), list):
+            events = existing["events"]
+        events.append(data)
+
+        os.lseek(fd, 0, os.SEEK_SET)
+        os.ftruncate(fd, 0)
+        content = json.dumps({"events": events}, ensure_ascii=False, indent=2)
+        os.write(fd, content.encode("utf-8"))
+
+        fcntl.flock(fd, fcntl.LOCK_UN)
+    finally:
+        os.close(fd)
 
 
 # === Text sanitization ===

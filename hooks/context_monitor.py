@@ -8,8 +8,8 @@ warnings when quality thresholds are exceeded.
 Thresholds (configurable via env):
     PEAK       0-29   tool calls
     GOOD      30-59   tool calls
-    DEGRADING 60-99   tool calls  (~50% context proxy)
-    POOR     100+     tool calls  (~70% context proxy)
+    DEGRADING 60-99   tool calls
+    POOR     100+     tool calls
 
 Copyright 2026 AllNew LLC
 Licensed under Apache License 2.0
@@ -17,6 +17,8 @@ Licensed under Apache License 2.0
 
 from __future__ import annotations
 
+import fcntl
+import json
 import os
 import uuid
 from pathlib import Path
@@ -49,15 +51,15 @@ if _ENV_POOR is not None:
 # === Warning messages ===
 
 _WARNING_DEGRADING = (
-    "[ANDON/Context] Context window is estimated 50%+ used "
-    "(~{n} tool calls). Consider delegating subtasks "
-    "to fresh Agent sessions."
+    "[ANDON/Context] High tool call count detected "
+    "({n} calls) — context quality may be degrading. "
+    "Consider delegating subtasks to fresh Agent sessions."
 )
 
 _WARNING_POOR = (
-    "[ANDON/Context] Context window is estimated 70%+ used "
-    "(~{n} tool calls). Critical decisions should be made "
-    "in a fresh session."
+    "[ANDON/Context] Very high tool call count detected "
+    "({n} calls) — context quality likely degraded. "
+    "Critical decisions should be made in a fresh session."
 )
 
 _WARNING_ANDON_POOR = (
@@ -123,6 +125,9 @@ def _andon_open_warning(
 def increment_and_check(state_dir: Path) -> dict[str, Any]:
     """Increment tool call counter and return quality assessment.
 
+    Uses fcntl.flock to protect the read-modify-write cycle against
+    concurrent access from parallel hook invocations.
+
     Returns:
         {
             "level": "DEGRADING",
@@ -132,45 +137,66 @@ def increment_and_check(state_dir: Path) -> dict[str, Any]:
         }
     """
     sf = _state_file(state_dir)
-    state = load_json(sf)
+    sf.parent.mkdir(parents=True, exist_ok=True)
 
-    # Initialize if empty
-    if not state or "session_id" not in state:
-        state = {
-            "session_id": str(uuid.uuid4()),
-            "tool_call_count": 0,
-            "quality_level": "PEAK",
-            "warnings_issued": [],
-        }
+    fd = os.open(str(sf), os.O_RDWR | os.O_CREAT, 0o640)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)
 
-    # Increment
-    count = int(state.get("tool_call_count", 0)) + 1
-    state["tool_call_count"] = count
+        # Read current state under lock
+        raw = os.read(fd, 1_000_000)
+        state: dict[str, Any] = {}
+        if raw:
+            try:
+                state = json.loads(raw.decode("utf-8"))
+            except (json.JSONDecodeError, ValueError, UnicodeDecodeError):
+                state = {}
 
-    old_level = str(state.get("quality_level", "PEAK"))
-    new_level = _level_for_count(count)
-    state["quality_level"] = new_level
-    state["updated_at"] = now_utc()
+        # Initialize if empty
+        if not state or "session_id" not in state:
+            state = {
+                "session_id": str(uuid.uuid4()),
+                "tool_call_count": 0,
+                "quality_level": "PEAK",
+                "warnings_issued": [],
+            }
 
-    warnings_issued: list[str] = state.get("warnings_issued", [])
-    if not isinstance(warnings_issued, list):
-        warnings_issued = []
+        # Increment
+        count = int(state.get("tool_call_count", 0)) + 1
+        state["tool_call_count"] = count
 
-    # Determine warnings
-    warning: str | None = None
-    andon_warning: str | None = None
+        old_level = str(state.get("quality_level", "PEAK"))
+        new_level = _level_for_count(count)
+        state["quality_level"] = new_level
+        state["updated_at"] = now_utc()
 
-    if new_level != old_level:
-        warning = _warning_for_transition(new_level, count, warnings_issued)
-        if warning and new_level not in warnings_issued:
-            warnings_issued.append(new_level)
+        warnings_issued = state.get("warnings_issued", [])
+        if not isinstance(warnings_issued, list):
+            warnings_issued = []
 
-    andon_warning = _andon_open_warning(new_level, warnings_issued)
-    if andon_warning and "ANDON_POOR" not in warnings_issued:
-        warnings_issued.append("ANDON_POOR")
+        # Determine warnings
+        warning: str | None = None
+        andon_warning: str | None = None
 
-    state["warnings_issued"] = warnings_issued
-    write_json(sf, state)
+        if new_level != old_level:
+            warning = _warning_for_transition(new_level, count, warnings_issued)
+            if warning and new_level not in warnings_issued:
+                warnings_issued.append(new_level)
+
+        andon_warning = _andon_open_warning(new_level, warnings_issued)
+        if andon_warning and "ANDON_POOR" not in warnings_issued:
+            warnings_issued.append("ANDON_POOR")
+
+        state["warnings_issued"] = warnings_issued
+
+        # Write back under lock: seek to start, truncate, write
+        os.lseek(fd, 0, os.SEEK_SET)
+        os.ftruncate(fd, 0)
+        os.write(fd, json.dumps(state, ensure_ascii=False, indent=2).encode("utf-8"))
+
+        fcntl.flock(fd, fcntl.LOCK_UN)
+    finally:
+        os.close(fd)
 
     return {
         "level": new_level,

@@ -29,7 +29,7 @@ import sys, json
 try:
     p = json.load(sys.stdin)
     print(p.get('tool_name', ''))
-except Exception:
+except (json.JSONDecodeError, ValueError, KeyError):
     print('')
 " 2>/dev/null || echo "")
 
@@ -55,7 +55,7 @@ try:
     p = json.load(sys.stdin)
     ec = find_exit_code(p)
     print(ec if ec is not None else '')
-except Exception:
+except (json.JSONDecodeError, ValueError, KeyError):
     print('')
 " 2>/dev/null || echo "")
 
@@ -83,7 +83,7 @@ for arg in sys.argv[1:]:
     if arg and arg != '{}':
         try:
             outputs.append(json.loads(arg))
-        except Exception:
+        except (json.JSONDecodeError, ValueError, KeyError):
             pass
 
 if not outputs:

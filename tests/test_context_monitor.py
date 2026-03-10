@@ -91,6 +91,7 @@ class TestLevelTransitions:
         result = None
         for _ in range(count):
             result = ctx.increment_and_check(state_dir)
+        assert result is not None
         return result
 
     def test_peak_to_good_at_30(self, state_dir, ctx):
@@ -105,7 +106,7 @@ class TestLevelTransitions:
         assert result["level"] == "DEGRADING"
         assert result["call_count"] == 60
         assert result["warning"] is not None
-        assert "50%+" in result["warning"]
+        assert "High tool call count" in result["warning"]
         assert "60" in result["warning"]
 
     def test_degrading_to_poor_at_100(self, state_dir, ctx):
@@ -113,7 +114,7 @@ class TestLevelTransitions:
         assert result["level"] == "POOR"
         assert result["call_count"] == 100
         assert result["warning"] is not None
-        assert "70%+" in result["warning"]
+        assert "Very high tool call count" in result["warning"]
         assert "100" in result["warning"]
 
     def test_still_peak_at_29(self, state_dir, ctx):
@@ -143,6 +144,7 @@ class TestWarningGeneration:
         result = None
         for _ in range(count):
             result = ctx.increment_and_check(state_dir)
+        assert result is not None
         return result
 
     def test_degrading_warning_message(self, state_dir, ctx):
@@ -188,6 +190,7 @@ class TestAndonOpenWarning:
         result = None
         for _ in range(count):
             result = ctx.increment_and_check(state_dir)
+        assert result is not None
         return result
 
     def test_andon_open_poor_produces_extra_warning(self, state_dir, ctx):
@@ -219,6 +222,7 @@ class TestWarnOnce:
         result = None
         for _ in range(count):
             result = ctx.increment_and_check(state_dir)
+        assert result is not None
         return result
 
     def test_degrading_warns_only_on_transition(self, state_dir, ctx):
@@ -266,7 +270,7 @@ class TestWarnOnce:
         """Verify that both DEGRADING (at 60) and POOR (at 100) trigger."""
         result_60 = self._advance_to(state_dir, ctx, 60)
         assert result_60["warning"] is not None
-        assert "50%+" in result_60["warning"]
+        assert "High tool call count" in result_60["warning"]
 
         # No more warnings between 61-99
         for _ in range(39):
@@ -276,7 +280,7 @@ class TestWarnOnce:
         # Call 100 => POOR transition => new warning
         result_100 = ctx.increment_and_check(state_dir)
         assert result_100["warning"] is not None
-        assert "70%+" in result_100["warning"]
+        assert "Very high tool call count" in result_100["warning"]
 
 
 # ============================================================
@@ -315,8 +319,9 @@ class TestSessionReset:
         result = None
         for _ in range(60):
             result = ctx.increment_and_check(state_dir)
+        assert result is not None
         assert result["warning"] is not None
-        assert "50%+" in result["warning"]
+        assert "High tool call count" in result["warning"]
 
 
 # ============================================================

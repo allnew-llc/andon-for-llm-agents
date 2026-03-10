@@ -67,8 +67,14 @@ def get_action_level(
         Action level 1-4.  Unknown classifications default to 2.
     """
     if pack_overrides and classification in pack_overrides:
-        level = pack_overrides[classification]
-        return max(1, min(4, int(level)))
+        raw = pack_overrides[classification]
+        try:
+            level = int(raw)
+        except (TypeError, ValueError):
+            return CLASSIFICATION_TO_LEVEL.get(classification, 2)
+        if not (1 <= level <= 4):
+            return max(1, min(4, level))
+        return level
     return CLASSIFICATION_TO_LEVEL.get(classification, 2)
 
 
