@@ -38,8 +38,7 @@ reviewed by a licensed attorney (弁護士) before use in legal
 decision-making.
 
 The e-Gov Law API data is published under the
-[Government Standard Terms of Use (Version 2.0)](https://www.e-gov.go.jp/policy/terms.html),
-compatible with CC BY 4.0.
+[Government Standard Terms of Use (Version 2.0)](https://www.e-gov.go.jp/policy/terms.html).
 
 ## License
 
