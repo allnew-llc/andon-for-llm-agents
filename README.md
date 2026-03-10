@@ -531,8 +531,9 @@ We offer our sincere respect and gratitude to all who have contributed to the TP
 Apache License 2.0. See [LICENSE](./LICENSE).
 
 Patent Notice: Certain methods implemented in this software are subject to pending patent
-applications filed by AllNew LLC (patent pending). If patents are granted, Apache 2.0 Section 3
-provides users a perpetual, royalty-free patent license. See [NOTICE](./NOTICE) for details.
+applications filed by AllNew LLC (JP 2026-035626, JP 2026-035627, JP 2026-035831,
+JP 2026-035832, JP 2026-035943). If patents are granted, Apache 2.0 Section 3 provides users
+a perpetual, royalty-free patent license. See [NOTICE](./NOTICE) for details.
 
 Trademark Notice: ANDON, Kaizen, Jidoka, Poka-yoke, and TPS are terms originating from lean
 manufacturing. Claude is a product of Anthropic, PBC. Cursor, Windsurf, and Codex are products
