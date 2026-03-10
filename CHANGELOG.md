@@ -30,6 +30,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Level 4 (stop_ask): ANDON open + complete block (user approval required)
   - Pack-extensible: Knowledge Packs can override action levels per classification
 
+### Security
+
+- **Process-safe state files**: `fcntl.flock()` exclusive lock on context monitor, analysis paralysis counter, and session reset operations
+- **Atomic file writes**: `write_json()` uses temp file + `os.rename()` to prevent partial writes on crash
+- **Prompt injection boundary**: `additionalContext` messages wrapped with `[ANDON_DATA_START]`/`[ANDON_DATA_END]` markers
+- **Path traversal validation**: `incident_id` validated to stay within `INCIDENTS_DIR` in close/rollback operations
+- **Input size limit**: `INPUT_JSON` payload capped at 500KB before parsing
+- **Recursion depth limit**: `find_exit_code()` recursive descent limited to depth 20
+- **Exception narrowing**: All `except Exception:` replaced with specific exception types across all hook modules
+- **Secure file permissions**: All file writes use explicit `0o640` mode (owner rw, group r)
+- **Extended secret redaction**: Added patterns for Slack tokens, PEM private keys, and database connection strings
+- **Environment variable safety**: Module-level `int()`/`float()` conversions wrapped in try/except ValueError
+
+### Fixed
+
+- GDPR/HIPAA pack descriptions changed from "compliance" to "reference patterns" for legal accuracy
+
 ## [0.1.2] - 2026-03-10
 
 ### Fixed
