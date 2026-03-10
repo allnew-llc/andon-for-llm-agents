@@ -123,6 +123,32 @@ def apply_standardization(
 
 # === Incident Report ===
 
+def enrich_analysis_for_level(
+    analysis: dict[str, Any],
+    actions_data: dict[str, Any],
+) -> None:
+    """Add level-specific fields to analysis and actions in-place.
+
+    Level 1-2: No additional fields (existing behavior).
+    Level 3:   Adds ``proposed_fix`` to analysis.
+    Level 4:   Adds ``requires_approval: true`` to analysis.
+    """
+    action_level = int(analysis.get("action_level", 2))
+    if action_level == 3:
+        cause_id = analysis.get("cause_id", "unknown_failure")
+        standardization = analysis.get("standardization_actions", [])
+        proposed = (
+            standardization[0].get("value", "review required")
+            if standardization
+            else "review required"
+        )
+        analysis["proposed_fix"] = (
+            f"Proposed fix for {cause_id}: {proposed}"
+        )
+    elif action_level == 4:
+        analysis["requires_approval"] = True
+
+
 def write_incident_report(
     incident_id: str,
     incident_dir: Path,

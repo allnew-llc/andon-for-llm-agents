@@ -33,6 +33,7 @@ KAIZEN_DIR = STATE_DIR / "kaizen"
 INCIDENTS_DIR = KAIZEN_DIR / "incidents"
 HISTORY_DIR = STATE_DIR / "history"
 ANDON_FILE = STATE_DIR / "andon-open.json"
+ANALYSIS_COUNTER_FILE = STATE_DIR / "andon-analysis-counter.json"
 STANDARD_REGISTRY = KAIZEN_DIR / "standardization-registry.json"
 
 # Confidence thresholds
