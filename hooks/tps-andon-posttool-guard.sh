@@ -35,19 +35,21 @@ except (json.JSONDecodeError, ValueError, KeyError):
 
 EXIT_CODE=$(echo "$INPUT_JSON" | python3 -c "
 import sys, json
-def find_exit_code(obj):
+def find_exit_code(obj, depth=0):
+    if depth > 20:
+        return None
     if isinstance(obj, dict):
         for k in ('exit_code', 'exitCode', 'status_code', 'statusCode', 'code', 'returncode'):
             v = obj.get(k)
             if isinstance(v, int):
                 return v
         for v in obj.values():
-            r = find_exit_code(v)
+            r = find_exit_code(v, depth + 1)
             if r is not None:
                 return r
     elif isinstance(obj, list):
         for item in obj:
-            r = find_exit_code(item)
+            r = find_exit_code(item, depth + 1)
             if r is not None:
                 return r
     return None

@@ -39,13 +39,19 @@ QUALITY_LEVELS: dict[str, tuple[int, float]] = {
 _ENV_DEGRADING = os.environ.get("ANDON_CTX_DEGRADING_THRESHOLD")
 _ENV_POOR = os.environ.get("ANDON_CTX_POOR_THRESHOLD")
 if _ENV_DEGRADING is not None:
-    _deg = int(_ENV_DEGRADING)
-    QUALITY_LEVELS["GOOD"] = (30, _deg)
-    QUALITY_LEVELS["DEGRADING"] = (_deg, QUALITY_LEVELS["POOR"][0])
+    try:
+        _deg = int(_ENV_DEGRADING)
+        QUALITY_LEVELS["GOOD"] = (30, _deg)
+        QUALITY_LEVELS["DEGRADING"] = (_deg, QUALITY_LEVELS["POOR"][0])
+    except ValueError:
+        pass  # keep defaults
 if _ENV_POOR is not None:
-    _poor = int(_ENV_POOR)
-    QUALITY_LEVELS["DEGRADING"] = (QUALITY_LEVELS["DEGRADING"][0], _poor)
-    QUALITY_LEVELS["POOR"] = (_poor, float("inf"))
+    try:
+        _poor = int(_ENV_POOR)
+        QUALITY_LEVELS["DEGRADING"] = (QUALITY_LEVELS["DEGRADING"][0], _poor)
+        QUALITY_LEVELS["POOR"] = (_poor, float("inf"))
+    except ValueError:
+        pass  # keep defaults
 
 
 # === Warning messages ===
@@ -212,8 +218,12 @@ def get_state(state_dir: Path) -> dict[str, Any]:
 
 
 def reset_session(state_dir: Path) -> None:
-    """Reset counter for a new session."""
+    """Reset counter for a new session.
+
+    Uses fcntl.flock to protect against concurrent increment_and_check().
+    """
     sf = _state_file(state_dir)
+    sf.parent.mkdir(parents=True, exist_ok=True)
     state = {
         "session_id": str(uuid.uuid4()),
         "tool_call_count": 0,
@@ -221,4 +231,12 @@ def reset_session(state_dir: Path) -> None:
         "warnings_issued": [],
         "reset_at": now_utc(),
     }
-    write_json(sf, state)
+    fd = os.open(str(sf), os.O_RDWR | os.O_CREAT, 0o640)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        os.lseek(fd, 0, os.SEEK_SET)
+        os.ftruncate(fd, 0)
+        os.write(fd, json.dumps(state, ensure_ascii=False, indent=2).encode("utf-8"))
+        fcntl.flock(fd, fcntl.LOCK_UN)
+    finally:
+        os.close(fd)

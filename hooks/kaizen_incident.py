@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import datetime
 import hashlib
+import os
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +25,15 @@ from kaizen_core import (
     now_utc,
     write_json,
 )
+
+def _write_text_secure(path: Path, content: str) -> None:
+    """Write text to a file with explicit 0o640 permissions."""
+    fd = os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o640)
+    try:
+        os.write(fd, content.encode("utf-8"))
+    finally:
+        os.close(fd)
+
 
 # === Incident ID ===
 
@@ -110,8 +120,8 @@ def apply_standardization(
 
     write_json(STANDARD_REGISTRY, registry)
     standard_md = KAIZEN_DIR / "STANDARDIZED_RULES.md"
-    standard_md.write_text(
-        render_standard_registry_markdown(registry), encoding="utf-8"
+    _write_text_secure(
+        standard_md, render_standard_registry_markdown(registry)
     )
 
     result["applied"] = added > 0
@@ -251,7 +261,7 @@ def write_incident_report(
     )
     lines.append("")
 
-    report_path.write_text("\n".join(lines), encoding="utf-8")
+    _write_text_secure(report_path, "\n".join(lines))
     return report_path
 
 
@@ -269,5 +279,5 @@ def update_final_report_on_close(
         base, "", "## Close Summary",
         f"- closed_at: {now_utc()}", f"- close_reason: {reason}", "",
     ]
-    final.write_text("\n".join(lines), encoding="utf-8")
+    _write_text_secure(final, "\n".join(lines))
     return final

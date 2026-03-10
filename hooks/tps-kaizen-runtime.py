@@ -25,7 +25,9 @@ Licensed under Apache License 2.0
 from __future__ import annotations
 
 import datetime
+import fcntl
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -52,6 +54,7 @@ from kaizen_core import (
     write_json,
 )
 from kaizen_incident import (
+    _write_text_secure,
     apply_standardization,
     enrich_analysis_for_level,
     incident_id_from,
@@ -441,7 +444,10 @@ def close_incident(reason: str) -> int:
     if not incident_id:
         print("ANDON close blocked: incident_id missing")
         return 1
-    incident_dir = INCIDENTS_DIR / incident_id
+    incident_dir = (INCIDENTS_DIR / incident_id).resolve()
+    if not str(incident_dir).startswith(str(INCIDENTS_DIR.resolve())):
+        print("Invalid incident ID: path traversal detected")
+        return 1
     required = [
         incident_dir / "evidence.json",
         incident_dir / "analysis.json",
@@ -529,7 +535,10 @@ def rollback_incident(target: str) -> int:
         print("Rollback skipped: no incident found")
         return 1
 
-    incident_dir = INCIDENTS_DIR / incident_id
+    incident_dir = (INCIDENTS_DIR / incident_id).resolve()
+    if not str(incident_dir).startswith(str(INCIDENTS_DIR.resolve())):
+        print("Invalid incident ID: path traversal detected")
+        return 1
     backup = incident_dir / "rollback" / "standardization-registry.before.json"
     if not backup.exists():
         print(f"Rollback skipped: no rollback snapshot for {incident_id}")
@@ -538,9 +547,7 @@ def rollback_incident(target: str) -> int:
     before = load_json(backup)
     write_json(STANDARD_REGISTRY, before)
     md = KAIZEN_DIR / "STANDARDIZED_RULES.md"
-    md.write_text(
-        render_standard_registry_markdown(before), encoding="utf-8"
-    )
+    _write_text_secure(md, render_standard_registry_markdown(before))
 
     rollback_meta = {
         "incident_id": incident_id,
@@ -610,30 +617,49 @@ def analysis_paralysis(tool_name: str, exit_code: int | None) -> int:
     """
     ensure_dirs()
 
-    state = load_json(ANALYSIS_COUNTER_FILE)
-    if not state:
-        state = {
-            "consecutive_reads": 0,
-            "last_write_at": "",
-            "session_id": "",
-        }
+    path = ANALYSIS_COUNTER_FILE
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(str(path), os.O_RDWR | os.O_CREAT, 0o640)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)
 
-    # Determine whether this tool call is a read or write
-    if tool_name in _READ_TOOLS:
-        state["consecutive_reads"] = state.get("consecutive_reads", 0) + 1
-    elif tool_name in _WRITE_TOOLS:
-        state["consecutive_reads"] = 0
-        state["last_write_at"] = now_utc()
-    elif tool_name == "Bash":
-        if exit_code is not None and exit_code == 0:
+        raw = os.read(fd, 1_000_000)
+        state: dict[str, Any] = {}
+        if raw:
+            try:
+                state = json.loads(raw.decode("utf-8"))
+            except (json.JSONDecodeError, ValueError, UnicodeDecodeError):
+                state = {}
+
+        if not state:
+            state = {
+                "consecutive_reads": 0,
+                "last_write_at": "",
+                "session_id": "",
+            }
+
+        # Determine whether this tool call is a read or write
+        if tool_name in _READ_TOOLS:
+            state["consecutive_reads"] = state.get("consecutive_reads", 0) + 1
+        elif tool_name in _WRITE_TOOLS:
             state["consecutive_reads"] = 0
             state["last_write_at"] = now_utc()
-        # Bash with non-zero exit does not reset (failed command)
-    else:
-        # Other tools (e.g., Skill, ToolSearch) — no effect
-        pass
+        elif tool_name == "Bash":
+            if exit_code is not None and exit_code == 0:
+                state["consecutive_reads"] = 0
+                state["last_write_at"] = now_utc()
+            # Bash with non-zero exit does not reset (failed command)
+        else:
+            # Other tools (e.g., Skill, ToolSearch) — no effect
+            pass
 
-    write_json(ANALYSIS_COUNTER_FILE, state)
+        os.lseek(fd, 0, os.SEEK_SET)
+        os.ftruncate(fd, 0)
+        os.write(fd, json.dumps(state, ensure_ascii=False, indent=2).encode("utf-8"))
+
+        fcntl.flock(fd, fcntl.LOCK_UN)
+    finally:
+        os.close(fd)
 
     consecutive = state.get("consecutive_reads", 0)
 
