@@ -8,7 +8,7 @@
 
 **Lean manufacturing (TPS) principles applied to LLM-assisted coding.**
 
-Stop defects from flowing downstream. Learn from every failure. Standardize improvements automatically.
+Stop defects from flowing downstream. Learn from every failure. Standardize improvements systematically.
 
 ---
 
@@ -80,11 +80,11 @@ ANDON addresses a different gap: **learning from failures and preventing recurre
 | Code generation quality | Codex (RL-trained), Jules (Planning Critic) | Complementary — not addressed |
 | Code security scanning | Copilot (CodeQL), Claude Code Security | Complementary — not addressed |
 | Sandbox isolation | Codex (containers), GitHub Actions | Complementary — not addressed |
-| Failure → line stop → root cause | **ANDON** | Primary solution |
-| Repeated failure pattern detection | **ANDON (Meta-ANDON)** | Primary solution (no equivalent elsewhere) |
-| Failure → standardized prevention | **ANDON (Kaizen)** | Primary solution (no equivalent elsewhere) |
-| Output safety for professional practice | **ANDON (Pack 0)** | Primary solution for coding agents |
-| Specification drift prevention | **ANDON** | Primary solution |
+| Failure → line stop → root cause | **ANDON** | Core focus |
+| Repeated failure pattern detection | **ANDON (Meta-ANDON)** | Core focus |
+| Failure → standardized prevention | **ANDON (Kaizen)** | Core focus |
+| Output safety for professional practice | **ANDON (Pack 0)** | Core focus for coding agents |
+| Specification drift prevention | **ANDON** | Core focus |
 | Domain-specific failure classification | **ANDON (Knowledge Packs)** | Extensible plugin system |
 
 ANDON works with any LLM coding agent that supports hooks or callbacks —
