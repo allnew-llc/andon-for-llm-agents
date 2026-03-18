@@ -63,6 +63,12 @@ LLM コーディングへの適用：
 
 ---
 
+## アーキテクチャ
+
+<p align="center">
+  <img src="docs/architecture.svg" alt="ANDON for LLM Agents アーキテクチャ図" width="800">
+</p>
+
 ## ANDON の位置づけ
 
 ANDON はコーディングエージェントの代替ではなく、その周囲を包む**安全と学習のレイヤー**です。

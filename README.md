@@ -63,6 +63,12 @@ Prevention levels (always aim for L1-L2):
 
 ---
 
+## Architecture
+
+<p align="center">
+  <img src="docs/architecture.svg" alt="ANDON for LLM Agents architecture diagram" width="800">
+</p>
+
 ## Where ANDON Fits
 
 ANDON is not a replacement for your coding agent — it's the safety and learning
