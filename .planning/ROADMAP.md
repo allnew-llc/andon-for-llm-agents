@@ -116,4 +116,4 @@ Note: Phase 9 depends on Phase 6 (not 8), so phases 8 and 9 can proceed in paral
 | 7. tps-kaizen Scripts & Persistent Data | 2/2 | Complete   | 2026-03-19 | - |
 | 8. QC Audit Skill | 1/2 | In Progress|  | - |
 | 9. Standalone Skill Upgrades | 3/3 | Complete   | 2026-03-19 | - |
-| 10. New Skills & On-Demand Hooks | 2/2 | Complete   | 2026-03-19 | - |
+| 10. New Skills & On-Demand Hooks | 2/2 | Complete    | 2026-03-19 | - |
