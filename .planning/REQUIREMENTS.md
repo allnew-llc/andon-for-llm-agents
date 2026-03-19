@@ -60,29 +60,29 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| REG-01 | TBD | Pending |
-| REG-02 | TBD | Pending |
-| REG-03 | TBD | Pending |
-| REG-04 | TBD | Pending |
-| SURF-01 | TBD | Pending |
-| SURF-02 | TBD | Pending |
-| SURF-03 | TBD | Pending |
-| SURF-04 | TBD | Pending |
-| LOOP-01 | TBD | Pending |
-| LOOP-02 | TBD | Pending |
-| LOOP-03 | TBD | Pending |
-| LOOP-04 | TBD | Pending |
-| METRIC-01 | TBD | Pending |
-| METRIC-02 | TBD | Pending |
-| METRIC-03 | TBD | Pending |
-| INTEG-01 | TBD | Pending |
-| INTEG-02 | TBD | Pending |
+| REG-01 | Phase 11 | Pending |
+| REG-02 | Phase 11 | Pending |
+| REG-03 | Phase 11 | Pending |
+| REG-04 | Phase 11 | Pending |
+| SURF-01 | Phase 12 | Pending |
+| SURF-02 | Phase 12 | Pending |
+| SURF-03 | Phase 12 | Pending |
+| SURF-04 | Phase 12 | Pending |
+| LOOP-01 | Phase 13 | Pending |
+| LOOP-02 | Phase 13 | Pending |
+| LOOP-03 | Phase 13 | Pending |
+| LOOP-04 | Phase 13 | Pending |
+| METRIC-01 | Phase 14 | Pending |
+| METRIC-02 | Phase 14 | Pending |
+| METRIC-03 | Phase 14 | Pending |
+| INTEG-01 | Phase 14 | Pending |
+| INTEG-02 | Phase 14 | Pending |
 
 **Coverage:**
 - v0.4.0 requirements: 17 total
-- Mapped to phases: 0
-- Unmapped: 17 ⚠️
+- Mapped to phases: 17
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-19*
-*Last updated: 2026-03-19 after initial definition*
+*Last updated: 2026-03-19 — traceability mapped to phases 11-14*

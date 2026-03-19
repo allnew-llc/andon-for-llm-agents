@@ -4,7 +4,8 @@
 
 - ✅ **v0.1.0 Foundation** - Phases 1-3 (shipped 2026-03-10)
 - ✅ **v0.2.0 Hardening** - Phases 4-5 (shipped 2026-03-10)
-- 🚧 **v0.3.0 Skill Quality & Ecosystem** - Phases 6-10 (in progress)
+- ✅ **v0.3.0 Skill Quality & Ecosystem** - Phases 6-10 (shipped 2026-03-19)
+- 🚧 **v0.4.0 Gotchas Engine** - Phases 11-14 (in progress)
 
 ## Phases
 
@@ -22,98 +23,83 @@ Phases 4-5 delivered production hardening: analysis paralysis guard, context qua
 
 </details>
 
-### 🚧 v0.3.0 Skill Quality & Ecosystem (In Progress)
+<details>
+<summary>✅ v0.3.0 Skill Quality & Ecosystem (Phases 6-10) - SHIPPED 2026-03-19</summary>
 
-**Milestone Goal:** Elevate tps-kaizen skill quality to Anthropic best practices, add /qc-audit skill, migrate standalone .md skills to SKILL.md structure, and introduce new skill categories plus on-demand hooks.
+Phases 6-10 delivered: tps-kaizen SKILL.md with trigger-focused description (14 keywords), 7 Gotchas, and related_skills; 3 analysis scripts (aggregate-incidents.sh, five-whys-validator.sh, quality-trend.sh); /qc-audit skill with trend analysis and gate-health correlation; 6 standalone skills upgraded to SKILL.md structure; 4 new skills (freee-analysis, standup, cleanup-artifacts, careful); on-demand hooks pattern (freeze + careful).
 
-- [x] **Phase 6: tps-kaizen Core Quality** - Trigger-focused description, documented gotchas, and related_skills composability (completed 2026-03-19)
-- [x] **Phase 7: tps-kaizen Scripts & Persistent Data** - scripts/ directory with analysis tools and persistent incident history (completed 2026-03-19)
-- [ ] **Phase 8: QC Audit Skill** - New /qc-audit skill with quality assessment, trend analysis, and gate correlation
-- [x] **Phase 9: Standalone Skill Upgrades** - Migrate 6 existing .md skills to SKILL.md structure with progressive disclosure (completed 2026-03-19)
-- [x] **Phase 10: New Skills & On-Demand Hooks** - Three new skill categories and session-scoped on-demand hook pattern (completed 2026-03-19)
+</details>
+
+### 🚧 v0.4.0 Gotchas Engine (In Progress)
+
+**Milestone Goal:** Evolve Gotchas from static text in SKILL.md into a structured data registry with automatic surfacing during ANDON, a Five Whys → Gotcha learning loop, and effectiveness metrics.
+
+- [ ] **Phase 11: Gotchas Registry** - YAML schema, seed data, registry loader, and Knowledge Pack extension point
+- [ ] **Phase 12: ANDON Auto-Surfacing** - Hook integration, pattern matching, confidence scoring, and ranked results
+- [ ] **Phase 13: Five Whys → Gotcha Loop** - Candidate generation, gotcha-review subcommand, and hot-reload promotion
+- [ ] **Phase 14: Analysis, Metrics & Skill Integration** - gotcha-stats.sh, tps-kaizen subcommand docs, and andon Step 0 update
 
 ## Phase Details
 
-### Phase 6: tps-kaizen Core Quality
-**Goal**: Users invoking Claude Code skills can find and use tps-kaizen correctly because its description, failure modes, and composition links are explicitly documented
+### Phase 11: Gotchas Registry
+**Goal**: A structured Gotchas Registry exists that can be parsed, validated, and extended by Knowledge Packs — replacing the static text in SKILL.md with machine-readable YAML
 **Depends on**: Nothing (first phase of this milestone)
-**Requirements**: SKILL-01, SKILL-02, SKILL-07
+**Requirements**: REG-01, REG-02, REG-03, REG-04
 **Success Criteria** (what must be TRUE):
-  1. tps-kaizen SKILL.md description lists concrete trigger keywords (error, failure, incident, broken, stuck, regression) so Claude invokes it at the right moment
-  2. A user reading tps-kaizen for the first time finds a Gotchas section with 5+ named failure patterns (human error stop, 4-artifact close, Meta-ANDON session reset, Gate-Gaming, confidence threshold)
-  3. tps-kaizen SKILL.md contains a related_skills section with direct links to pipeline-debugging, adversarial-review, and qc-audit
-**Plans**: 1 plan
-Plans:
-- [ ] 06-01-PLAN.md — Rewrite SKILL.md with trigger-focused description, Gotchas, and related_skills
+  1. Running the registry loader against gotchas/ produces a valid parsed list with all seed Gotchas and no schema errors
+  2. gotchas/ directory contains at least 5 YAML files, each with id, name, pattern, severity, prevention, discovered, and source fields populated
+  3. A Knowledge Pack directory (e.g., packs/financial/gotchas/) containing pack-specific YAML files is discovered and included by the loader without changes to core code
+  4. Running the loader against a YAML file missing a required field produces a clear schema validation error, not a silent failure
+**Plans**: TBD
 
-### Phase 7: tps-kaizen Scripts & Persistent Data
-**Goal**: Users can run tps-kaizen subcommands that analyze historical incident data and detect recurring failure patterns using persistent storage
-**Depends on**: Phase 6
-**Requirements**: SKILL-03, SKILL-04, SKILL-05, SKILL-06
+### Phase 12: ANDON Auto-Surfacing
+**Goal**: When ANDON opens, matching Gotchas are automatically surfaced with confidence scores so Claude can avoid repeating known failures
+**Depends on**: Phase 11
+**Requirements**: SURF-01, SURF-02, SURF-03, SURF-04
 **Success Criteria** (what must be TRUE):
-  1. Running aggregate-incidents.sh from tps-kaizen/scripts/ produces a summary of past incidents and pattern clusters from ${CLAUDE_PLUGIN_DATA}/kaizen/
-  2. Running five-whys-validator.sh reports whether a Five Whys document has reached 5 causal levels and filled the verification column
-  3. Running quality-trend.sh outputs a time-series view of quality self-assessment results
-  4. The tps-kaizen andon subcommand automatically surfaces past incidents matching the current problem pattern from the persistent kaizen store
-**Plans**: 2 plans
-Plans:
-- [ ] 07-01-PLAN.md — Create aggregate-incidents.sh and quality-trend.sh analysis scripts
-- [ ] 07-02-PLAN.md — Create five-whys-validator.sh and update andon subcommand with incident history
+  1. Opening an ANDON incident with a known error pattern surfaces at least one matching Gotcha with prevention advice injected into additionalContext
+  2. Match results include a confidence label (exact match, partial match, or category match) so the user can judge relevance
+  3. When multiple Gotchas match, they are presented ranked by relevance score with the highest-confidence match first
+  4. Opening an ANDON incident with no matching pattern produces no spurious Gotcha output (no false matches injected into context)
+**Plans**: TBD
 
-### Phase 8: QC Audit Skill
-**Goal**: Users can actively trigger quality self-assessments, view historical quality trends, and understand the correlation between quality scores and gate pass rates
-**Depends on**: Phase 7
-**Requirements**: QC-01, QC-02, QC-03, QC-04, QC-05
+### Phase 13: Five Whys → Gotcha Loop
+**Goal**: Completing a Five Whys analysis automatically produces a reviewable Gotcha candidate that can be promoted into the live registry without restarting any process
+**Depends on**: Phase 11
+**Requirements**: LOOP-01, LOOP-02, LOOP-03, LOOP-04
 **Success Criteria** (what must be TRUE):
-  1. /qc-audit skill exists with a SKILL.md that has a trigger-focused description and a Gotchas section
-  2. Running /qc-audit with no arguments executes a quality self-assessment for the current phase using quality_criteria from the deliverable manifest and produces a pass/warn/fail result
-  3. Running /qc-audit trend displays a trend chart of FAIL/WARN/OK rates over time from ${CLAUDE_PLUGIN_DATA}/qc/ history
-  4. Running /qc-audit gate-health shows a correlation analysis between quality scores and Gate pass rates for recent phases
-  5. Running scripts/collect-assessments.sh aggregates quality-self-assessment JSON files from multiple project directories into the central ${CLAUDE_PLUGIN_DATA}/qc/ store
-**Plans**: 2 plans
-Plans:
-- [ ] 08-01-PLAN.md — Create SKILL.md with trigger description, Gotchas, and self-assessment instructions
-- [ ] 08-02-PLAN.md — Create trend.sh, gate-health.sh, and collect-assessments.sh scripts
+  1. After a Five Whys session completes, a candidate YAML file appears in gotchas/candidates/ with auto-extracted pattern and prevention derived from the root cause statement
+  2. Running `/tps-kaizen gotcha-review` lists all files in gotchas/candidates/ with their key fields (id, pattern, severity) and prompts for approve or skip
+  3. Approving a candidate in gotcha-review moves it from gotchas/candidates/ to gotchas/ without manual file operations
+  4. A Gotcha promoted via gotcha-review is immediately matchable by the ANDON surfacing engine in the same session (no restart required)
+**Plans**: TBD
 
-### Phase 9: Standalone Skill Upgrades
-**Goal**: Six existing single-file skills are promoted to SKILL.md directory structure with trigger-focused descriptions, Gotchas sections, and progressive disclosure via references/
-**Depends on**: Phase 6
-**Requirements**: UPGRADE-01, UPGRADE-02, UPGRADE-03, UPGRADE-04, UPGRADE-05, UPGRADE-06
+### Phase 14: Analysis, Metrics & Skill Integration
+**Goal**: Users can measure Gotcha hit rates and effectiveness, and the tps-kaizen skill surface all Gotcha operations (review, stats, andon check) clearly documented
+**Depends on**: Phase 12, Phase 13
+**Requirements**: METRIC-01, METRIC-02, METRIC-03, INTEG-01, INTEG-02
 **Success Criteria** (what must be TRUE):
-  1. freeze/ SKILL.md exists with on-demand hook registration pattern (dynamic hook activated only when /freeze is invoked), replacing the flat freeze.md
-  2. cherry-pick-prod/ SKILL.md exists with a Gotchas section and a references/ subdirectory for supplementary material
-  3. ios-app-factory-operator/ SKILL.md exists with a trigger-focused description that tells Claude when to invoke the skill
-  4. blog-reader-critic/ SKILL.md and apple-developer-docs/ SKILL.md and apple-review-guidelines/ SKILL.md each have trigger-focused descriptions and progressive disclosure via references/
-**Plans**: 3 plans
-Plans:
-- [ ] 09-01-PLAN.md — Upgrade freeze + cherry-pick-prod to SKILL.md with Gotchas and on-demand hooks
-- [ ] 09-02-PLAN.md — Upgrade ios-app-factory-operator + blog-reader-critic to SKILL.md with trigger descriptions
-- [ ] 09-03-PLAN.md — Upgrade apple-developer-docs + apple-review-guidelines to SKILL.md with progressive disclosure
-
-### Phase 10: New Skills & On-Demand Hooks
-**Goal**: Three new skill categories are available for use, and the on-demand hook pattern is established with a second example beyond freeze
-**Depends on**: Phase 9
-**Requirements**: NEW-01, NEW-02, NEW-03, HOOK-01, HOOK-02
-**Success Criteria** (what must be TRUE):
-  1. /freee-analysis skill exists and can fetch freee accounting data via MCP and produce an analysis or visualization output
-  2. /cleanup-artifacts skill exists and inventories pipeline artifacts, build caches, and orphaned outputs, then executes cleanup on request
-  3. /standup skill exists and aggregates git log plus task state into a daily summary in a standard format
-  4. /careful skill exists with a session-scoped on-demand hook that blocks rm -rf, force-push, DROP TABLE, and kubectl delete for the duration of the session
-**Plans**: 2 plans
-Plans:
-- [ ] 10-01-PLAN.md — Create freee-analysis and standup instruction skills
-- [ ] 10-02-PLAN.md — Create cleanup-artifacts skill, careful on-demand hook skill, and verify freeze HOOK-01
+  1. Running gotcha-stats.sh outputs a hit-rate table showing each Gotcha ID, name, and how many times it matched an incident
+  2. gotcha-stats.sh flags any Gotcha with zero hits and labels it as "potentially stale" in the output
+  3. gotcha-stats.sh includes a prevention-effectiveness column showing whether incidents where a Gotcha was surfaced resolved differently than incidents without a match
+  4. Running `/tps-kaizen` shows gotcha-review as a documented subcommand with usage description in SKILL.md
+  5. The tps-kaizen andon Step 0 prompt includes a Gotcha Registry check alongside the existing incident history check
+**Plans**: TBD
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
-Note: Phase 9 depends on Phase 6 (not 8), so phases 8 and 9 can proceed in parallel after phases 6 and 7 complete.
+Phases 1-10 complete. Continuing: 11 → 12 → 13 → 14
+Note: Phases 12 and 13 both depend on Phase 11 and can run in parallel. Phase 14 depends on both 12 and 13.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 6. tps-kaizen Core Quality | 1/1 | Complete   | 2026-03-19 | - |
-| 7. tps-kaizen Scripts & Persistent Data | 2/2 | Complete   | 2026-03-19 | - |
-| 8. QC Audit Skill | 1/2 | In Progress|  | - |
-| 9. Standalone Skill Upgrades | 3/3 | Complete   | 2026-03-19 | - |
-| 10. New Skills & On-Demand Hooks | 2/2 | Complete    | 2026-03-19 | - |
+| 6. tps-kaizen Core Quality | v0.3.0 | 1/1 | Complete | 2026-03-19 |
+| 7. tps-kaizen Scripts & Persistent Data | v0.3.0 | 2/2 | Complete | 2026-03-19 |
+| 8. QC Audit Skill | v0.3.0 | 2/2 | Complete | 2026-03-19 |
+| 9. Standalone Skill Upgrades | v0.3.0 | 3/3 | Complete | 2026-03-19 |
+| 10. New Skills & On-Demand Hooks | v0.3.0 | 2/2 | Complete | 2026-03-19 |
+| 11. Gotchas Registry | v0.4.0 | 0/? | Not started | - |
+| 12. ANDON Auto-Surfacing | v0.4.0 | 0/? | Not started | - |
+| 13. Five Whys → Gotcha Loop | v0.4.0 | 0/? | Not started | - |
+| 14. Analysis, Metrics & Skill Integration | v0.4.0 | 0/? | Not started | - |
