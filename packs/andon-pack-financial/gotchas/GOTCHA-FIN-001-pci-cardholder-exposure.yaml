@@ -1,0 +1,31 @@
+id: "GOTCHA-FIN-001"
+name: "PCI Cardholder Data Exposure"
+pattern: >
+  LLM-generated code logs, prints, or stores cardholder data (PAN, CVV, expiry
+  date) in plaintext, violating PCI-DSS requirements. This pattern most often
+  appears in error handling, debug output, or logging statements where payment
+  objects are passed to string formatters without masking. The code may pass
+  functional tests while silently exposing sensitive data.
+severity: "critical"
+prevention: >
+  Never pass cardholder data fields to logging frameworks, string formatting
+  functions, or any persistence layer in unmasked form. Use tokenisation or
+  masked display (e.g., "****1234" for the last four digits of a PAN). Review
+  all error handlers that touch payment objects for data leakage, and add
+  automated linting rules that flag direct access to PAN, CVV, or expiry fields
+  outside of the payment SDK boundary.
+discovered: "2026-03-19"
+source: "andon-pack-financial"
+tags:
+  - pci-dss
+  - data-exposure
+  - financial
+  - compliance
+  - cardholder-data
+examples:
+  - "logger.error('Payment failed for card %s', payment.pan) — logs full PAN in plaintext"
+  - "raise ValueError(f'Invalid CVV: {card.cvv}') — includes CVV in exception message"
+  - "Storing card.expiry in a debug database table for troubleshooting purposes"
+references:
+  - "packs/andon-pack-financial/knowledge-pack.yaml"
+  - "https://www.pcisecuritystandards.org/document_library/"
