@@ -36,7 +36,7 @@ Phases 6-10 delivered: tps-kaizen SKILL.md with trigger-focused description (14 
 
 - [x] **Phase 11: Gotchas Registry** - YAML schema, seed data, registry loader, and Knowledge Pack extension point (completed 2026-03-19)
 - [x] **Phase 12: ANDON Auto-Surfacing** - Hook integration, pattern matching, confidence scoring, and ranked results (completed 2026-03-19)
-- [ ] **Phase 13: Five Whys → Gotcha Loop** - Candidate generation, gotcha-review subcommand, and hot-reload promotion
+- [x] **Phase 13: Five Whys → Gotcha Loop** - Candidate generation, gotcha-review subcommand, and hot-reload promotion (completed 2026-03-19)
 - [ ] **Phase 14: Analysis, Metrics & Skill Integration** - gotcha-stats.sh, tps-kaizen subcommand docs, and andon Step 0 update
 
 ## Phase Details
@@ -109,5 +109,5 @@ Note: Phases 12 and 13 both depend on Phase 11 and can run in parallel. Phase 14
 | 10. New Skills & On-Demand Hooks | v0.3.0 | 2/2 | Complete | 2026-03-19 |
 | 11. Gotchas Registry | v0.4.0 | 2/2 | Complete | 2026-03-19 |
 | 12. ANDON Auto-Surfacing | 1/1 | Complete   | 2026-03-19 | - |
-| 13. Five Whys → Gotcha Loop | 0/2 | Planned    |  | - |
+| 13. Five Whys → Gotcha Loop | 2/2 | Complete   | 2026-03-19 | - |
 | 14. Analysis, Metrics & Skill Integration | v0.4.0 | 0/? | Not started | - |

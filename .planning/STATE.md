@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v0.1
 milestone_name: milestone
 status: completed
-stopped_at: Completed 12-01-PLAN.md (Gotcha auto-surfacing surfacer + ANDON integration)
-last_updated: "2026-03-19T14:54:39.273Z"
+stopped_at: Completed 13-02-PLAN.md (gotcha-review subcommand + Five Whys candidate integration in SKILL.md)
+last_updated: "2026-03-19T15:00:01.016Z"
 last_activity: 2026-03-19 — Phase 11 Plan 02 complete (7 seed Gotcha YAMLs + pack example)
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 5
   percent: 57
 ---
 
@@ -56,6 +56,7 @@ Progress: [████████████░░░░░░░░] 57% (10
 
 *Updated after each plan completion*
 | Phase 12 P01 | 467s | 2 tasks | 3 files |
+| Phase 13-five-whys-gotcha-loop P02 | 2 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,8 @@ Recent decisions affecting current work:
 - 11-02: Severity conventions established — critical for system-undermining patterns; high for recurrence risk; medium for cultural/counter patterns
 - [Phase 12]: Pattern matching is keyword/substring based (not regex) because GotchaEntry.pattern is natural language prose
 - [Phase 12]: Surfacer never blocks ANDON: GotchaValidationError and unexpected exceptions are caught and empty string returned
+- [Phase 13-five-whys-gotcha-loop]: 13-02: gotcha-review is instruction-based (not a script): SKILL.md tells Claude which filesystem operations to perform
+- [Phase 13-five-whys-gotcha-loop]: 13-02: Immediate availability after promotion explicitly documented — load_gotchas() reads from disk with no caching
 
 ### Pending Todos
 
@@ -84,6 +87,6 @@ None yet. Phase 11 is self-contained (no external dependencies).
 
 ## Session Continuity
 
-Last session: 2026-03-19T14:54:27.287Z
-Stopped at: Completed 12-01-PLAN.md (Gotcha auto-surfacing surfacer + ANDON integration)
+Last session: 2026-03-19T15:00:01.013Z
+Stopped at: Completed 13-02-PLAN.md (gotcha-review subcommand + Five Whys candidate integration in SKILL.md)
 Resume file: None
