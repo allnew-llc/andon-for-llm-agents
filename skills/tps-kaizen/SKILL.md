@@ -1,8 +1,8 @@
 ---
 name: TPS Kaizen
-description: Lean manufacturing (Jidoka + JIT) based anomaly detection, root cause analysis, and continuous improvement skill
+description: "Use when: error, test failure, build failure, incident, broken pipeline, stuck process, regression, anomaly, or any quality defect. Provides Jidoka (stop-and-fix) response, Five Whys root cause analysis, and Kaizen continuous improvement."
 argument-hint: "<subcommand> [args] — andon, five-whys, kaizen, audit"
-version: 1.0.0
+version: 1.1.0
 ---
 
 # TPS Kaizen — Lean Manufacturing Improvement Skill
@@ -13,6 +13,26 @@ version: 1.0.0
 
 This skill applies the two pillars of TPS to software development,
 providing procedures and frameworks for **autonomous improvement activities** when problems occur.
+
+---
+
+## When to Use This Skill
+
+Invoke `/tps-kaizen` when you encounter:
+
+| Trigger | Example | Subcommand |
+|---------|---------|------------|
+| Test failure | `pytest` returns non-zero, assertion errors | `andon` |
+| Build error | Compilation failure, type errors, missing imports | `andon` |
+| Runtime exception | Unhandled error in production or dev server | `andon` |
+| Pipeline stuck | CI/CD hangs, deployment blocked, merge conflict loop | `andon` |
+| Regression | Feature that worked before now fails | `andon` then `five-whys` |
+| Incident | User-reported bug, data corruption, service outage | `andon` |
+| Unexplained behavior | "It works on my machine", flaky tests | `five-whys` |
+| Process inefficiency | Repeated manual work, slow feedback loops | `kaizen` or `audit` |
+| Quality degradation | Increasing defect rate, declining test coverage | `audit` |
+
+**Key signals in user messages**: "error", "failure", "broken", "stuck", "regression", "incident", "not working", "keeps failing", "can't figure out why"
 
 ---
 
@@ -249,3 +269,51 @@ Audit from the 3M (Muda/Mura/Muri) perspective.
 3. **Blame the process, not the person**: Five Whys digs into system issues
 4. **Small experiments**: Improvement is accumulated small experiments, not big bets
 5. **Standards enable improvement**: Without standards, there's no baseline to improve from
+
+---
+
+## Gotchas
+
+### Human Error Stop
+
+Five Whys analysis terminates at "human error" or "I made a mistake" instead of digging into the process/system gap that allowed the mistake. Always ask "Why did the process allow this error?" to reach a structural root cause. A root cause of "human error" means the investigation is incomplete — the system should be designed so that human error either cannot occur or is immediately caught.
+
+### 4-Artifact Close Shortcut
+
+Attempting to close ANDON without all 4 artifacts (evidence.json, analysis.json, actions.json, report.md). The close command will reject if any artifact is missing. Do not create placeholder/empty artifacts just to pass validation — each must contain genuine analysis. Thin artifacts that pass the close check but lack real content undermine the entire Jidoka cycle and leave the root cause unaddressed.
+
+### Meta-ANDON Session Reset
+
+Meta-ANDON failure counters reset at session boundaries. A pattern of 2 failures per session across multiple sessions will never trigger Meta-ANDON (requires 3 in one session). Long-running investigations should stay in one session or explicitly note the cross-session pattern. If continuity is broken, manually count cumulative failures and apply the Meta-ANDON protocol when the threshold is reached.
+
+### Gate-Gaming
+
+LLM agents optimize for Gate pass conditions (required_files, output_markers) instead of genuine quality. This produces thin artifacts that pass validation but fail in practice. Prevention: focus on deliverable quality criteria, not Gate conditions. See `rules/45-quality-driven-execution.md`. The symptom is artifacts that exist and contain the right keywords but provide no actionable insight.
+
+### Confidence Threshold Bypass
+
+ANDON close with root cause confidence below 0.70 is rejected unless the close reason includes `manual-approved:` prefix. Do not inflate confidence scores to bypass the threshold. If genuine confidence is low, get human verification and use `manual-approved: <verified reason>`. Inflated confidence that passes close validation leaves the team with false certainty and no real preventive measures.
+
+### Andon Cord Fear
+
+Team members hesitate to pull the Andon cord (report problems) because they fear blame or disruption. The TPS principle is: pulling the cord is always encouraged. The cost of stopping is always less than the cost of passing defects downstream. A culture where problems are hidden is more dangerous than any individual defect — it means the system cannot detect and respond to failures.
+
+### Fix-and-Forget
+
+Emergency fix restores normal operation, but Step 4 (Investigate) is skipped. The root cause remains, and the same failure recurs. Always complete the full 4-step Jidoka cycle. The emergency fix in Step 3 is explicitly not the end of the process — it is a temporary measure to restart the line while the real fix is developed through investigation and standard-work updates.
+
+---
+
+## Related Skills
+
+| Skill | Path | When to Chain |
+|-------|------|---------------|
+| pipeline-debugging | `skills/pipeline-debugging/SKILL.md` | When ANDON is triggered by a pipeline failure — use pipeline-debugging for environment/config diagnosis before Five Whys for root cause |
+| adversarial-review | `skills/adversarial-review/SKILL.md` | After kaizen improvements — use adversarial-review to stress-test the fix and verify it handles edge cases |
+| qc-audit | `skills/qc-audit/SKILL.md` | After closing ANDON — use qc-audit to verify the fix improved overall quality metrics and did not regress other areas |
+
+### Composition Patterns
+
+**Incident Response Chain**: `andon` (stop + emergency fix) -> `five-whys` (root cause) -> `pipeline-debugging` (if infrastructure-related) -> `adversarial-review` (verify fix robustness)
+
+**Quality Improvement Chain**: `audit` (identify waste) -> `kaizen` (plan improvement) -> `qc-audit` (measure impact)
