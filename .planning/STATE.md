@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v0.1
 milestone_name: milestone
 status: planning
-stopped_at: Completed 10-new-skills-on-demand-hooks-10-02-PLAN.md
-last_updated: "2026-03-19T09:59:00.301Z"
+stopped_at: Completed 10-new-skills-on-demand-hooks-10-01-PLAN.md
+last_updated: "2026-03-19T09:59:12.669Z"
 last_activity: 2026-03-19 — v0.3.0 roadmap created, phases 6-10 defined
 progress:
   total_phases: 5
@@ -97,6 +97,8 @@ Recent decisions affecting current work:
 - [Phase 10-new-skills-on-demand-hooks]: careful-guard.sh uses Bash matcher (not Edit|Write like freeze) — guards command execution not file writes
 - [Phase 10-new-skills-on-demand-hooks]: cleanup-artifacts uses two-phase model: inventory always runs first, cleanup requires explicit /cleanup-artifacts clean
 - [Phase 10-new-skills-on-demand-hooks]: Plugin data (CLAUDE_PLUGIN_DATA) is inventory-only in cleanup-artifacts — never auto-cleaned, requires explicit per-directory approval
+- [Phase 10-new-skills-on-demand-hooks]: freee-analysis is an instruction-only skill with no scripts — all MCP orchestration fits in SKILL.md
+- [Phase 10-new-skills-on-demand-hooks]: standup.sh awk section-range: use found=1;next pattern to skip heading line and avoid matching stop pattern on the same heading
 
 ### Pending Todos
 
@@ -108,6 +110,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T09:58:35.943Z
-Stopped at: Completed 10-new-skills-on-demand-hooks-10-02-PLAN.md
+Last session: 2026-03-19T09:59:12.667Z
+Stopped at: Completed 10-new-skills-on-demand-hooks-10-01-PLAN.md
 Resume file: None

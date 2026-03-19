@@ -36,9 +36,9 @@ Requirements for skill quality and ecosystem milestone. Each maps to roadmap pha
 
 ### New Skill Categories
 
-- [ ] **NEW-01**: /freee-analysis skill exists — fetches freee accounting data via MCP and performs analysis/visualization
+- [x] **NEW-01**: /freee-analysis skill exists — fetches freee accounting data via MCP and performs analysis/visualization
 - [x] **NEW-02**: /cleanup-artifacts skill exists — inventories and cleans pipeline artifacts, build caches, and orphaned outputs
-- [ ] **NEW-03**: /standup skill exists — aggregates git log + task state into daily summary format
+- [x] **NEW-03**: /standup skill exists — aggregates git log + task state into daily summary format
 
 ### On-Demand Hooks
 
@@ -85,9 +85,9 @@ Requirements for skill quality and ecosystem milestone. Each maps to roadmap pha
 | UPGRADE-04 | Phase 9 | Complete |
 | UPGRADE-05 | Phase 9 | Complete |
 | UPGRADE-06 | Phase 9 | Complete |
-| NEW-01 | Phase 10 | Pending |
+| NEW-01 | Phase 10 | Complete |
 | NEW-02 | Phase 10 | Complete |
-| NEW-03 | Phase 10 | Pending |
+| NEW-03 | Phase 10 | Complete |
 | HOOK-01 | Phase 10 | Complete |
 | HOOK-02 | Phase 10 | Complete |
 
