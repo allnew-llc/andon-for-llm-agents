@@ -49,7 +49,16 @@ Stop defects from flowing downstream and learn from every failure — applied to
 
 <!-- Current scope. Building toward these. -->
 
-(Defining in next milestone)
+## Current Milestone: v0.4.0 Gotchas Engine
+
+**Goal:** Gotchas を静的テキストから構造化データ + 自動サーフェシングエンジンに進化させ、Five Whys → Gotcha 登録 → ANDON 照合の学習ループを閉じる
+
+**Target features:**
+- Gotchas Registry（YAML 構造化データ、パターンマッチ対応）
+- ANDON open 時の自動 Gotcha 照合（既知パターン検出・回避策提示）
+- Five Whys → Gotcha 候補の自動生成・登録ループ
+- Knowledge Pack 固有 Gotchas の展開
+- Gotcha ヒット率・有効性の分析スクリプト
 
 ### Out of Scope
 
