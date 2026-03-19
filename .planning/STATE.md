@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v0.1
 milestone_name: milestone
 status: planning
-stopped_at: Completed 08-qc-audit-skill-08-02-PLAN.md
-last_updated: "2026-03-19T08:21:49.129Z"
+stopped_at: Completed 09-standalone-skill-upgrades-09-02-PLAN.md
+last_updated: "2026-03-19T09:01:33.982Z"
 last_activity: 2026-03-19 — v0.3.0 roadmap created, phases 6-10 defined
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 5
-  completed_plans: 5
+  total_plans: 8
+  completed_plans: 6
   percent: 100
 ---
 
@@ -55,6 +55,7 @@ Progress: [██████████] 100%
 | Phase 07-tps-kaizen-scripts-persistent-data P01 | 5 | 2 tasks | 2 files |
 | Phase 08-qc-audit-skill P01 | 9 | 1 tasks | 1 files |
 | Phase 08-qc-audit-skill P02 | 3 | 3 tasks | 3 files |
+| Phase 09-standalone-skill-upgrades P02 | 4 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,10 @@ Recent decisions affecting current work:
 - [Phase 08-qc-audit-skill]: trend.sh is the qc-audit-owned canonical quality trend tool adding percentage rate summary and ASCII bar charts over the tps-kaizen version
 - [Phase 08-qc-audit-skill]: gate-health.sh treats WARN as non-PASS for quality side — any non-PASS maps to WARN/FAIL quadrant for strict quality-gate correlation semantics
 - [Phase 08-qc-audit-skill]: collect-assessments.sh requires CLAUDE_PLUGIN_DATA (exits 1 if unset) — writing to central store is always intentional, unlike read-only scripts that fall back gracefully
+- [Phase 09-standalone-skill-upgrades]: ios-app-factory-operator is compact — no references/ subdirectory needed; external .codex/skills/ links sufficient
+- [Phase 09-standalone-skill-upgrades]: blog-reader-critic criteria tables retained in SKILL.md (core value); Audit Protocol extracted to references/ for progressive disclosure
+- [Phase 09-standalone-skill-upgrades]: Three named Gotchas added to blog-reader-critic: Persona Drift, Confirmation Bias, Kindness Creep — documenting persona degradation failure modes
+- [Phase 09-standalone-skill-upgrades]: ios-app-factory-operator Japanese section headers translated to English for consistency with Phase 6 SKILL.md pattern
 
 ### Pending Todos
 
@@ -90,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T08:17:49.419Z
-Stopped at: Completed 08-qc-audit-skill-08-02-PLAN.md
+Last session: 2026-03-19T09:01:33.979Z
+Stopped at: Completed 09-standalone-skill-upgrades-09-02-PLAN.md
 Resume file: None
