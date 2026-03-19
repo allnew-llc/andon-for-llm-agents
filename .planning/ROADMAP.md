@@ -30,7 +30,7 @@ Phases 4-5 delivered production hardening: analysis paralysis guard, context qua
 - [x] **Phase 7: tps-kaizen Scripts & Persistent Data** - scripts/ directory with analysis tools and persistent incident history (completed 2026-03-19)
 - [ ] **Phase 8: QC Audit Skill** - New /qc-audit skill with quality assessment, trend analysis, and gate correlation
 - [x] **Phase 9: Standalone Skill Upgrades** - Migrate 6 existing .md skills to SKILL.md structure with progressive disclosure (completed 2026-03-19)
-- [ ] **Phase 10: New Skills & On-Demand Hooks** - Three new skill categories and session-scoped on-demand hook pattern
+- [x] **Phase 10: New Skills & On-Demand Hooks** - Three new skill categories and session-scoped on-demand hook pattern (completed 2026-03-19)
 
 ## Phase Details
 
@@ -116,4 +116,4 @@ Note: Phase 9 depends on Phase 6 (not 8), so phases 8 and 9 can proceed in paral
 | 7. tps-kaizen Scripts & Persistent Data | 2/2 | Complete   | 2026-03-19 | - |
 | 8. QC Audit Skill | 1/2 | In Progress|  | - |
 | 9. Standalone Skill Upgrades | 3/3 | Complete   | 2026-03-19 | - |
-| 10. New Skills & On-Demand Hooks | v0.3.0 | 0/2 | Not started | - |
+| 10. New Skills & On-Demand Hooks | 2/2 | Complete   | 2026-03-19 | - |

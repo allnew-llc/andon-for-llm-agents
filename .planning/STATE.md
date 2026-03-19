@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v0.1
 milestone_name: milestone
 status: planning
-stopped_at: Completed 09-standalone-skill-upgrades-09-03-PLAN.md
-last_updated: "2026-03-19T09:10:05.531Z"
+stopped_at: Completed 10-new-skills-on-demand-hooks-10-02-PLAN.md
+last_updated: "2026-03-19T09:59:00.301Z"
 last_activity: 2026-03-19 — v0.3.0 roadmap created, phases 6-10 defined
 progress:
   total_phases: 5
-  completed_phases: 4
-  total_plans: 8
-  completed_plans: 8
+  completed_phases: 5
+  total_plans: 10
+  completed_plans: 10
   percent: 100
 ---
 
@@ -58,6 +58,8 @@ Progress: [██████████] 100%
 | Phase 09-standalone-skill-upgrades P02 | 4 | 2 tasks | 5 files |
 | Phase 09-standalone-skill-upgrades P01 | 5 | 2 tasks | 4 files |
 | Phase 09-standalone-skill-upgrades P03 | 8 | 2 tasks | 10 files |
+| Phase 10-new-skills-on-demand-hooks P02 | 4 | 2 tasks | 5 files |
+| Phase 10-new-skills-on-demand-hooks P01 | 258 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -92,6 +94,9 @@ Recent decisions affecting current work:
 - [Phase 09-standalone-skill-upgrades]: Framework Index table pattern for apple-developer-docs: each framework gets its own reference file, SKILL.md stays ~80 lines with Quick Reference property wrapper table
 - [Phase 09-standalone-skill-upgrades]: Top 10 Rejection Causes table stays in apple-review-guidelines SKILL.md (highest-value quick-lookup), full section details and complete checklist moved to references/ for progressive disclosure
 - [Phase 09-standalone-skill-upgrades]: Info.plist settings placed in references/concurrency.md alongside Swift 6 concurrency — both relate to app configuration and are commonly needed together
+- [Phase 10-new-skills-on-demand-hooks]: careful-guard.sh uses Bash matcher (not Edit|Write like freeze) — guards command execution not file writes
+- [Phase 10-new-skills-on-demand-hooks]: cleanup-artifacts uses two-phase model: inventory always runs first, cleanup requires explicit /cleanup-artifacts clean
+- [Phase 10-new-skills-on-demand-hooks]: Plugin data (CLAUDE_PLUGIN_DATA) is inventory-only in cleanup-artifacts — never auto-cleaned, requires explicit per-directory approval
 
 ### Pending Todos
 
@@ -103,6 +108,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T09:05:52.236Z
-Stopped at: Completed 09-standalone-skill-upgrades-09-03-PLAN.md
+Last session: 2026-03-19T09:58:35.943Z
+Stopped at: Completed 10-new-skills-on-demand-hooks-10-02-PLAN.md
 Resume file: None

@@ -37,13 +37,13 @@ Requirements for skill quality and ecosystem milestone. Each maps to roadmap pha
 ### New Skill Categories
 
 - [ ] **NEW-01**: /freee-analysis skill exists — fetches freee accounting data via MCP and performs analysis/visualization
-- [ ] **NEW-02**: /cleanup-artifacts skill exists — inventories and cleans pipeline artifacts, build caches, and orphaned outputs
+- [x] **NEW-02**: /cleanup-artifacts skill exists — inventories and cleans pipeline artifacts, build caches, and orphaned outputs
 - [ ] **NEW-03**: /standup skill exists — aggregates git log + task state into daily summary format
 
 ### On-Demand Hooks
 
-- [ ] **HOOK-01**: freeze skill registers on-demand PreToolUse hook that blocks Edit/Write outside frozen directory (only active when /freeze is invoked)
-- [ ] **HOOK-02**: /careful skill exists with on-demand hook blocking rm -rf, force-push, DROP TABLE, kubectl delete (session-scoped activation)
+- [x] **HOOK-01**: freeze skill registers on-demand PreToolUse hook that blocks Edit/Write outside frozen directory (only active when /freeze is invoked)
+- [x] **HOOK-02**: /careful skill exists with on-demand hook blocking rm -rf, force-push, DROP TABLE, kubectl delete (session-scoped activation)
 
 ## Future Requirements
 
@@ -86,10 +86,10 @@ Requirements for skill quality and ecosystem milestone. Each maps to roadmap pha
 | UPGRADE-05 | Phase 9 | Complete |
 | UPGRADE-06 | Phase 9 | Complete |
 | NEW-01 | Phase 10 | Pending |
-| NEW-02 | Phase 10 | Pending |
+| NEW-02 | Phase 10 | Complete |
 | NEW-03 | Phase 10 | Pending |
-| HOOK-01 | Phase 10 | Pending |
-| HOOK-02 | Phase 10 | Pending |
+| HOOK-01 | Phase 10 | Complete |
+| HOOK-02 | Phase 10 | Complete |
 
 **Coverage:**
 - v0.3.0 requirements: 23 total
