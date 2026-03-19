@@ -23,8 +23,8 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 
 ### Five Whys → Gotcha Loop
 
-- [ ] **LOOP-01**: Five Whys completion generates a Gotcha candidate YAML file in gotchas/candidates/
-- [ ] **LOOP-02**: Gotcha candidate includes auto-extracted pattern from the Five Whys root cause
+- [x] **LOOP-01**: Five Whys completion generates a Gotcha candidate YAML file in gotchas/candidates/
+- [x] **LOOP-02**: Gotcha candidate includes auto-extracted pattern from the Five Whys root cause
 - [x] **LOOP-03**: /tps-kaizen gotcha-review subcommand lists candidates and promotes approved ones to gotchas/
 - [x] **LOOP-04**: Promoted Gotchas are immediately available for ANDON auto-surfacing (no restart required)
 
@@ -68,8 +68,8 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 | SURF-02 | Phase 12 | Complete |
 | SURF-03 | Phase 12 | Complete |
 | SURF-04 | Phase 12 | Complete |
-| LOOP-01 | Phase 13 | Pending |
-| LOOP-02 | Phase 13 | Pending |
+| LOOP-01 | Phase 13 | Complete |
+| LOOP-02 | Phase 13 | Complete |
 | LOOP-03 | Phase 13 | Complete |
 | LOOP-04 | Phase 13 | Complete |
 | METRIC-01 | Phase 14 | Pending |
