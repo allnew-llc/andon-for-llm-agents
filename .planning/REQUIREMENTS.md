@@ -31,8 +31,8 @@ Requirements for skill quality and ecosystem milestone. Each maps to roadmap pha
 - [x] **UPGRADE-02**: cherry-pick-prod.md upgraded to cherry-pick-prod/ SKILL.md structure with Gotchas and references/
 - [x] **UPGRADE-03**: ios-app-factory-operator.md upgraded to SKILL.md structure with trigger-focused description
 - [x] **UPGRADE-04**: blog-reader-critic.md upgraded to SKILL.md structure with trigger-focused description
-- [ ] **UPGRADE-05**: apple-developer-docs.md upgraded to SKILL.md structure with progressive disclosure (references/)
-- [ ] **UPGRADE-06**: apple-review-guidelines.md upgraded to SKILL.md structure with progressive disclosure (references/)
+- [x] **UPGRADE-05**: apple-developer-docs.md upgraded to SKILL.md structure with progressive disclosure (references/)
+- [x] **UPGRADE-06**: apple-review-guidelines.md upgraded to SKILL.md structure with progressive disclosure (references/)
 
 ### New Skill Categories
 
@@ -83,8 +83,8 @@ Requirements for skill quality and ecosystem milestone. Each maps to roadmap pha
 | UPGRADE-02 | Phase 9 | Complete |
 | UPGRADE-03 | Phase 9 | Complete |
 | UPGRADE-04 | Phase 9 | Complete |
-| UPGRADE-05 | Phase 9 | Pending |
-| UPGRADE-06 | Phase 9 | Pending |
+| UPGRADE-05 | Phase 9 | Complete |
+| UPGRADE-06 | Phase 9 | Complete |
 | NEW-01 | Phase 10 | Pending |
 | NEW-02 | Phase 10 | Pending |
 | NEW-03 | Phase 10 | Pending |

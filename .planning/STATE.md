@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v0.1
 milestone_name: milestone
 status: planning
-stopped_at: Completed 09-standalone-skill-upgrades-09-01-PLAN.md
-last_updated: "2026-03-19T09:02:54.503Z"
+stopped_at: Completed 09-standalone-skill-upgrades-09-03-PLAN.md
+last_updated: "2026-03-19T09:05:52.239Z"
 last_activity: 2026-03-19 — v0.3.0 roadmap created, phases 6-10 defined
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
   percent: 100
 ---
 
@@ -57,6 +57,7 @@ Progress: [██████████] 100%
 | Phase 08-qc-audit-skill P02 | 3 | 3 tasks | 3 files |
 | Phase 09-standalone-skill-upgrades P02 | 4 | 2 tasks | 5 files |
 | Phase 09-standalone-skill-upgrades P01 | 5 | 2 tasks | 4 files |
+| Phase 09-standalone-skill-upgrades P03 | 8 | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -88,6 +89,9 @@ Recent decisions affecting current work:
 - [Phase 09-standalone-skill-upgrades]: On-demand hook pattern: freeze-guard.sh registration is permanent in settings.json, activation via state file toggle — zero overhead when inactive
 - [Phase 09-standalone-skill-upgrades]: Gotchas as named ### patterns with explanatory paragraphs (not bullets) — explains structural root cause of each failure mode
 - [Phase 09-standalone-skill-upgrades]: Progressive disclosure: heavy details extracted to references/ files, SKILL.md stays readable for first-time users
+- [Phase 09-standalone-skill-upgrades]: Framework Index table pattern for apple-developer-docs: each framework gets its own reference file, SKILL.md stays ~80 lines with Quick Reference property wrapper table
+- [Phase 09-standalone-skill-upgrades]: Top 10 Rejection Causes table stays in apple-review-guidelines SKILL.md (highest-value quick-lookup), full section details and complete checklist moved to references/ for progressive disclosure
+- [Phase 09-standalone-skill-upgrades]: Info.plist settings placed in references/concurrency.md alongside Swift 6 concurrency — both relate to app configuration and are commonly needed together
 
 ### Pending Todos
 
@@ -99,6 +103,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T09:02:54.500Z
-Stopped at: Completed 09-standalone-skill-upgrades-09-01-PLAN.md
+Last session: 2026-03-19T09:05:52.236Z
+Stopped at: Completed 09-standalone-skill-upgrades-09-03-PLAN.md
 Resume file: None
