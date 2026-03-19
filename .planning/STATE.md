@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v0.1
 milestone_name: milestone
 status: completed
-stopped_at: Completed 14-02-PLAN.md (andon Step 0 Gotcha Registry check + INTEG-01/INTEG-02 complete)
-last_updated: "2026-03-19T15:17:06Z"
-last_activity: 2026-03-19 — Phase 14 Plan 02 complete (Step 0 Gotcha Registry check in SKILL.md)
+stopped_at: Completed 14-01-PLAN.md (gotcha-stats.sh metrics script — METRIC-01/02/03)
+last_updated: "2026-03-20T06:20:00Z"
+last_activity: 2026-03-20 — Phase 14 Plan 01 complete (gotcha-stats.sh hit rate, staleness, effectiveness)
 progress:
   total_phases: 4
   completed_phases: 4
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 Phase: 14 of 14 (Analysis, Metrics, Skill Integration)
 Plan: 2 of 2 in current phase
 Status: Complete
-Last activity: 2026-03-19 — Phase 14 Plan 02 complete (andon Step 0 Gotcha Registry check + INTEG-01/INTEG-02)
+Last activity: 2026-03-20 — Phase 14 Plan 01 complete (gotcha-stats.sh — METRIC-01/02/03)
 
 Progress: [████████████████████] 100% (v0.4.0 milestone complete — all 4 phases done)
 
@@ -58,6 +58,7 @@ Progress: [████████████████████] 100% (v
 | Phase 12 P01 | 467s | 2 tasks | 3 files |
 | Phase 13-five-whys-gotcha-loop P02 | 2 | 1 tasks | 1 files |
 | Phase 14-analysis-metrics-skill-integration P02 | 9min | 1 task | 1 file |
+| Phase 14-analysis-metrics-skill-integration P01 | 4min | 2 tasks | 1 file |
 
 ## Accumulated Context
 
@@ -79,6 +80,8 @@ Recent decisions affecting current work:
 - [Phase 13-five-whys-gotcha-loop]: 13-02: Immediate availability after promotion explicitly documented — load_gotchas() reads from disk with no caching
 - [Phase 14]: 14-02: Step 0 uses [GOTCHA_MATCH] hook output from gotcha_surfacer.py rather than requiring manual registry scanning — leverages Phase 12 infrastructure
 - [Phase 14]: 14-02: INTEG-01 verified as already satisfied by Phase 13 (gotcha-review present with 4 references)
+- [Phase 14]: 14-01: CLAUDE_PLUGIN_DATA takes priority over ANDON_STATE_DIR in gotcha-stats.sh (matches hook convention)
+- [Phase 14]: 14-01: 40%+ keyword threshold in bash mirrors gotcha_surfacer.py PARTIAL match — consistent hit counting across live and retrospective analysis
 
 ### Pending Todos
 
@@ -90,6 +93,6 @@ None yet. Phase 11 is self-contained (no external dependencies).
 
 ## Session Continuity
 
-Last session: 2026-03-19T15:17:06Z
-Stopped at: Completed 14-02-PLAN.md (andon Step 0 Gotcha Registry check + INTEG-01/INTEG-02 complete)
+Last session: 2026-03-20T06:20:00Z
+Stopped at: Completed 14-01-PLAN.md (gotcha-stats.sh metrics script — METRIC-01/02/03)
 Resume file: None

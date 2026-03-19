@@ -30,9 +30,9 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 
 ### Analysis & Metrics
 
-- [ ] **METRIC-01**: gotcha-stats.sh script reports Gotcha hit rates (how often each Gotcha matched an incident)
-- [ ] **METRIC-02**: gotcha-stats.sh identifies Gotchas with zero hits (potentially stale or too narrow pattern)
-- [ ] **METRIC-03**: gotcha-stats.sh shows prevention effectiveness (incidents where Gotcha was surfaced vs resolved faster)
+- [x] **METRIC-01**: gotcha-stats.sh script reports Gotcha hit rates (how often each Gotcha matched an incident)
+- [x] **METRIC-02**: gotcha-stats.sh identifies Gotchas with zero hits (potentially stale or too narrow pattern)
+- [x] **METRIC-03**: gotcha-stats.sh shows prevention effectiveness (incidents where Gotcha was surfaced vs resolved faster)
 
 ### Skill Integration
 
@@ -72,9 +72,9 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 | LOOP-02 | Phase 13 | Complete |
 | LOOP-03 | Phase 13 | Complete |
 | LOOP-04 | Phase 13 | Complete |
-| METRIC-01 | Phase 14 | Pending |
-| METRIC-02 | Phase 14 | Pending |
-| METRIC-03 | Phase 14 | Pending |
+| METRIC-01 | Phase 14 | Complete |
+| METRIC-02 | Phase 14 | Complete |
+| METRIC-03 | Phase 14 | Complete |
 | INTEG-01 | Phase 14 | Complete (2026-03-19) |
 | INTEG-02 | Phase 14 | Complete (2026-03-19) |
 
