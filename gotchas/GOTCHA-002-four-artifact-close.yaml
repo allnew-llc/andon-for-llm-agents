@@ -1,0 +1,29 @@
+id: "GOTCHA-002"
+name: "4-Artifact Close Shortcut"
+pattern: >
+  Attempting to close ANDON without all four required artifacts (evidence.json,
+  analysis.json, actions.json, report.md), or creating placeholder/empty
+  artifacts solely to pass the close validation check. Thin artifacts that
+  satisfy the file-existence check but contain no genuine analysis undermine
+  the entire Jidoka cycle.
+severity: "critical"
+prevention: >
+  Each of the four artifacts must contain genuine analysis produced during the
+  ANDON session. Do not create empty or template-filled files just to unblock
+  the close command. If an artifact cannot be completed, the ANDON should
+  remain open until investigation is thorough. The close command is the last
+  gate, not a rubber stamp.
+discovered: "2026-03-19"
+source: "tps-kaizen"
+tags:
+  - andon
+  - jidoka
+  - artifacts
+  - gate-gaming
+examples:
+  - "Creating an analysis.json with '{\"root_cause\": \"TBD\"}' to pass the close check"
+  - "Writing a report.md containing only a section header and a placeholder sentence"
+references:
+  - "skills/tps-kaizen/SKILL.md#andon"
+  - "skills/tps-kaizen/references/jidoka-response.md"
+  - ".claude/rules/70-kaizen-learning.md"

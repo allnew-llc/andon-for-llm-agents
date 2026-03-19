@@ -1,0 +1,27 @@
+id: "GOTCHA-001"
+name: "Human Error Stop"
+pattern: >
+  Five Whys analysis terminates at "human error" or "I made a mistake" instead
+  of digging into the process or system gap that allowed the mistake to occur.
+  The investigation is declared complete without identifying a structural root
+  cause, leaving the system unchanged and the defect free to recur.
+severity: "high"
+prevention: >
+  Always ask "Why did the process allow this error?" to reach a structural root
+  cause. A root cause of "human error" means the investigation is incomplete.
+  The system should be designed so that human error either cannot occur or is
+  immediately caught via poka-yoke (type system, linter, pre-commit hook).
+discovered: "2026-03-19"
+source: "tps-kaizen"
+tags:
+  - five-whys
+  - root-cause
+  - jidoka
+  - investigation
+examples:
+  - "Five Whys stops at 'the developer forgot to validate input' without asking why the validation was optional"
+  - "Root cause listed as 'operator error' with no process change recommended"
+references:
+  - "skills/tps-kaizen/SKILL.md#five-whys"
+  - "skills/tps-kaizen/references/five-whys-template.md"
+  - ".claude/rules/70-kaizen-learning.md"

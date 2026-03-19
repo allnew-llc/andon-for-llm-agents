@@ -1,0 +1,29 @@
+id: "GOTCHA-006"
+name: "Andon Cord Fear"
+pattern: >
+  Team members or agents hesitate to pull the Andon cord (report problems,
+  halt the pipeline, raise ANDON) because they fear blame, disruption, or
+  appearing incompetent. Problems are hidden or minimised instead of surfaced.
+  A culture where failures are concealed is more dangerous than any individual
+  defect because it prevents the system from detecting and responding to
+  failures.
+severity: "medium"
+prevention: >
+  Pulling the Andon cord should always be encouraged. The TPS principle is that
+  the cost of stopping is always less than the cost of passing defects
+  downstream. Reinforce that raising ANDON is correct behaviour, not a sign of
+  failure. Reward transparency and fast escalation over hiding problems until
+  they become crises.
+discovered: "2026-03-19"
+source: "tps-kaizen"
+tags:
+  - culture
+  - andon
+  - jidoka
+  - psychological-safety
+examples:
+  - "Agent continues past a failing test rather than raising ANDON to avoid delaying the pipeline"
+  - "Developer does not report a flaky test because 'it usually passes' and does not want to slow the team"
+references:
+  - "skills/tps-kaizen/SKILL.md#core-principles"
+  - ".claude/rules/70-kaizen-learning.md"

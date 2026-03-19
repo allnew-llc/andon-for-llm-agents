@@ -1,0 +1,30 @@
+id: "GOTCHA-007"
+name: "Fix-and-Forget"
+pattern: >
+  An emergency fix restores normal operation and the team considers the
+  incident closed, but Step 4 of the Jidoka cycle (Investigate — find root
+  cause and prevent recurrence) is skipped. The structural root cause remains,
+  the same failure recurs, and no standard work is updated to embed prevention.
+  The emergency fix in Step 3 is explicitly a temporary measure to restart the
+  line, not a permanent solution.
+severity: "high"
+prevention: >
+  Always complete the full 4-step Jidoka cycle. Treat Step 3 (emergency fix)
+  as a line-restart, not a resolution. After normal operation resumes, schedule
+  and complete Step 4: run Five Whys, design prevention measures, embed them
+  in standard work, and add automatic detection for the same class of problems.
+  Mark the ANDON as open until Step 4 is complete.
+discovered: "2026-03-19"
+source: "tps-kaizen"
+tags:
+  - jidoka
+  - root-cause
+  - prevention
+  - standard-work
+examples:
+  - "Bug is patched and deployed; no Five Whys is run; the same bug class recurs in a different module three weeks later"
+  - "Pipeline failure fixed by reverting a commit; root cause investigation marked 'future work' and never completed"
+references:
+  - "skills/tps-kaizen/SKILL.md#step-4-investigate"
+  - "skills/tps-kaizen/references/jidoka-response.md"
+  - ".claude/rules/70-kaizen-learning.md"

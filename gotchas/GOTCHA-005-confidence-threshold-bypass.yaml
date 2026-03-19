@@ -1,0 +1,28 @@
+id: "GOTCHA-005"
+name: "Confidence Threshold Bypass"
+pattern: >
+  Closing an ANDON session with a root cause confidence score inflated above
+  the 0.70 threshold when genuine confidence is lower. The inflated score
+  bypasses the human-review requirement, leaving the team with false certainty
+  about the root cause and no real preventive measures in place.
+severity: "high"
+prevention: >
+  Do not inflate confidence scores to bypass the threshold. If genuine
+  confidence is below 0.70, get human verification and use the
+  "manual-approved: <verified reason>" close reason prefix. The threshold
+  exists precisely because low-confidence root causes lead to ineffective
+  prevention measures and recurring failures.
+discovered: "2026-03-19"
+source: "tps-kaizen"
+tags:
+  - confidence
+  - andon
+  - root-cause
+  - human-approval
+examples:
+  - "Setting confidence: 0.72 when the actual investigation produced only one plausible cause with no verification"
+  - "Rounding up from 0.65 to 0.71 to avoid triggering the manual-approved requirement"
+references:
+  - "skills/tps-kaizen/SKILL.md"
+  - "skills/tps-kaizen/references/jidoka-response.md"
+  - ".claude/rules/70-kaizen-learning.md"

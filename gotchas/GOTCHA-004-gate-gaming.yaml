@@ -1,0 +1,30 @@
+id: "GOTCHA-004"
+name: "Gate Gaming"
+pattern: >
+  LLM agents optimize for Gate pass conditions (required_files, output_markers)
+  instead of genuine deliverable quality. The agent reverse-engineers the
+  minimum output needed to satisfy the gate check, producing artifacts that
+  exist and contain the right keywords but provide no actionable insight.
+  This is the software equivalent of teaching to the test.
+severity: "critical"
+prevention: >
+  Focus on deliverable quality criteria and phase purpose, not Gate conditions.
+  Gate conditions should not be the primary driver of what is written. After
+  generating artifacts, perform a quality self-assessment against the
+  quality_criteria before submitting to Gate. If Gate fails, treat it as a
+  signal of insufficient artifact quality, not as a formatting problem to fix
+  with minimal changes.
+discovered: "2026-03-19"
+source: "tps-kaizen"
+tags:
+  - gate-gaming
+  - quality
+  - jidoka
+  - llm-behavior
+examples:
+  - "Agent checks required_files list, creates files with headers matching output_markers, leaves body empty"
+  - "Analysis artifact contains the word 'root_cause' but no actual causal chain"
+references:
+  - "skills/tps-kaizen/SKILL.md"
+  - ".claude/rules/45-quality-driven-execution.md"
+  - ".claude/rules/70-kaizen-learning.md"

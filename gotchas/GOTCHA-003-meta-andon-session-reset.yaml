@@ -1,0 +1,27 @@
+id: "GOTCHA-003"
+name: "Meta-ANDON Session Reset"
+pattern: >
+  Meta-ANDON failure counters reset at session boundaries, so a pattern of two
+  failures per session across multiple sessions never accumulates enough to
+  trigger the Meta-ANDON threshold (three failures in one session). The
+  repeated failure pattern goes undetected because each session appears normal
+  in isolation.
+severity: "medium"
+prevention: >
+  Long-running investigations should stay in one session or explicitly note the
+  cross-session pattern in the ANDON artifacts. If session continuity is broken,
+  manually count cumulative failures across sessions and apply the Meta-ANDON
+  protocol when the threshold (three failures) is reached, regardless of session
+  boundaries.
+discovered: "2026-03-19"
+source: "tps-kaizen"
+tags:
+  - meta-andon
+  - session
+  - failure-pattern
+  - counters
+examples:
+  - "Session 1: 2 pipeline failures. Session 2: 2 pipeline failures. Meta-ANDON never triggers because count never reaches 3 in one session."
+references:
+  - "skills/tps-kaizen/SKILL.md"
+  - ".claude/rules/70-kaizen-learning.md#meta-andon"
