@@ -67,35 +67,35 @@ Requirements for skill quality and ecosystem milestone. Each maps to roadmap pha
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SKILL-01 | TBD | Pending |
-| SKILL-02 | TBD | Pending |
-| SKILL-03 | TBD | Pending |
-| SKILL-04 | TBD | Pending |
-| SKILL-05 | TBD | Pending |
-| SKILL-06 | TBD | Pending |
-| SKILL-07 | TBD | Pending |
-| QC-01 | TBD | Pending |
-| QC-02 | TBD | Pending |
-| QC-03 | TBD | Pending |
-| QC-04 | TBD | Pending |
-| QC-05 | TBD | Pending |
-| UPGRADE-01 | TBD | Pending |
-| UPGRADE-02 | TBD | Pending |
-| UPGRADE-03 | TBD | Pending |
-| UPGRADE-04 | TBD | Pending |
-| UPGRADE-05 | TBD | Pending |
-| UPGRADE-06 | TBD | Pending |
-| NEW-01 | TBD | Pending |
-| NEW-02 | TBD | Pending |
-| NEW-03 | TBD | Pending |
-| HOOK-01 | TBD | Pending |
-| HOOK-02 | TBD | Pending |
+| SKILL-01 | Phase 6 | Pending |
+| SKILL-02 | Phase 6 | Pending |
+| SKILL-07 | Phase 6 | Pending |
+| SKILL-03 | Phase 7 | Pending |
+| SKILL-04 | Phase 7 | Pending |
+| SKILL-05 | Phase 7 | Pending |
+| SKILL-06 | Phase 7 | Pending |
+| QC-01 | Phase 8 | Pending |
+| QC-02 | Phase 8 | Pending |
+| QC-03 | Phase 8 | Pending |
+| QC-04 | Phase 8 | Pending |
+| QC-05 | Phase 8 | Pending |
+| UPGRADE-01 | Phase 9 | Pending |
+| UPGRADE-02 | Phase 9 | Pending |
+| UPGRADE-03 | Phase 9 | Pending |
+| UPGRADE-04 | Phase 9 | Pending |
+| UPGRADE-05 | Phase 9 | Pending |
+| UPGRADE-06 | Phase 9 | Pending |
+| NEW-01 | Phase 10 | Pending |
+| NEW-02 | Phase 10 | Pending |
+| NEW-03 | Phase 10 | Pending |
+| HOOK-01 | Phase 10 | Pending |
+| HOOK-02 | Phase 10 | Pending |
 
 **Coverage:**
 - v0.3.0 requirements: 23 total
-- Mapped to phases: 0
-- Unmapped: 23 ⚠️
+- Mapped to phases: 23
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-19*
-*Last updated: 2026-03-19 after initial definition*
+*Last updated: 2026-03-19 after roadmap creation (phases 6-10 assigned)*
