@@ -3,99 +3,86 @@
 **Defined:** 2026-03-19
 **Core Value:** Stop defects from flowing downstream and learn from every failure
 
-## v0.3.0 Requirements
+## v0.4.0 Requirements
 
-Requirements for skill quality and ecosystem milestone. Each maps to roadmap phases.
+Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 
-### TPS-Kaizen Skill Improvement
+### Gotchas Registry
 
-- [x] **SKILL-01**: tps-kaizen SKILL.md description is trigger-focused (lists when to call: error, failure, incident, broken, stuck, regression)
-- [x] **SKILL-02**: tps-kaizen has Gotchas section with 5+ documented failure patterns (human error stop, 4-artifact close, Meta-ANDON session reset, Gate-Gaming, confidence threshold)
-- [x] **SKILL-03**: tps-kaizen has scripts/ directory with aggregate-incidents.sh (past incident aggregation and pattern analysis)
-- [x] **SKILL-04**: tps-kaizen has scripts/five-whys-validator.sh (completeness check: 5 levels reached, verification column filled)
-- [x] **SKILL-05**: tps-kaizen has scripts/quality-trend.sh (quality self-assessment trend over time)
-- [x] **SKILL-06**: tps-kaizen andon subcommand auto-references past incident history from ${CLAUDE_PLUGIN_DATA}/kaizen/ and detects recurring patterns
-- [x] **SKILL-07**: tps-kaizen SKILL.md includes related_skills section linking to pipeline-debugging, adversarial-review, qc-audit
+- [ ] **REG-01**: Gotchas Registry schema defined (YAML format with id, name, pattern, severity, prevention, discovered, source fields)
+- [ ] **REG-02**: gotchas/ directory exists in repo root with at least 5 seed Gotchas from existing tps-kaizen Gotchas section
+- [ ] **REG-03**: Registry loader (Python) can parse all YAML files in gotchas/ and validate schema
+- [ ] **REG-04**: Knowledge Packs can contribute pack-specific Gotchas via packs/{pack-name}/gotchas/ directory
 
-### QC Audit Skill
+### ANDON Auto-Surfacing
 
-- [x] **QC-01**: /qc-audit skill exists with SKILL.md, trigger-focused description, and Gotchas
-- [x] **QC-02**: /qc-audit (no args) executes quality self-assessment for the current phase using quality_criteria from deliverable manifest
-- [x] **QC-03**: /qc-audit trend reads ${CLAUDE_PLUGIN_DATA}/qc/ history and displays trend of FAIL/WARN/OK rates over time
-- [x] **QC-04**: /qc-audit gate-health analyzes correlation between quality scores and Gate pass rates
-- [x] **QC-05**: /qc-audit has scripts/collect-assessments.sh that aggregates quality-self-assessment JSON files from project dirs into central store
+- [ ] **SURF-01**: ANDON open hook auto-loads Gotchas Registry and matches current error against pattern fields
+- [ ] **SURF-02**: Matching Gotchas are injected into additionalContext with prevention advice when ANDON opens
+- [ ] **SURF-03**: Match results include confidence score (exact match, partial match, category match)
+- [ ] **SURF-04**: Multiple Gotcha matches are ranked by relevance and presented in order
 
-### Standalone Skill Upgrades
+### Five Whys → Gotcha Loop
 
-- [x] **UPGRADE-01**: freeze.md upgraded to freeze/ SKILL.md structure with on-demand hooks (dynamic hook registration on skill activation)
-- [x] **UPGRADE-02**: cherry-pick-prod.md upgraded to cherry-pick-prod/ SKILL.md structure with Gotchas and references/
-- [x] **UPGRADE-03**: ios-app-factory-operator.md upgraded to SKILL.md structure with trigger-focused description
-- [x] **UPGRADE-04**: blog-reader-critic.md upgraded to SKILL.md structure with trigger-focused description
-- [x] **UPGRADE-05**: apple-developer-docs.md upgraded to SKILL.md structure with progressive disclosure (references/)
-- [x] **UPGRADE-06**: apple-review-guidelines.md upgraded to SKILL.md structure with progressive disclosure (references/)
+- [ ] **LOOP-01**: Five Whys completion generates a Gotcha candidate YAML file in gotchas/candidates/
+- [ ] **LOOP-02**: Gotcha candidate includes auto-extracted pattern from the Five Whys root cause
+- [ ] **LOOP-03**: /tps-kaizen gotcha-review subcommand lists candidates and promotes approved ones to gotchas/
+- [ ] **LOOP-04**: Promoted Gotchas are immediately available for ANDON auto-surfacing (no restart required)
 
-### New Skill Categories
+### Analysis & Metrics
 
-- [x] **NEW-01**: /freee-analysis skill exists — fetches freee accounting data via MCP and performs analysis/visualization
-- [x] **NEW-02**: /cleanup-artifacts skill exists — inventories and cleans pipeline artifacts, build caches, and orphaned outputs
-- [x] **NEW-03**: /standup skill exists — aggregates git log + task state into daily summary format
+- [ ] **METRIC-01**: gotcha-stats.sh script reports Gotcha hit rates (how often each Gotcha matched an incident)
+- [ ] **METRIC-02**: gotcha-stats.sh identifies Gotchas with zero hits (potentially stale or too narrow pattern)
+- [ ] **METRIC-03**: gotcha-stats.sh shows prevention effectiveness (incidents where Gotcha was surfaced vs resolved faster)
 
-### On-Demand Hooks
+### Skill Integration
 
-- [x] **HOOK-01**: freeze skill registers on-demand PreToolUse hook that blocks Edit/Write outside frozen directory (only active when /freeze is invoked)
-- [x] **HOOK-02**: /careful skill exists with on-demand hook blocking rm -rf, force-push, DROP TABLE, kubectl delete (session-scoped activation)
+- [ ] **INTEG-01**: tps-kaizen SKILL.md updated with gotcha-review subcommand documentation
+- [ ] **INTEG-02**: tps-kaizen andon Step 0 updated to include Gotcha Registry check alongside incident history check
 
 ## Future Requirements
 
-### v0.4.0 Candidates
+### v0.5.0 Candidates
 
-- **MEASURE-01**: Skill triggering accuracy dashboard (expected vs actual invocations)
-- **MEASURE-02**: Cross-session learning analytics (pattern recurrence detection over weeks)
-- **COMPOSE-01**: Skill dependency graph visualization
-- **PACK-02**: Additional knowledge packs (kubernetes, terraform, AWS CDK)
+- **COLLAB-01**: Gotcha sharing across teams via git-based registry sync
+- **ML-01**: Pattern similarity scoring using embedding distance (beyond regex)
+- **VISUAL-01**: Gotcha dependency graph visualization
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Plugin marketplace publishing | Separate workflow, not part of skill quality |
-| Non-Claude Code agent support | Current focus is Claude Code hooks only |
-| Web-based skill editor | CLI-first philosophy |
-| Automated skill generation from code | Too speculative for v0.3.0 |
+| Web-based Gotcha editor | CLI-first philosophy |
+| Real-time Gotcha push notifications | Batch analysis sufficient |
+| Auto-promotion of candidates (no human review) | Safety — human approval required for pattern promotion |
+| Breaking changes to existing hooks | Backward compat constraint |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SKILL-01 | Phase 6 | Complete |
-| SKILL-02 | Phase 6 | Complete |
-| SKILL-07 | Phase 6 | Complete |
-| SKILL-03 | Phase 7 | Complete |
-| SKILL-04 | Phase 7 | Complete |
-| SKILL-05 | Phase 7 | Complete |
-| SKILL-06 | Phase 7 | Complete |
-| QC-01 | Phase 8 | Complete |
-| QC-02 | Phase 8 | Complete |
-| QC-03 | Phase 8 | Complete |
-| QC-04 | Phase 8 | Complete |
-| QC-05 | Phase 8 | Complete |
-| UPGRADE-01 | Phase 9 | Complete |
-| UPGRADE-02 | Phase 9 | Complete |
-| UPGRADE-03 | Phase 9 | Complete |
-| UPGRADE-04 | Phase 9 | Complete |
-| UPGRADE-05 | Phase 9 | Complete |
-| UPGRADE-06 | Phase 9 | Complete |
-| NEW-01 | Phase 10 | Complete |
-| NEW-02 | Phase 10 | Complete |
-| NEW-03 | Phase 10 | Complete |
-| HOOK-01 | Phase 10 | Complete |
-| HOOK-02 | Phase 10 | Complete |
+| REG-01 | TBD | Pending |
+| REG-02 | TBD | Pending |
+| REG-03 | TBD | Pending |
+| REG-04 | TBD | Pending |
+| SURF-01 | TBD | Pending |
+| SURF-02 | TBD | Pending |
+| SURF-03 | TBD | Pending |
+| SURF-04 | TBD | Pending |
+| LOOP-01 | TBD | Pending |
+| LOOP-02 | TBD | Pending |
+| LOOP-03 | TBD | Pending |
+| LOOP-04 | TBD | Pending |
+| METRIC-01 | TBD | Pending |
+| METRIC-02 | TBD | Pending |
+| METRIC-03 | TBD | Pending |
+| INTEG-01 | TBD | Pending |
+| INTEG-02 | TBD | Pending |
 
 **Coverage:**
-- v0.3.0 requirements: 23 total
-- Mapped to phases: 23
-- Unmapped: 0
+- v0.4.0 requirements: 17 total
+- Mapped to phases: 0
+- Unmapped: 17 ⚠️
 
 ---
 *Requirements defined: 2026-03-19*
-*Last updated: 2026-03-19 after roadmap creation (phases 6-10 assigned)*
+*Last updated: 2026-03-19 after initial definition*
