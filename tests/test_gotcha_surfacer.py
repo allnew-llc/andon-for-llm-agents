@@ -22,6 +22,7 @@ HOOKS_DIR = Path(__file__).resolve().parent.parent / "hooks"
 sys.path.insert(0, str(HOOKS_DIR))
 
 import pytest  # noqa: E402
+from gotcha_registry import GotchaEntry  # noqa: E402
 from gotcha_surfacer import (  # noqa: E402
     ConfidenceLevel,
     MatchResult,
@@ -29,8 +30,6 @@ from gotcha_surfacer import (  # noqa: E402
     match_gotchas,
     surface_gotchas,
 )
-from gotcha_registry import GotchaEntry  # noqa: E402
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -83,15 +82,18 @@ def test_exact_match_returns_exact_confidence() -> None:
 
 def test_partial_match_returns_partial_confidence() -> None:
     """Error text with 40%+ significant pattern words → PARTIAL, score in 0.5–0.8."""
-    # Pattern has ~8 significant words: "five", "whys", "analysis", "terminates",
-    # "human", "error", "process", "structural"
+    # Pattern significant words: five, whys, analysis, terminates, human, error,
+    # instead, digging, process, system, gap, allowed, mistake  (13 total)
+    # Error text must hit at least 40% = 6 of those 13 words to trigger PARTIAL.
     pattern = (
         "Five Whys analysis terminates at human error instead of "
         "digging into the process or system gap that allowed the mistake"
     )
     entry = make_entry(pattern=pattern)
-    # Include several significant words from the pattern
-    error_text = "The five whys analysis stopped at human error without identifying structural root cause"
+    # Error text hits: five, whys, analysis, terminates, human, error, process (7/13 = 54%)
+    error_text = (
+        "The five whys analysis terminates at human error in process without structural change"
+    )
     results = match_gotchas(error_text, [entry])
     assert len(results) == 1
     assert results[0].confidence == ConfidenceLevel.PARTIAL
@@ -290,12 +292,14 @@ def test_surface_gotchas_with_gate_gaming_gotcha_real_files() -> None:
     if not gotchas_dir.is_dir():
         pytest.skip("Real gotchas directory not available")
 
-    error_text = "Gate Gaming optimization for conditions detected in pipeline execution"
+    # Use text that contains the tag 'gate-gaming' (GOTCHA-004 tag) so we get
+    # at least a CATEGORY match, regardless of prose word overlap
+    error_text = "gate-gaming behavior detected: agent optimizing for gate conditions"
     result = surface_gotchas(
         error_text,
         gotchas_dir,
         packs_dir=packs_dir if packs_dir.is_dir() else None,
     )
-    # The real GOTCHA-004 (Gate Gaming) should match
+    # The real GOTCHA-004 (Gate Gaming) should match via tag 'gate-gaming'
     assert result, f"Expected at least one match for gate gaming text, got: {result!r}"
     assert "GOTCHA_MATCH" in result
