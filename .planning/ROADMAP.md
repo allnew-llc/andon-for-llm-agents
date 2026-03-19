@@ -50,7 +50,7 @@ Phases 6-10 delivered: tps-kaizen SKILL.md with trigger-focused description (14 
   2. gotchas/ directory contains at least 5 YAML files, each with id, name, pattern, severity, prevention, discovered, and source fields populated
   3. A Knowledge Pack directory (e.g., packs/financial/gotchas/) containing pack-specific YAML files is discovered and included by the loader without changes to core code
   4. Running the loader against a YAML file missing a required field produces a clear schema validation error, not a silent failure
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 Plans:
 - [ ] 11-01-PLAN.md — Schema definition + registry loader module with TDD tests
 - [ ] 11-02-PLAN.md — 7 seed Gotcha YAML files from tps-kaizen + pack-contributed example
@@ -102,7 +102,7 @@ Note: Phases 12 and 13 both depend on Phase 11 and can run in parallel. Phase 14
 | 8. QC Audit Skill | v0.3.0 | 2/2 | Complete | 2026-03-19 |
 | 9. Standalone Skill Upgrades | v0.3.0 | 3/3 | Complete | 2026-03-19 |
 | 10. New Skills & On-Demand Hooks | v0.3.0 | 2/2 | Complete | 2026-03-19 |
-| 11. Gotchas Registry | v0.4.0 | 0/2 | Planning complete | - |
+| 11. Gotchas Registry | 1/2 | In Progress|  | - |
 | 12. ANDON Auto-Surfacing | v0.4.0 | 0/? | Not started | - |
 | 13. Five Whys → Gotcha Loop | v0.4.0 | 0/? | Not started | - |
 | 14. Analysis, Metrics & Skill Integration | v0.4.0 | 0/? | Not started | - |
