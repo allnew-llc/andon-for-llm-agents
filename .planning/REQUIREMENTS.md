@@ -11,9 +11,9 @@ Requirements for skill quality and ecosystem milestone. Each maps to roadmap pha
 
 - [x] **SKILL-01**: tps-kaizen SKILL.md description is trigger-focused (lists when to call: error, failure, incident, broken, stuck, regression)
 - [x] **SKILL-02**: tps-kaizen has Gotchas section with 5+ documented failure patterns (human error stop, 4-artifact close, Meta-ANDON session reset, Gate-Gaming, confidence threshold)
-- [ ] **SKILL-03**: tps-kaizen has scripts/ directory with aggregate-incidents.sh (past incident aggregation and pattern analysis)
+- [x] **SKILL-03**: tps-kaizen has scripts/ directory with aggregate-incidents.sh (past incident aggregation and pattern analysis)
 - [x] **SKILL-04**: tps-kaizen has scripts/five-whys-validator.sh (completeness check: 5 levels reached, verification column filled)
-- [ ] **SKILL-05**: tps-kaizen has scripts/quality-trend.sh (quality self-assessment trend over time)
+- [x] **SKILL-05**: tps-kaizen has scripts/quality-trend.sh (quality self-assessment trend over time)
 - [x] **SKILL-06**: tps-kaizen andon subcommand auto-references past incident history from ${CLAUDE_PLUGIN_DATA}/kaizen/ and detects recurring patterns
 - [x] **SKILL-07**: tps-kaizen SKILL.md includes related_skills section linking to pipeline-debugging, adversarial-review, qc-audit
 
@@ -70,9 +70,9 @@ Requirements for skill quality and ecosystem milestone. Each maps to roadmap pha
 | SKILL-01 | Phase 6 | Complete |
 | SKILL-02 | Phase 6 | Complete |
 | SKILL-07 | Phase 6 | Complete |
-| SKILL-03 | Phase 7 | Pending |
+| SKILL-03 | Phase 7 | Complete |
 | SKILL-04 | Phase 7 | Complete |
-| SKILL-05 | Phase 7 | Pending |
+| SKILL-05 | Phase 7 | Complete |
 | SKILL-06 | Phase 7 | Complete |
 | QC-01 | Phase 8 | Pending |
 | QC-02 | Phase 8 | Pending |

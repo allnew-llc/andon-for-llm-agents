@@ -27,7 +27,7 @@ Phases 4-5 delivered production hardening: analysis paralysis guard, context qua
 **Milestone Goal:** Elevate tps-kaizen skill quality to Anthropic best practices, add /qc-audit skill, migrate standalone .md skills to SKILL.md structure, and introduce new skill categories plus on-demand hooks.
 
 - [x] **Phase 6: tps-kaizen Core Quality** - Trigger-focused description, documented gotchas, and related_skills composability (completed 2026-03-19)
-- [ ] **Phase 7: tps-kaizen Scripts & Persistent Data** - scripts/ directory with analysis tools and persistent incident history
+- [x] **Phase 7: tps-kaizen Scripts & Persistent Data** - scripts/ directory with analysis tools and persistent incident history (completed 2026-03-19)
 - [ ] **Phase 8: QC Audit Skill** - New /qc-audit skill with quality assessment, trend analysis, and gate correlation
 - [ ] **Phase 9: Standalone Skill Upgrades** - Migrate 6 existing .md skills to SKILL.md structure with progressive disclosure
 - [ ] **Phase 10: New Skills & On-Demand Hooks** - Three new skill categories and session-scoped on-demand hook pattern
@@ -103,7 +103,7 @@ Note: Phase 9 depends on Phase 6 (not 8), so phases 8 and 9 can proceed in paral
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 6. tps-kaizen Core Quality | 1/1 | Complete   | 2026-03-19 | - |
-| 7. tps-kaizen Scripts & Persistent Data | 1/2 | In Progress|  | - |
+| 7. tps-kaizen Scripts & Persistent Data | 2/2 | Complete   | 2026-03-19 | - |
 | 8. QC Audit Skill | v0.3.0 | 0/? | Not started | - |
 | 9. Standalone Skill Upgrades | v0.3.0 | 0/? | Not started | - |
 | 10. New Skills & On-Demand Hooks | v0.3.0 | 0/? | Not started | - |

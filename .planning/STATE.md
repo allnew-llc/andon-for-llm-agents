@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v0.1
 milestone_name: milestone
 status: planning
-stopped_at: Completed 07-tps-kaizen-scripts-persistent-data-07-02-PLAN.md
-last_updated: "2026-03-19T07:30:54.335Z"
+stopped_at: Completed 07-tps-kaizen-scripts-persistent-data-07-01-PLAN.md
+last_updated: "2026-03-19T07:34:25.830Z"
 last_activity: 2026-03-19 — v0.3.0 roadmap created, phases 6-10 defined
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
   percent: 100
 ---
 
@@ -52,6 +52,7 @@ Progress: [██████████] 100%
 *Updated after each plan completion*
 | Phase 06-tps-kaizen-core-quality P01 | 2 | 1 tasks | 1 files |
 | Phase 07-tps-kaizen-scripts-persistent-data P02 | 3 | 2 tasks | 2 files |
+| Phase 07-tps-kaizen-scripts-persistent-data P01 | 5 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,8 @@ Recent decisions affecting current work:
 - [Phase 07-tps-kaizen-scripts-persistent-data]: Used POSIX tools only (grep/sed/awk) for bash 3.2+ compatibility in five-whys-validator.sh
 - [Phase 07-tps-kaizen-scripts-persistent-data]: Human error stop check is a warning (not failure) — user decides if stopping early is justified
 - [Phase 07-tps-kaizen-scripts-persistent-data]: Step 0 in andon SKILL.md is documentation enhancement only; version stays at 1.1.0
+- [Phase 07-tps-kaizen-scripts-persistent-data]: Use awk gsub for global JSON pattern counting — grep|wc -l pipeline fails under set -euo pipefail when grep exits 1 on no match
+- [Phase 07-tps-kaizen-scripts-persistent-data]: macOS stat -f '%Sm' not GNU ls --time-style for portable file mtime extraction in bash scripts
 
 ### Pending Todos
 
@@ -79,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T07:30:54.333Z
-Stopped at: Completed 07-tps-kaizen-scripts-persistent-data-07-02-PLAN.md
+Last session: 2026-03-19T07:34:25.828Z
+Stopped at: Completed 07-tps-kaizen-scripts-persistent-data-07-01-PLAN.md
 Resume file: None
