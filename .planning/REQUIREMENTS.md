@@ -36,8 +36,8 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 
 ### Skill Integration
 
-- [ ] **INTEG-01**: tps-kaizen SKILL.md updated with gotcha-review subcommand documentation
-- [ ] **INTEG-02**: tps-kaizen andon Step 0 updated to include Gotcha Registry check alongside incident history check
+- [x] **INTEG-01**: tps-kaizen SKILL.md updated with gotcha-review subcommand documentation
+- [x] **INTEG-02**: tps-kaizen andon Step 0 updated to include Gotcha Registry check alongside incident history check
 
 ## Future Requirements
 
@@ -75,8 +75,8 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 | METRIC-01 | Phase 14 | Pending |
 | METRIC-02 | Phase 14 | Pending |
 | METRIC-03 | Phase 14 | Pending |
-| INTEG-01 | Phase 14 | Pending |
-| INTEG-02 | Phase 14 | Pending |
+| INTEG-01 | Phase 14 | Complete (2026-03-19) |
+| INTEG-02 | Phase 14 | Complete (2026-03-19) |
 
 **Coverage:**
 - v0.4.0 requirements: 17 total

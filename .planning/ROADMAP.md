@@ -5,7 +5,7 @@
 - ✅ **v0.1.0 Foundation** - Phases 1-3 (shipped 2026-03-10)
 - ✅ **v0.2.0 Hardening** - Phases 4-5 (shipped 2026-03-10)
 - ✅ **v0.3.0 Skill Quality & Ecosystem** - Phases 6-10 (shipped 2026-03-19)
-- 🚧 **v0.4.0 Gotchas Engine** - Phases 11-14 (in progress)
+- ✅ **v0.4.0 Gotchas Engine** - Phases 11-14 (shipped 2026-03-19)
 
 ## Phases
 
@@ -30,14 +30,14 @@ Phases 6-10 delivered: tps-kaizen SKILL.md with trigger-focused description (14 
 
 </details>
 
-### 🚧 v0.4.0 Gotchas Engine (In Progress)
+### ✅ v0.4.0 Gotchas Engine (SHIPPED 2026-03-19)
 
 **Milestone Goal:** Evolve Gotchas from static text in SKILL.md into a structured data registry with automatic surfacing during ANDON, a Five Whys → Gotcha learning loop, and effectiveness metrics.
 
 - [x] **Phase 11: Gotchas Registry** - YAML schema, seed data, registry loader, and Knowledge Pack extension point (completed 2026-03-19)
 - [x] **Phase 12: ANDON Auto-Surfacing** - Hook integration, pattern matching, confidence scoring, and ranked results (completed 2026-03-19)
 - [x] **Phase 13: Five Whys → Gotcha Loop** - Candidate generation, gotcha-review subcommand, and hot-reload promotion (completed 2026-03-19)
-- [ ] **Phase 14: Analysis, Metrics & Skill Integration** - gotcha-stats.sh, tps-kaizen subcommand docs, and andon Step 0 update
+- [x] **Phase 14: Analysis, Metrics & Skill Integration** - gotcha-stats.sh, tps-kaizen subcommand docs, and andon Step 0 update (completed 2026-03-19)
 
 ## Phase Details
 
@@ -113,4 +113,4 @@ Note: Phases 12 and 13 both depend on Phase 11 and can run in parallel. Phase 14
 | 11. Gotchas Registry | v0.4.0 | 2/2 | Complete | 2026-03-19 |
 | 12. ANDON Auto-Surfacing | v0.4.0 | 1/1 | Complete | 2026-03-19 |
 | 13. Five Whys → Gotcha Loop | v0.4.0 | 2/2 | Complete | 2026-03-19 |
-| 14. Analysis, Metrics & Skill Integration | v0.4.0 | 0/2 | Not started | - |
+| 14. Analysis, Metrics & Skill Integration | v0.4.0 | 2/2 | Complete | 2026-03-19 |
