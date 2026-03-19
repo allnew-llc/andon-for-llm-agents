@@ -84,7 +84,11 @@ Plans:
   2. cherry-pick-prod/ SKILL.md exists with a Gotchas section and a references/ subdirectory for supplementary material
   3. ios-app-factory-operator/ SKILL.md exists with a trigger-focused description that tells Claude when to invoke the skill
   4. blog-reader-critic/ SKILL.md and apple-developer-docs/ SKILL.md and apple-review-guidelines/ SKILL.md each have trigger-focused descriptions and progressive disclosure via references/
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 09-01-PLAN.md — Upgrade freeze + cherry-pick-prod to SKILL.md with Gotchas and on-demand hooks
+- [ ] 09-02-PLAN.md — Upgrade ios-app-factory-operator + blog-reader-critic to SKILL.md with trigger descriptions
+- [ ] 09-03-PLAN.md — Upgrade apple-developer-docs + apple-review-guidelines to SKILL.md with progressive disclosure
 
 ### Phase 10: New Skills & On-Demand Hooks
 **Goal**: Three new skill categories are available for use, and the on-demand hook pattern is established with a second example beyond freeze
@@ -108,5 +112,5 @@ Note: Phase 9 depends on Phase 6 (not 8), so phases 8 and 9 can proceed in paral
 | 6. tps-kaizen Core Quality | 1/1 | Complete   | 2026-03-19 | - |
 | 7. tps-kaizen Scripts & Persistent Data | 2/2 | Complete   | 2026-03-19 | - |
 | 8. QC Audit Skill | 1/2 | In Progress|  | - |
-| 9. Standalone Skill Upgrades | v0.3.0 | 0/? | Not started | - |
+| 9. Standalone Skill Upgrades | v0.3.0 | 0/3 | Planning complete | - |
 | 10. New Skills & On-Demand Hooks | v0.3.0 | 0/? | Not started | - |
