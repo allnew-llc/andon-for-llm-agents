@@ -1,5 +1,22 @@
 # Milestones
 
+## v0.4.0 — Gotchas Engine (Shipped 2026-03-19)
+
+**Goal:** Gotchas を静的テキストから構造化データ + 自動サーフェシングエンジンに進化させ、学習ループを閉じる
+
+**Stats:** 4 phases (11-14), 7 plans, 39 files changed, +5,801 lines, 784 LOC in Python modules, 727 LOC in gotcha-stats.sh
+
+**Delivered:**
+- Gotchas Registry: YAML schema + loader (validate/discover/pack-extend), 7 core + 1 pack seed Gotchas
+- ANDON Auto-Surfacing: 3-tier confidence matching (exact/partial/category), hook integration, prevention advice injection
+- Five Whys → Gotcha Loop: candidate generation from root cause, gotcha-review subcommand, immediate promotion
+- gotcha-stats.sh: hit rates, zero-hit staleness flags, prevention effectiveness metrics
+- SKILL.md v1.2.0: Step 0 Gotcha Registry check, gotcha-review documented
+
+**Phases:** 11-14 (GSD-tracked, fully planned and verified)
+
+---
+
 ## v0.3.0 — Skill Quality & Ecosystem (Shipped 2026-03-19)
 
 **Goal:** Anthropic ベストプラクティスに基づくスキル品質向上と Claude 環境エコシステム拡充

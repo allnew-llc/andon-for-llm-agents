@@ -45,20 +45,17 @@ Stop defects from flowing downstream and learn from every failure — applied to
 - ✓ **NEW-01~03**: freee-analysis, cleanup-artifacts, standup skills — v0.3.0
 - ✓ **HOOK-01~02**: On-demand hooks (freeze verified, careful created) — v0.3.0
 
+- ✓ **REG-01~04**: Gotchas Registry (YAML schema, loader, 7+1 seed, pack extension) — v0.4.0
+- ✓ **SURF-01~04**: ANDON auto-surfacing (3-tier confidence, hook integration) — v0.4.0
+- ✓ **LOOP-01~04**: Five Whys → Gotcha loop (candidate gen, review, promotion) — v0.4.0
+- ✓ **METRIC-01~03**: gotcha-stats.sh (hit rates, staleness, effectiveness) — v0.4.0
+- ✓ **INTEG-01~02**: SKILL.md gotcha-review + Step 0 Registry check — v0.4.0
+
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-## Current Milestone: v0.4.0 Gotchas Engine
-
-**Goal:** Gotchas を静的テキストから構造化データ + 自動サーフェシングエンジンに進化させ、Five Whys → Gotcha 登録 → ANDON 照合の学習ループを閉じる
-
-**Target features:**
-- Gotchas Registry（YAML 構造化データ、パターンマッチ対応）
-- ANDON open 時の自動 Gotcha 照合（既知パターン検出・回避策提示）
-- Five Whys → Gotcha 候補の自動生成・登録ループ
-- Knowledge Pack 固有 Gotchas の展開
-- Gotcha ヒット率・有効性の分析スクリプト
+(Defining in next milestone)
 
 ### Out of Scope
 
@@ -71,9 +68,10 @@ Stop defects from flowing downstream and learn from every failure — applied to
 - Published on GitHub: allnew-llc/andon-for-llm-agents
 - Python 3.10+, single dependency (PyYAML)
 - 7 skills in repo: tps-kaizen, qc-audit, freee-analysis, standup, cleanup-artifacts, careful (+ 6 upgraded user skills)
-- 6 analysis scripts (bash, POSIX-only, no jq/python dependencies)
+- 7 analysis scripts (bash, POSIX-only) + 3 Python modules (registry, surfacer, candidate)
+- Gotchas Registry: 7 core + 1 pack YAML, auto-surfacing on ANDON open, Five Whys → candidate loop
 - Integrated with AllNew LLC's ios-app-factory pipeline
-- v0.3.0 applied Anthropic "Lessons from Building Claude Code" best practices
+- v0.3.0: Anthropic best practices, v0.4.0: Gotchas Engine (structured data + learning loop)
 
 ## Constraints
 
@@ -94,6 +92,10 @@ Stop defects from flowing downstream and learn from every failure — applied to
 | POSIX-only bash scripts (no jq) | OSS portability — works on any machine | ✓ Good |
 | On-demand hooks via state file toggle | Session-scoped activation without permanent overhead | ✓ Good |
 | Progressive disclosure via references/ | Keep SKILL.md lightweight, detail on demand | ✓ Good |
+| Gotchas as structured YAML (not markdown) | Machine-readable, pattern-matchable, pack-extensible | ✓ Good |
+| 3-tier confidence (exact/partial/category) | Ranked matching avoids false positives | ✓ Good |
+| Human approval for Gotcha promotion | Safety — no auto-promotion of candidate patterns | ✓ Good |
+| Re-run matching in stats (not persisted) | Simpler architecture, no surfacing output schema dependency | ✓ Good |
 
 ---
-*Last updated: 2026-03-19 after v0.3.0 milestone*
+*Last updated: 2026-03-19 after v0.4.0 milestone*

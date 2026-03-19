@@ -1,5 +1,46 @@
 # Retrospective
 
+## Milestone: v0.4.0 — Gotchas Engine
+
+**Shipped:** 2026-03-19
+**Phases:** 4 (11-14) | **Plans:** 7 | **Duration:** Single session (continuation from v0.3.0)
+
+### What Was Built
+- Gotchas Registry: YAML schema + Python loader with pack discovery (239 lines, 19 tests)
+- ANDON auto-surfacing: 3-tier confidence matching engine (335 lines, 12 tests) integrated into runtime hook
+- Five Whys → Gotcha candidate loop: auto-generation from root cause (210 lines, 24 tests) + gotcha-review subcommand
+- gotcha-stats.sh: hit rates, staleness detection, prevention effectiveness (727 lines)
+- tps-kaizen SKILL.md v1.2.0: Step 0 Registry check + gotcha-review documented
+
+### What Worked
+- **TDD for Python modules**: All 3 modules (registry, surfacer, candidate) built TDD-first — caught deviation issues early
+- **Phase 12+13 parallel execution**: Independent features executed simultaneously, no merge conflicts
+- **Consistent script patterns**: gotcha-stats.sh reused the same awk/POSIX patterns from v0.3.0 scripts
+- **Article-driven → engine-driven**: v0.3.0 laid the static Gotchas foundation, v0.4.0 naturally built on top
+
+### What Was Inefficient
+- **13-01 agent truncation**: One executor agent stopped mid-task (GREEN committed but no SUMMARY). Required manual recovery.
+- **REQUIREMENTS.md tracking lag**: LOOP-01/02 not marked Complete by executor — caught by verifier, fixed manually
+- **gotcha-stats.sh is large** (727 lines): The keyword-overlap matching reimplemented in bash is verbose compared to Python. Future consideration: share matching logic.
+
+### Patterns Established
+- **Gotcha lifecycle**: YAML → Registry → Surfacing → Candidate → Review → Promotion → Stats
+- **TDD for hook modules**: RED/GREEN/REFACTOR with explicit test behavior specs
+- **Graceful import failure**: Surfacer import wrapped in try/except so ANDON never blocked by missing module
+- **Re-run matching**: Stats script re-computes matches rather than reading persisted surfacing data — simpler architecture
+
+### Key Lessons
+- Structured data (YAML) with a loader is fundamentally better than markdown text for machine consumption
+- The learning loop (incident → Five Whys → Gotcha → prevention) is the core value proposition of the Gotchas Engine
+- Human approval for promotion is the right safety constraint — auto-promotion would risk noisy/incorrect patterns
+
+### Cost Observations
+- Model mix: sonnet for all subagents, opus for orchestration (same as v0.3.0)
+- Sessions: 1 continuous session (spanning both v0.3.0 and v0.4.0)
+- Notable: 9 phases (5 + 4) planned and executed in a single conversation
+
+---
+
 ## Milestone: v0.3.0 — Skill Quality & Ecosystem
 
 **Shipped:** 2026-03-19
@@ -44,9 +85,11 @@
 
 ## Cross-Milestone Trends
 
-| Metric | v0.1.0 | v0.2.0 | v0.3.0 |
-|--------|--------|--------|--------|
-| Phases | 3 | 2 | 5 |
-| Plans | — | — | 10 |
-| GSD-tracked | No | Partial | Full |
-| Verification | — | — | All passed |
+| Metric | v0.1.0 | v0.2.0 | v0.3.0 | v0.4.0 |
+|--------|--------|--------|--------|--------|
+| Phases | 3 | 2 | 5 | 4 |
+| Plans | — | — | 10 | 7 |
+| GSD-tracked | No | Partial | Full | Full |
+| Verification | — | — | All passed | All passed |
+| TDD | — | — | No | Yes (3 modules) |
+| Python LOC | — | — | 0 | 784 |
