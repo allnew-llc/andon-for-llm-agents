@@ -109,5 +109,5 @@ Note: Phases 12 and 13 both depend on Phase 11 and can run in parallel. Phase 14
 | 10. New Skills & On-Demand Hooks | v0.3.0 | 2/2 | Complete | 2026-03-19 |
 | 11. Gotchas Registry | v0.4.0 | 2/2 | Complete | 2026-03-19 |
 | 12. ANDON Auto-Surfacing | 1/1 | Complete   | 2026-03-19 | - |
-| 13. Five Whys → Gotcha Loop | v0.4.0 | 0/2 | Planned | - |
+| 13. Five Whys → Gotcha Loop | 0/2 | Planned    |  | - |
 | 14. Analysis, Metrics & Skill Integration | v0.4.0 | 0/? | Not started | - |
