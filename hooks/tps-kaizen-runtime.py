@@ -43,6 +43,7 @@ from kaizen_core import (
     KAIZEN_DIR,
     STANDARD_REGISTRY,
     STATE_DIR,
+    WORKSPACE,
     append_json_event,
     ensure_dirs,
     load_json,
@@ -103,6 +104,24 @@ def _init_packs() -> None:
     except ImportError:
         _safety_guard = None
         _pack_bundle = None
+
+
+# === Gotcha Surfacer (lazy-loaded) ===
+_surfacer_loaded = False
+
+
+def _init_surfacer() -> None:
+    """Lazy-load the Gotcha surfacer. Failure is non-fatal — ANDON must not block."""
+    global _surfacer_loaded
+    if _surfacer_loaded:
+        return
+    try:
+        from gotcha_surfacer import surface_gotchas as _sf  # noqa: F811
+
+        globals()["_surface_gotchas"] = _sf
+    except ImportError:
+        globals()["_surface_gotchas"] = None
+    _surfacer_loaded = True
 
 
 # === Self-Check Validation (SCK-01 .. SCK-05) ===
@@ -369,6 +388,19 @@ def open_from_payload() -> int:
     }
     write_json(ANDON_FILE, andon_state)
 
+    # --- Gotcha auto-surfacing ---
+    _init_surfacer()
+    gotcha_context = ""
+    sf = globals().get("_surface_gotchas")
+    if sf is not None:
+        gotchas_dir = WORKSPACE / "gotchas"
+        packs_dir_path = WORKSPACE / "packs"
+        gotcha_context = sf(
+            merged_output,
+            gotchas_dir,
+            packs_dir=packs_dir_path if packs_dir_path.is_dir() else None,
+        )
+
     cause_id = analysis.get("cause_id", "unknown_failure")
 
     if action_level == 4:
@@ -379,6 +411,8 @@ def open_from_payload() -> int:
             f"Report: {report_path} "
             "Use '.claude/hooks/tps-andon-control.sh close' after review."
         )
+        if gotcha_context:
+            message += f" {gotcha_context}"
         print_hook_context(message, block=True)
         return 0
 
@@ -392,6 +426,8 @@ def open_from_payload() -> int:
             f"Report: {report_path} "
             "Review and apply or report if insufficient."
         )
+        if gotcha_context:
+            message += f" {gotcha_context}"
         print_hook_context(message, block=True)
         return 0
 
@@ -417,6 +453,8 @@ def open_from_payload() -> int:
             f"Report: {report_path} "
             'After fix: `.claude/hooks/tps-andon-control.sh close "<reason>"`.'
         )
+    if gotcha_context:
+        message += f" {gotcha_context}"
 
     print_hook_context(message, block=True)
     return 0
