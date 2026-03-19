@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v0.1
 milestone_name: milestone
 status: planning
-stopped_at: Completed 09-standalone-skill-upgrades-09-02-PLAN.md
-last_updated: "2026-03-19T09:01:33.982Z"
+stopped_at: Completed 09-standalone-skill-upgrades-09-01-PLAN.md
+last_updated: "2026-03-19T09:02:54.503Z"
 last_activity: 2026-03-19 — v0.3.0 roadmap created, phases 6-10 defined
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 8
-  completed_plans: 6
+  completed_plans: 7
   percent: 100
 ---
 
@@ -56,6 +56,7 @@ Progress: [██████████] 100%
 | Phase 08-qc-audit-skill P01 | 9 | 1 tasks | 1 files |
 | Phase 08-qc-audit-skill P02 | 3 | 3 tasks | 3 files |
 | Phase 09-standalone-skill-upgrades P02 | 4 | 2 tasks | 5 files |
+| Phase 09-standalone-skill-upgrades P01 | 5 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,9 @@ Recent decisions affecting current work:
 - [Phase 09-standalone-skill-upgrades]: blog-reader-critic criteria tables retained in SKILL.md (core value); Audit Protocol extracted to references/ for progressive disclosure
 - [Phase 09-standalone-skill-upgrades]: Three named Gotchas added to blog-reader-critic: Persona Drift, Confirmation Bias, Kindness Creep — documenting persona degradation failure modes
 - [Phase 09-standalone-skill-upgrades]: ios-app-factory-operator Japanese section headers translated to English for consistency with Phase 6 SKILL.md pattern
+- [Phase 09-standalone-skill-upgrades]: On-demand hook pattern: freeze-guard.sh registration is permanent in settings.json, activation via state file toggle — zero overhead when inactive
+- [Phase 09-standalone-skill-upgrades]: Gotchas as named ### patterns with explanatory paragraphs (not bullets) — explains structural root cause of each failure mode
+- [Phase 09-standalone-skill-upgrades]: Progressive disclosure: heavy details extracted to references/ files, SKILL.md stays readable for first-time users
 
 ### Pending Todos
 
@@ -95,6 +99,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T09:01:33.979Z
-Stopped at: Completed 09-standalone-skill-upgrades-09-02-PLAN.md
+Last session: 2026-03-19T09:02:54.500Z
+Stopped at: Completed 09-standalone-skill-upgrades-09-01-PLAN.md
 Resume file: None
