@@ -70,7 +70,10 @@ Plans:
   3. Running /qc-audit trend displays a trend chart of FAIL/WARN/OK rates over time from ${CLAUDE_PLUGIN_DATA}/qc/ history
   4. Running /qc-audit gate-health shows a correlation analysis between quality scores and Gate pass rates for recent phases
   5. Running scripts/collect-assessments.sh aggregates quality-self-assessment JSON files from multiple project directories into the central ${CLAUDE_PLUGIN_DATA}/qc/ store
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 08-01-PLAN.md — Create SKILL.md with trigger description, Gotchas, and self-assessment instructions
+- [ ] 08-02-PLAN.md — Create trend.sh, gate-health.sh, and collect-assessments.sh scripts
 
 ### Phase 9: Standalone Skill Upgrades
 **Goal**: Six existing single-file skills are promoted to SKILL.md directory structure with trigger-focused descriptions, Gotchas sections, and progressive disclosure via references/
@@ -104,6 +107,6 @@ Note: Phase 9 depends on Phase 6 (not 8), so phases 8 and 9 can proceed in paral
 |-------|-----------|----------------|--------|-----------|
 | 6. tps-kaizen Core Quality | 1/1 | Complete   | 2026-03-19 | - |
 | 7. tps-kaizen Scripts & Persistent Data | 2/2 | Complete   | 2026-03-19 | - |
-| 8. QC Audit Skill | v0.3.0 | 0/? | Not started | - |
+| 8. QC Audit Skill | v0.3.0 | 0/2 | Planned | - |
 | 9. Standalone Skill Upgrades | v0.3.0 | 0/? | Not started | - |
 | 10. New Skills & On-Demand Hooks | v0.3.0 | 0/? | Not started | - |
