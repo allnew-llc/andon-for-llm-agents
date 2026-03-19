@@ -33,19 +33,23 @@ Stop defects from flowing downstream and learn from every failure — applied to
 - ✓ **SEC-03**: Path traversal validation — v0.2.0
 - ✓ **SEC-04**: Secret redaction patterns — v0.2.0
 
+- ✓ **SKILL-01**: tps-kaizen trigger-focused description (14 keywords) — v0.3.0
+- ✓ **SKILL-02**: tps-kaizen Gotchas section (7 named failure patterns) — v0.3.0
+- ✓ **SKILL-03**: aggregate-incidents.sh (incident pattern clustering) — v0.3.0
+- ✓ **SKILL-04**: five-whys-validator.sh (depth/verification validation) — v0.3.0
+- ✓ **SKILL-05**: quality-trend.sh (QC assessment trend timeline) — v0.3.0
+- ✓ **SKILL-06**: andon Step 0 incident history auto-reference — v0.3.0
+- ✓ **SKILL-07**: related_skills composability links — v0.3.0
+- ✓ **QC-01~05**: /qc-audit skill with trend, gate-health, collect-assessments — v0.3.0
+- ✓ **UPGRADE-01~06**: 6 standalone skills → SKILL.md structure — v0.3.0
+- ✓ **NEW-01~03**: freee-analysis, cleanup-artifacts, standup skills — v0.3.0
+- ✓ **HOOK-01~02**: On-demand hooks (freeze verified, careful created) — v0.3.0
+
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-## Current Milestone: v0.3.0 Skill Quality & Ecosystem
-
-**Goal:** Anthropic ベストプラクティスに基づくスキル品質向上と Claude 環境エコシステム拡充
-
-**Target features:**
-- tps-kaizen スキルの全面改善（description, gotchas, scripts, persistent data, composability）
-- /qc-audit スキル新設（品質自己評価の能動的実行・トレンド分析）
-- 環境スキルの SKILL.md 昇格と On-Demand Hooks 化
-- 新スキルカテゴリ追加（freee-analysis, cleanup-artifacts, standup）
+(Defining in next milestone)
 
 ### Out of Scope
 
@@ -57,9 +61,10 @@ Stop defects from flowing downstream and learn from every failure — applied to
 
 - Published on GitHub: allnew-llc/andon-for-llm-agents
 - Python 3.10+, single dependency (PyYAML)
-- Includes TPS Kaizen skill for Claude Code (`skills/tps-kaizen/`)
+- 7 skills in repo: tps-kaizen, qc-audit, freee-analysis, standup, cleanup-artifacts, careful (+ 6 upgraded user skills)
+- 6 analysis scripts (bash, POSIX-only, no jq/python dependencies)
 - Integrated with AllNew LLC's ios-app-factory pipeline
-- User's local Claude environment has 8 custom skills, 18 hooks, 36 plugins
+- v0.3.0 applied Anthropic "Lessons from Building Claude Code" best practices
 
 ## Constraints
 
@@ -76,6 +81,10 @@ Stop defects from flowing downstream and learn from every failure — applied to
 | Knowledge Packs for domain rules | Extensible without core changes | ✓ Good |
 | Deviation rules hierarchy (L1-L4) | Different failures need different responses | ✓ Good |
 | TPS terminology throughout | Consistent mental model, educational value | ✓ Good |
+| Trigger-focused skill descriptions | Article: "description is for the model, not humans" | ✓ Good |
+| POSIX-only bash scripts (no jq) | OSS portability — works on any machine | ✓ Good |
+| On-demand hooks via state file toggle | Session-scoped activation without permanent overhead | ✓ Good |
+| Progressive disclosure via references/ | Keep SKILL.md lightweight, detail on demand | ✓ Good |
 
 ---
-*Last updated: 2026-03-19 after brownfield initialization*
+*Last updated: 2026-03-19 after v0.3.0 milestone*

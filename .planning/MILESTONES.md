@@ -1,5 +1,23 @@
 # Milestones
 
+## v0.3.0 — Skill Quality & Ecosystem (Shipped 2026-03-19)
+
+**Goal:** Anthropic ベストプラクティスに基づくスキル品質向上と Claude 環境エコシステム拡充
+
+**Stats:** 5 phases (6-10), 10 plans, 16 feat commits, 50 files changed, +8,143 lines, 4,464 LOC in skills/
+
+**Delivered:**
+- tps-kaizen SKILL.md upgraded: trigger-focused description (14 keywords), 7 Gotchas, related_skills, Step 0 incident history
+- 3 analysis scripts: aggregate-incidents.sh, five-whys-validator.sh, quality-trend.sh
+- /qc-audit skill: quality self-assessment, trend analysis, gate-health correlation + 3 scripts
+- 6 standalone skills upgraded to SKILL.md structure with progressive disclosure
+- 4 new skills: freee-analysis, standup, cleanup-artifacts, careful
+- On-demand hooks pattern: freeze (HOOK-01 verified) + careful (HOOK-02)
+
+**Phases:** 6-10 (GSD-tracked, fully planned and verified)
+
+---
+
 ## v0.1.0 — Foundation (Shipped 2026-03-10)
 
 **Goal:** Core ANDON safety framework with TPS principles
