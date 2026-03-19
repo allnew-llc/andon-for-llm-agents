@@ -117,3 +117,20 @@ The skill files are located at `~/.claude/skills/` (outside the git repository).
 ---
 *Phase: 09-standalone-skill-upgrades*
 *Completed: 2026-03-19*
+
+## Self-Check: PASSED
+
+All files verified present:
+- `~/.claude/skills/apple-developer-docs/SKILL.md` — FOUND
+- `~/.claude/skills/apple-developer-docs/references/swiftui.md` — FOUND
+- `~/.claude/skills/apple-developer-docs/references/swiftdata.md` — FOUND
+- `~/.claude/skills/apple-developer-docs/references/storekit.md` — FOUND
+- `~/.claude/skills/apple-developer-docs/references/healthkit.md` — FOUND
+- `~/.claude/skills/apple-developer-docs/references/testing.md` — FOUND
+- `~/.claude/skills/apple-developer-docs/references/concurrency.md` — FOUND
+- `~/.claude/skills/apple-review-guidelines/SKILL.md` — FOUND
+- `~/.claude/skills/apple-review-guidelines/references/section-details.md` — FOUND
+- `~/.claude/skills/apple-review-guidelines/references/rejection-checklist.md` — FOUND
+- Old `~/.claude/skills/apple-developer-docs.md` — DELETED
+- Old `~/.claude/skills/apple-review-guidelines.md` — DELETED
+- Final commit `af030ab` — FOUND
