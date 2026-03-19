@@ -2,7 +2,7 @@
 name: TPS Kaizen
 description: "Use when: error, test failure, build failure, incident, broken pipeline, stuck process, regression, anomaly, or any quality defect. Provides Jidoka (stop-and-fix) response, Five Whys root cause analysis, and Kaizen continuous improvement."
 argument-hint: "<subcommand> [args] — andon, five-whys, kaizen, audit"
-version: 1.1.0
+version: 1.2.0
 ---
 
 # TPS Kaizen — Lean Manufacturing Improvement Skill
@@ -82,6 +82,7 @@ Software mapping:
 /tps-kaizen kaizen <area>         Run improvement cycle via Improvement Kata
 /tps-kaizen audit                 3M (Muda/Mura/Muri) waste audit
 /tps-kaizen capture [learning]    Capture and standardize knowledge from fixes
+/tps-kaizen gotcha-review          Review and promote Gotcha candidates
 ```
 
 ---
@@ -146,6 +147,16 @@ The goal is **restarting the line**, not solving the root cause.
 2. Design **prevention measures** for the root cause
 3. Embed prevention in **standard work** (rules, templates, CI config, etc.)
 4. Add **automatic detection** (poka-yoke) for the same class of problems
+5. **Generate Gotcha candidate**: After defining prevention measures, run gotcha candidate generation to capture the learning:
+   ```python
+   from gotcha_candidate import generate_candidate
+   candidate_path = generate_candidate(
+       root_cause="<root cause from Five Whys>",
+       prevention="<prevention measures defined above>",
+       tags=["<category from Five Whys>"]
+   )
+   ```
+   Report the candidate path and suggest running `/tps-kaizen gotcha-review` to promote it.
 
 > Detailed guide: `references/jidoka-response.md`
 
@@ -199,6 +210,13 @@ Analyze by **looking at actual code, logs, and config files**. Never rely on mem
 2. [poka-yoke: automatic detection mechanism]
 3. [standard work update location]
 ```
+
+> **After completion**: Run gotcha candidate generation to capture this learning as a reviewable Gotcha:
+> ```python
+> from gotcha_candidate import generate_candidate
+> generate_candidate(root_cause="<root cause>", prevention="<prevention measures>")
+> ```
+> Then run `/tps-kaizen gotcha-review` to approve the candidate into the live registry.
 
 > Detailed template and examples: `references/five-whys-template.md`
 
@@ -256,6 +274,47 @@ Audit from the 3M (Muda/Mura/Muri) perspective.
 | People | Unrealistic deadlines, excessive parallel work? |
 | Systems | Tools/processes used beyond design limits? |
 | Code | Single class/function carrying too many responsibilities? |
+
+---
+
+## Subcommand: `gotcha-review`
+
+**Trigger**: After Five Whys generates one or more Gotcha candidates, or periodically to check pending candidates
+
+Review Gotcha candidates in `gotchas/candidates/` and promote approved ones to the live registry.
+
+### Procedure
+
+1. **List candidates**: Read all `*.yaml` files in `gotchas/candidates/`. For each, display:
+   ```
+   Candidate: {id}
+     Pattern:  {pattern (first 80 chars)}
+     Severity: {severity}
+     Source:   {source}
+   ```
+   If no candidates exist, report "No Gotcha candidates pending review." and stop.
+
+2. **Review each candidate**: For each candidate, ask the user:
+   ```
+   Approve this candidate? [approve / skip / edit]
+   ```
+   - **approve**: Move the YAML file from `gotchas/candidates/{file}` to `gotchas/{file}` using `mv`. The Gotcha is immediately available to `load_gotchas()` (no restart required because `load_gotchas()` reads from disk on each call).
+   - **skip**: Leave the candidate in `gotchas/candidates/` for later review.
+   - **edit**: Open the YAML content for inline editing (severity, pattern wording, tags), then re-ask approve/skip.
+
+3. **Report results**: After reviewing all candidates, summarize:
+   ```
+   Gotcha Review Complete:
+   - Approved: N (moved to gotchas/)
+   - Skipped: N (remain in candidates/)
+   - Total reviewed: N
+   ```
+
+### Notes
+
+- Promoted Gotchas are immediately matchable by the ANDON surfacing engine in the same session because `load_gotchas()` reads from disk on every call with no caching.
+- The candidate file name is preserved during promotion (the ID is already in the YAML).
+- If a promoted Gotcha has an ID that conflicts with an existing Gotcha, `load_gotchas()` will raise `GotchaValidationError` on next load. Resolve by editing the candidate's `id` field before approval.
 
 ---
 
