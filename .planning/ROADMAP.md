@@ -42,7 +42,9 @@ Phases 4-5 delivered production hardening: analysis paralysis guard, context qua
   1. tps-kaizen SKILL.md description lists concrete trigger keywords (error, failure, incident, broken, stuck, regression) so Claude invokes it at the right moment
   2. A user reading tps-kaizen for the first time finds a Gotchas section with 5+ named failure patterns (human error stop, 4-artifact close, Meta-ANDON session reset, Gate-Gaming, confidence threshold)
   3. tps-kaizen SKILL.md contains a related_skills section with direct links to pipeline-debugging, adversarial-review, and qc-audit
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 06-01-PLAN.md — Rewrite SKILL.md with trigger-focused description, Gotchas, and related_skills
 
 ### Phase 7: tps-kaizen Scripts & Persistent Data
 **Goal**: Users can run tps-kaizen subcommands that analyze historical incident data and detect recurring failure patterns using persistent storage
@@ -97,7 +99,7 @@ Note: Phase 9 depends on Phase 6 (not 8), so phases 8 and 9 can proceed in paral
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 6. tps-kaizen Core Quality | v0.3.0 | 0/? | Not started | - |
+| 6. tps-kaizen Core Quality | v0.3.0 | 0/1 | Planning complete | - |
 | 7. tps-kaizen Scripts & Persistent Data | v0.3.0 | 0/? | Not started | - |
 | 8. QC Audit Skill | v0.3.0 | 0/? | Not started | - |
 | 9. Standalone Skill Upgrades | v0.3.0 | 0/? | Not started | - |
