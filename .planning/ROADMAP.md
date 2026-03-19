@@ -92,7 +92,10 @@ Plans:
   3. gotcha-stats.sh includes a prevention-effectiveness column showing whether incidents where a Gotcha was surfaced resolved differently than incidents without a match
   4. Running `/tps-kaizen` shows gotcha-review as a documented subcommand with usage description in SKILL.md
   5. The tps-kaizen andon Step 0 prompt includes a Gotcha Registry check alongside the existing incident history check
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 14-01-PLAN.md — gotcha-stats.sh script with hit rates, staleness detection, and effectiveness metrics (METRIC-01, METRIC-02, METRIC-03)
+- [ ] 14-02-PLAN.md — SKILL.md integration: verify gotcha-review docs, update Step 0 with Gotcha Registry check (INTEG-01, INTEG-02)
 
 ## Progress
 
@@ -108,6 +111,6 @@ Note: Phases 12 and 13 both depend on Phase 11 and can run in parallel. Phase 14
 | 9. Standalone Skill Upgrades | v0.3.0 | 3/3 | Complete | 2026-03-19 |
 | 10. New Skills & On-Demand Hooks | v0.3.0 | 2/2 | Complete | 2026-03-19 |
 | 11. Gotchas Registry | v0.4.0 | 2/2 | Complete | 2026-03-19 |
-| 12. ANDON Auto-Surfacing | 1/1 | Complete    | 2026-03-19 | - |
-| 13. Five Whys → Gotcha Loop | 2/2 | Complete    | 2026-03-19 | - |
-| 14. Analysis, Metrics & Skill Integration | v0.4.0 | 0/? | Not started | - |
+| 12. ANDON Auto-Surfacing | v0.4.0 | 1/1 | Complete | 2026-03-19 |
+| 13. Five Whys → Gotcha Loop | v0.4.0 | 2/2 | Complete | 2026-03-19 |
+| 14. Analysis, Metrics & Skill Integration | v0.4.0 | 0/2 | Not started | - |
