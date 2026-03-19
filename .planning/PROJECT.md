@@ -37,7 +37,15 @@ Stop defects from flowing downstream and learn from every failure — applied to
 
 <!-- Current scope. Building toward these. -->
 
-(Defining in milestone v0.3.0)
+## Current Milestone: v0.3.0 Skill Quality & Ecosystem
+
+**Goal:** Anthropic ベストプラクティスに基づくスキル品質向上と Claude 環境エコシステム拡充
+
+**Target features:**
+- tps-kaizen スキルの全面改善（description, gotchas, scripts, persistent data, composability）
+- /qc-audit スキル新設（品質自己評価の能動的実行・トレンド分析）
+- 環境スキルの SKILL.md 昇格と On-Demand Hooks 化
+- 新スキルカテゴリ追加（freee-analysis, cleanup-artifacts, standup）
 
 ### Out of Scope
 
