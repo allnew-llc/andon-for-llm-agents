@@ -19,8 +19,8 @@ Requirements for skill quality and ecosystem milestone. Each maps to roadmap pha
 
 ### QC Audit Skill
 
-- [ ] **QC-01**: /qc-audit skill exists with SKILL.md, trigger-focused description, and Gotchas
-- [ ] **QC-02**: /qc-audit (no args) executes quality self-assessment for the current phase using quality_criteria from deliverable manifest
+- [x] **QC-01**: /qc-audit skill exists with SKILL.md, trigger-focused description, and Gotchas
+- [x] **QC-02**: /qc-audit (no args) executes quality self-assessment for the current phase using quality_criteria from deliverable manifest
 - [ ] **QC-03**: /qc-audit trend reads ${CLAUDE_PLUGIN_DATA}/qc/ history and displays trend of FAIL/WARN/OK rates over time
 - [ ] **QC-04**: /qc-audit gate-health analyzes correlation between quality scores and Gate pass rates
 - [ ] **QC-05**: /qc-audit has scripts/collect-assessments.sh that aggregates quality-self-assessment JSON files from project dirs into central store
@@ -74,8 +74,8 @@ Requirements for skill quality and ecosystem milestone. Each maps to roadmap pha
 | SKILL-04 | Phase 7 | Complete |
 | SKILL-05 | Phase 7 | Complete |
 | SKILL-06 | Phase 7 | Complete |
-| QC-01 | Phase 8 | Pending |
-| QC-02 | Phase 8 | Pending |
+| QC-01 | Phase 8 | Complete |
+| QC-02 | Phase 8 | Complete |
 | QC-03 | Phase 8 | Pending |
 | QC-04 | Phase 8 | Pending |
 | QC-05 | Phase 8 | Pending |
