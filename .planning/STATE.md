@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 ## Current Position
 
 Phase: 11 of 14 (Gotchas Registry)
-Plan: 1 of 1 in current phase
-Status: In Progress
-Last activity: 2026-03-19 — Phase 11 Plan 01 complete (gotcha_registry module)
+Plan: 2 of 2 in current phase
+Status: Complete
+Last activity: 2026-03-19 — Phase 11 Plan 02 complete (7 seed Gotcha YAMLs + pack example)
 
-Progress: [███████████░░░░░░░░░] 54% (10/14 phases complete across all milestones; 1/4 v0.4.0 phases in progress)
+Progress: [████████████░░░░░░░░] 57% (10/14 phases complete across all milestones; Phase 11 complete, 3/4 v0.4.0 phases remaining)
 
 ## Performance Metrics
 
@@ -32,7 +32,7 @@ Progress: [███████████░░░░░░░░░] 54% (10
 | 8 | 2 | Complete | 2026-03-19 |
 | 9 | 3 | Complete | 2026-03-19 |
 | 10 | 2 | Complete | 2026-03-19 |
-| 11 | 1 | In Progress | 2026-03-19 |
+| 11 | 2 | Complete | 2026-03-19 |
 
 **Recent Trend:**
 - Last milestone: v0.3.0 shipped same session as planned (all 5 phases)
@@ -52,6 +52,8 @@ Recent decisions affecting current work:
 - v0.4.0: Phases 12 and 13 can run in parallel after Phase 11 completes (independent feature areas)
 - v0.4.0: gotcha-stats.sh follows POSIX-only bash convention (no jq, no Python dependencies)
 - 11-01: load_gotchas() raises on first invalid file (fail-fast); validate_gotcha() collects all field errors before returning
+- 11-02: Pack Gotcha source field set to pack name (not 'tps-kaizen') to enable source-based filtering in Phases 12/13
+- 11-02: Severity conventions established — critical for system-undermining patterns; high for recurrence risk; medium for cultural/counter patterns
 
 ### Pending Todos
 
@@ -64,5 +66,5 @@ None yet. Phase 11 is self-contained (no external dependencies).
 ## Session Continuity
 
 Last session: 2026-03-19
-Stopped at: Completed 11-01-PLAN.md (gotcha_registry module + 19 tests)
+Stopped at: Completed 11-02-PLAN.md (7 seed Gotcha YAMLs + pack example; Phase 11 fully complete)
 Resume file: None

@@ -34,7 +34,7 @@ Phases 6-10 delivered: tps-kaizen SKILL.md with trigger-focused description (14 
 
 **Milestone Goal:** Evolve Gotchas from static text in SKILL.md into a structured data registry with automatic surfacing during ANDON, a Five Whys → Gotcha learning loop, and effectiveness metrics.
 
-- [ ] **Phase 11: Gotchas Registry** - YAML schema, seed data, registry loader, and Knowledge Pack extension point
+- [x] **Phase 11: Gotchas Registry** - YAML schema, seed data, registry loader, and Knowledge Pack extension point (completed 2026-03-19)
 - [ ] **Phase 12: ANDON Auto-Surfacing** - Hook integration, pattern matching, confidence scoring, and ranked results
 - [ ] **Phase 13: Five Whys → Gotcha Loop** - Candidate generation, gotcha-review subcommand, and hot-reload promotion
 - [ ] **Phase 14: Analysis, Metrics & Skill Integration** - gotcha-stats.sh, tps-kaizen subcommand docs, and andon Step 0 update
@@ -50,7 +50,7 @@ Phases 6-10 delivered: tps-kaizen SKILL.md with trigger-focused description (14 
   2. gotchas/ directory contains at least 5 YAML files, each with id, name, pattern, severity, prevention, discovered, and source fields populated
   3. A Knowledge Pack directory (e.g., packs/financial/gotchas/) containing pack-specific YAML files is discovered and included by the loader without changes to core code
   4. Running the loader against a YAML file missing a required field produces a clear schema validation error, not a silent failure
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 11-01-PLAN.md — Schema definition + registry loader module with TDD tests
 - [ ] 11-02-PLAN.md — 7 seed Gotcha YAML files from tps-kaizen + pack-contributed example
@@ -102,7 +102,7 @@ Note: Phases 12 and 13 both depend on Phase 11 and can run in parallel. Phase 14
 | 8. QC Audit Skill | v0.3.0 | 2/2 | Complete | 2026-03-19 |
 | 9. Standalone Skill Upgrades | v0.3.0 | 3/3 | Complete | 2026-03-19 |
 | 10. New Skills & On-Demand Hooks | v0.3.0 | 2/2 | Complete | 2026-03-19 |
-| 11. Gotchas Registry | 1/2 | In Progress|  | - |
+| 11. Gotchas Registry | 2/2 | Complete   | 2026-03-19 | - |
 | 12. ANDON Auto-Surfacing | v0.4.0 | 0/? | Not started | - |
 | 13. Five Whys → Gotcha Loop | v0.4.0 | 0/? | Not started | - |
 | 14. Analysis, Metrics & Skill Integration | v0.4.0 | 0/? | Not started | - |

@@ -10,9 +10,9 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 ### Gotchas Registry
 
 - [x] **REG-01**: Gotchas Registry schema defined (YAML format with id, name, pattern, severity, prevention, discovered, source fields)
-- [ ] **REG-02**: gotchas/ directory exists in repo root with at least 5 seed Gotchas from existing tps-kaizen Gotchas section
+- [x] **REG-02**: gotchas/ directory exists in repo root with at least 5 seed Gotchas from existing tps-kaizen Gotchas section
 - [x] **REG-03**: Registry loader (Python) can parse all YAML files in gotchas/ and validate schema
-- [ ] **REG-04**: Knowledge Packs can contribute pack-specific Gotchas via packs/{pack-name}/gotchas/ directory
+- [x] **REG-04**: Knowledge Packs can contribute pack-specific Gotchas via packs/{pack-name}/gotchas/ directory
 
 ### ANDON Auto-Surfacing
 
@@ -61,9 +61,9 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | REG-01 | Phase 11 | Complete |
-| REG-02 | Phase 11 | Pending |
+| REG-02 | Phase 11 | Complete |
 | REG-03 | Phase 11 | Complete |
-| REG-04 | Phase 11 | Pending |
+| REG-04 | Phase 11 | Complete |
 | SURF-01 | Phase 12 | Pending |
 | SURF-02 | Phase 12 | Pending |
 | SURF-03 | Phase 12 | Pending |
