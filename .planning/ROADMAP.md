@@ -64,7 +64,9 @@ Plans:
   2. Match results include a confidence label (exact match, partial match, or category match) so the user can judge relevance
   3. When multiple Gotchas match, they are presented ranked by relevance score with the highest-confidence match first
   4. Opening an ANDON incident with no matching pattern produces no spurious Gotcha output (no false matches injected into context)
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 12-01-PLAN.md — Gotcha surfacer module with TDD + ANDON hook integration
 
 ### Phase 13: Five Whys → Gotcha Loop
 **Goal**: Completing a Five Whys analysis automatically produces a reviewable Gotcha candidate that can be promoted into the live registry without restarting any process
@@ -75,7 +77,10 @@ Plans:
   2. Running `/tps-kaizen gotcha-review` lists all files in gotchas/candidates/ with their key fields (id, pattern, severity) and prompts for approve or skip
   3. Approving a candidate in gotcha-review moves it from gotchas/candidates/ to gotchas/ without manual file operations
   4. A Gotcha promoted via gotcha-review is immediately matchable by the ANDON surfacing engine in the same session (no restart required)
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 13-01-PLAN.md — Gotcha candidate generation module with TDD tests (LOOP-01, LOOP-02)
+- [ ] 13-02-PLAN.md — SKILL.md gotcha-review subcommand + Five Whys integration (LOOP-03, LOOP-04)
 
 ### Phase 14: Analysis, Metrics & Skill Integration
 **Goal**: Users can measure Gotcha hit rates and effectiveness, and the tps-kaizen skill surface all Gotcha operations (review, stats, andon check) clearly documented
@@ -102,7 +107,7 @@ Note: Phases 12 and 13 both depend on Phase 11 and can run in parallel. Phase 14
 | 8. QC Audit Skill | v0.3.0 | 2/2 | Complete | 2026-03-19 |
 | 9. Standalone Skill Upgrades | v0.3.0 | 3/3 | Complete | 2026-03-19 |
 | 10. New Skills & On-Demand Hooks | v0.3.0 | 2/2 | Complete | 2026-03-19 |
-| 11. Gotchas Registry | 2/2 | Complete    | 2026-03-19 | - |
-| 12. ANDON Auto-Surfacing | v0.4.0 | 0/? | Not started | - |
-| 13. Five Whys → Gotcha Loop | v0.4.0 | 0/? | Not started | - |
+| 11. Gotchas Registry | v0.4.0 | 2/2 | Complete | 2026-03-19 |
+| 12. ANDON Auto-Surfacing | v0.4.0 | 0/1 | Planned | - |
+| 13. Five Whys → Gotcha Loop | v0.4.0 | 0/2 | Planned | - |
 | 14. Analysis, Metrics & Skill Integration | v0.4.0 | 0/? | Not started | - |
