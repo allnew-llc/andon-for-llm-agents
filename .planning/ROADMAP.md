@@ -99,7 +99,10 @@ Plans:
   2. /cleanup-artifacts skill exists and inventories pipeline artifacts, build caches, and orphaned outputs, then executes cleanup on request
   3. /standup skill exists and aggregates git log plus task state into a daily summary in a standard format
   4. /careful skill exists with a session-scoped on-demand hook that blocks rm -rf, force-push, DROP TABLE, and kubectl delete for the duration of the session
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 10-01-PLAN.md — Create freee-analysis and standup instruction skills
+- [ ] 10-02-PLAN.md — Create cleanup-artifacts skill, careful on-demand hook skill, and verify freeze HOOK-01
 
 ## Progress
 
@@ -113,4 +116,4 @@ Note: Phase 9 depends on Phase 6 (not 8), so phases 8 and 9 can proceed in paral
 | 7. tps-kaizen Scripts & Persistent Data | 2/2 | Complete   | 2026-03-19 | - |
 | 8. QC Audit Skill | 1/2 | In Progress|  | - |
 | 9. Standalone Skill Upgrades | 3/3 | Complete   | 2026-03-19 | - |
-| 10. New Skills & On-Demand Hooks | v0.3.0 | 0/? | Not started | - |
+| 10. New Skills & On-Demand Hooks | v0.3.0 | 0/2 | Not started | - |
