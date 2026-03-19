@@ -93,22 +93,28 @@ Software mapping:
 
 Execute the Jidoka cycle (Step 0 + 4 steps):
 
-### Step 0: Check Incident History
+### Step 0: Check Incident History and Gotcha Registry
 
-Before starting analysis, check for recurring patterns in past incidents.
+Before starting analysis, check for recurring patterns in past incidents and known anti-patterns in the Gotcha Registry.
 
 1. **Scan persistent store**: Check `${CLAUDE_PLUGIN_DATA}/kaizen/incidents/` (if CLAUDE_PLUGIN_DATA is set) or `~/.claude/state/kaizen/incidents/` for past incident data
-2. **Match current problem**: Compare the current error message, command, and failure category against `cause_id` and `category` fields in past `analysis.json` files
-3. **Surface matches**: If matching incidents are found, report them:
+2. **Check Gotcha Registry**: The ANDON hook automatically surfaces matching Gotchas via `gotcha_surfacer.py` — check the hook output for `[GOTCHA_MATCH]` markers. If Gotcha matches were surfaced, note them:
+   ```
+   [Gotcha] Found N known anti-pattern(s) matching this incident:
+   - GOTCHA-XXX: [name] — [prevention advice]
+   Use matched Gotcha prevention advice to guide investigation.
+   ```
+3. **Match current problem**: Compare the current error message, command, and failure category against `cause_id` and `category` fields in past `analysis.json` files
+4. **Surface matches**: If matching incidents are found, report them:
    ```
    [History] Found N past incident(s) matching this pattern:
    - INC-YYYYMMDD-... : [root_cause_summary] (confidence: X.XX)
    - INC-YYYYMMDD-... : [root_cause_summary] (confidence: X.XX)
    Previous prevention measures: [from actions.json]
    ```
-4. **Inform investigation**: Use past incident data to skip already-explored root causes and focus on what's new or what previous prevention measures failed to prevent
+5. **Inform investigation**: Use both past incident data AND matched Gotcha prevention advice to skip already-explored root causes and focus the investigation on what's new or what previous prevention measures failed to prevent
 
-> **Tip**: Run `skills/tps-kaizen/scripts/aggregate-incidents.sh` to see a full pattern summary before starting.
+> **Tip**: Run `skills/tps-kaizen/scripts/aggregate-incidents.sh` for incident pattern summary, and `skills/tps-kaizen/scripts/gotcha-stats.sh` for Gotcha hit rates and effectiveness.
 
 ### Step 1: Detect — What happened
 
