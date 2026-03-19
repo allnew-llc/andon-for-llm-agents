@@ -55,7 +55,10 @@ Plans:
   2. Running five-whys-validator.sh reports whether a Five Whys document has reached 5 causal levels and filled the verification column
   3. Running quality-trend.sh outputs a time-series view of quality self-assessment results
   4. The tps-kaizen andon subcommand automatically surfaces past incidents matching the current problem pattern from the persistent kaizen store
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 07-01-PLAN.md — Create aggregate-incidents.sh and quality-trend.sh analysis scripts
+- [ ] 07-02-PLAN.md — Create five-whys-validator.sh and update andon subcommand with incident history
 
 ### Phase 8: QC Audit Skill
 **Goal**: Users can actively trigger quality self-assessments, view historical quality trends, and understand the correlation between quality scores and gate pass rates
@@ -100,7 +103,7 @@ Note: Phase 9 depends on Phase 6 (not 8), so phases 8 and 9 can proceed in paral
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 6. tps-kaizen Core Quality | 1/1 | Complete   | 2026-03-19 | - |
-| 7. tps-kaizen Scripts & Persistent Data | v0.3.0 | 0/? | Not started | - |
+| 7. tps-kaizen Scripts & Persistent Data | v0.3.0 | 0/2 | Planning complete | - |
 | 8. QC Audit Skill | v0.3.0 | 0/? | Not started | - |
 | 9. Standalone Skill Upgrades | v0.3.0 | 0/? | Not started | - |
 | 10. New Skills & On-Demand Hooks | v0.3.0 | 0/? | Not started | - |
