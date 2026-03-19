@@ -35,7 +35,7 @@ Phases 6-10 delivered: tps-kaizen SKILL.md with trigger-focused description (14 
 **Milestone Goal:** Evolve Gotchas from static text in SKILL.md into a structured data registry with automatic surfacing during ANDON, a Five Whys → Gotcha learning loop, and effectiveness metrics.
 
 - [x] **Phase 11: Gotchas Registry** - YAML schema, seed data, registry loader, and Knowledge Pack extension point (completed 2026-03-19)
-- [ ] **Phase 12: ANDON Auto-Surfacing** - Hook integration, pattern matching, confidence scoring, and ranked results
+- [x] **Phase 12: ANDON Auto-Surfacing** - Hook integration, pattern matching, confidence scoring, and ranked results (completed 2026-03-19)
 - [ ] **Phase 13: Five Whys → Gotcha Loop** - Candidate generation, gotcha-review subcommand, and hot-reload promotion
 - [ ] **Phase 14: Analysis, Metrics & Skill Integration** - gotcha-stats.sh, tps-kaizen subcommand docs, and andon Step 0 update
 
@@ -64,7 +64,7 @@ Plans:
   2. Match results include a confidence label (exact match, partial match, or category match) so the user can judge relevance
   3. When multiple Gotchas match, they are presented ranked by relevance score with the highest-confidence match first
   4. Opening an ANDON incident with no matching pattern produces no spurious Gotcha output (no false matches injected into context)
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] 12-01-PLAN.md — Gotcha surfacer module with TDD + ANDON hook integration
 
@@ -108,6 +108,6 @@ Note: Phases 12 and 13 both depend on Phase 11 and can run in parallel. Phase 14
 | 9. Standalone Skill Upgrades | v0.3.0 | 3/3 | Complete | 2026-03-19 |
 | 10. New Skills & On-Demand Hooks | v0.3.0 | 2/2 | Complete | 2026-03-19 |
 | 11. Gotchas Registry | v0.4.0 | 2/2 | Complete | 2026-03-19 |
-| 12. ANDON Auto-Surfacing | v0.4.0 | 0/1 | Planned | - |
+| 12. ANDON Auto-Surfacing | 1/1 | Complete   | 2026-03-19 | - |
 | 13. Five Whys → Gotcha Loop | v0.4.0 | 0/2 | Planned | - |
 | 14. Analysis, Metrics & Skill Integration | v0.4.0 | 0/? | Not started | - |

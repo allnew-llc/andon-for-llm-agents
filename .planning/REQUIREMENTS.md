@@ -16,10 +16,10 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 
 ### ANDON Auto-Surfacing
 
-- [ ] **SURF-01**: ANDON open hook auto-loads Gotchas Registry and matches current error against pattern fields
-- [ ] **SURF-02**: Matching Gotchas are injected into additionalContext with prevention advice when ANDON opens
-- [ ] **SURF-03**: Match results include confidence score (exact match, partial match, category match)
-- [ ] **SURF-04**: Multiple Gotcha matches are ranked by relevance and presented in order
+- [x] **SURF-01**: ANDON open hook auto-loads Gotchas Registry and matches current error against pattern fields
+- [x] **SURF-02**: Matching Gotchas are injected into additionalContext with prevention advice when ANDON opens
+- [x] **SURF-03**: Match results include confidence score (exact match, partial match, category match)
+- [x] **SURF-04**: Multiple Gotcha matches are ranked by relevance and presented in order
 
 ### Five Whys → Gotcha Loop
 
@@ -64,10 +64,10 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 | REG-02 | Phase 11 | Complete |
 | REG-03 | Phase 11 | Complete |
 | REG-04 | Phase 11 | Complete |
-| SURF-01 | Phase 12 | Pending |
-| SURF-02 | Phase 12 | Pending |
-| SURF-03 | Phase 12 | Pending |
-| SURF-04 | Phase 12 | Pending |
+| SURF-01 | Phase 12 | Complete |
+| SURF-02 | Phase 12 | Complete |
+| SURF-03 | Phase 12 | Complete |
+| SURF-04 | Phase 12 | Complete |
 | LOOP-01 | Phase 13 | Pending |
 | LOOP-02 | Phase 13 | Pending |
 | LOOP-03 | Phase 13 | Pending |

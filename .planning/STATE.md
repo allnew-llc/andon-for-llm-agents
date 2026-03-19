@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v0.1
 milestone_name: milestone
 status: completed
-stopped_at: Completed 11-02-PLAN.md (7 seed Gotcha YAMLs + pack example; Phase 11 fully complete)
-last_updated: "2026-03-19T14:28:59.578Z"
+stopped_at: Completed 12-01-PLAN.md (Gotcha auto-surfacing surfacer + ANDON integration)
+last_updated: "2026-03-19T14:54:39.273Z"
 last_activity: 2026-03-19 — Phase 11 Plan 02 complete (7 seed Gotcha YAMLs + pack example)
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  completed_phases: 2
+  total_plans: 5
+  completed_plans: 3
   percent: 57
 ---
 
@@ -55,6 +55,7 @@ Progress: [████████████░░░░░░░░] 57% (10
 - Trend: Stable
 
 *Updated after each plan completion*
+| Phase 12 P01 | 467s | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,8 @@ Recent decisions affecting current work:
 - 11-01: load_gotchas() raises on first invalid file (fail-fast); validate_gotcha() collects all field errors before returning
 - 11-02: Pack Gotcha source field set to pack name (not 'tps-kaizen') to enable source-based filtering in Phases 12/13
 - 11-02: Severity conventions established — critical for system-undermining patterns; high for recurrence risk; medium for cultural/counter patterns
+- [Phase 12]: Pattern matching is keyword/substring based (not regex) because GotchaEntry.pattern is natural language prose
+- [Phase 12]: Surfacer never blocks ANDON: GotchaValidationError and unexpected exceptions are caught and empty string returned
 
 ### Pending Todos
 
@@ -81,6 +84,6 @@ None yet. Phase 11 is self-contained (no external dependencies).
 
 ## Session Continuity
 
-Last session: 2026-03-19
-Stopped at: Completed 11-02-PLAN.md (7 seed Gotcha YAMLs + pack example; Phase 11 fully complete)
+Last session: 2026-03-19T14:54:27.287Z
+Stopped at: Completed 12-01-PLAN.md (Gotcha auto-surfacing surfacer + ANDON integration)
 Resume file: None
