@@ -168,6 +168,47 @@ This skill is primarily a read/analysis skill. The `freee_create_journal` tool m
 
 ---
 
+## Setup
+
+On first invocation, this skill checks for a config file at `${CLAUDE_PLUGIN_DATA}/freee-analysis/config.json`. If it does not exist, ask the user for initial configuration using AskUserQuestion:
+
+```json
+{
+  "default_company_id": null,
+  "fiscal_year_start_month": 4,
+  "preferred_currency": "JPY",
+  "common_account_ids": {
+    "sales": 236,
+    "cost_of_sales": 237,
+    "operating_expenses": 238
+  },
+  "report_language": "ja"
+}
+```
+
+- `default_company_id`: Skip the company selection step if only one company is used
+- `fiscal_year_start_month`: Avoids the Fiscal Year Boundary gotcha (4 = April start)
+- `common_account_ids`: Frequently referenced account IDs from the user's chart of accounts
+- `report_language`: Output language for reports ("ja" or "en")
+
+If config exists, load it at Step 2 and apply defaults. If `default_company_id` is set, skip the company list call.
+
+---
+
+## Evaluations
+
+Test these scenarios to verify the skill works correctly:
+
+| Scenario | Input | Expected Behavior |
+|----------|-------|-------------------|
+| Basic trial balance | `/freee-analysis trial-balance` | Calls freee_get_companies → freee_get_trial_balance, outputs debit/credit totals with balance status |
+| Monthly expense breakdown | `/freee-analysis expenses 2026-03` | Groups deals by account, sorts by amount descending, shows % of total |
+| Missing company context | `/freee-analysis trial-balance` (no config) | Asks user to select company via AskUserQuestion before proceeding |
+| Rate limit handling | Rapid multi-month queries | Handles 429 gracefully, retries with backoff, completes analysis |
+| Write guard | User asks to create a journal entry | Confirms intent explicitly before calling freee_create_journal |
+
+---
+
 ## Related Skills
 
 | Skill | Path | When to Chain |

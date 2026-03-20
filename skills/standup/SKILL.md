@@ -103,6 +103,46 @@ In CI environments or freshly-checked-out repos created with `--depth`, git log 
 
 ---
 
+## Setup
+
+On first invocation, this skill checks for a config file at `${CLAUDE_PLUGIN_DATA}/standup/config.json`. If it does not exist, ask the user for initial configuration using AskUserQuestion:
+
+```json
+{
+  "author_name": null,
+  "repos": ["."],
+  "output_format": "markdown",
+  "include_gsd_state": true,
+  "slack_channel": null,
+  "default_timeframe": "24h"
+}
+```
+
+- `author_name`: Filter git log to this author (null = all authors in the repo)
+- `repos`: List of repository paths to aggregate (default: current directory only)
+- `output_format`: "markdown" (default), "slack" (compact for Slack), or "json"
+- `include_gsd_state`: Whether to read STATE.md and ROADMAP.md for In Progress / Next sections
+- `slack_channel`: If set, remind Claude to format for Slack posting
+- `default_timeframe`: Default hours for the standup window
+
+If config exists, load it before running standup.sh and apply as defaults.
+
+---
+
+## Evaluations
+
+Test these scenarios to verify the skill works correctly:
+
+| Scenario | Input | Expected Behavior |
+|----------|-------|-------------------|
+| Basic daily standup | `/standup` | Runs standup.sh, groups commits by topic, shows In Progress from STATE.md |
+| Empty commit history | `/standup` (no commits in 24h) | Reports "No commits in the last 24h" cleanly, still shows In Progress/Next |
+| Custom timeframe | `/standup week` | Shows 7 days of activity, correctly handles date boundaries |
+| Non-GSD project | `/standup` (no .planning/) | Shows git activity only, omits In Progress/Next gracefully |
+| Multi-repo | Config with `repos: [".", "../api"]` | Aggregates commits from both repos in one report |
+
+---
+
 ## Related Skills
 
 | Skill | Path | When to Chain |
