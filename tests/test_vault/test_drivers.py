@@ -9,8 +9,13 @@ from unittest.mock import patch
 
 import pytest
 from vault.drivers import get_driver
+from vault.drivers.aws_ssm import AWSSSMDriver
 from vault.drivers.cloudflare import CloudflarePagesDriver
+from vault.drivers.flyio import FlyIODriver
+from vault.drivers.github import GitHubActionsDriver
+from vault.drivers.heroku import HerokuDriver
 from vault.drivers.local import LocalDriver
+from vault.drivers.netlify import NetlifyDriver
 from vault.drivers.vercel import VercelDriver
 
 
@@ -189,12 +194,127 @@ class TestVercelDriver:
                 driver.put("KEY", "val", "app")
 
 
+class TestGitHubActionsDriver:
+    @patch("vault.drivers.github._find_gh", return_value="/usr/bin/gh")
+    @patch("vault.drivers.github.subprocess.run")
+    def test_exists_true(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess(
+            [], returncode=0, stdout="OPENAI_API_KEY\tUpdated 2026-01-01\n"
+        )
+        driver = GitHubActionsDriver()
+        assert driver.exists("OPENAI_API_KEY", "owner/repo") is True
+
+    @patch("vault.drivers.github._find_gh", return_value="/usr/bin/gh")
+    @patch("vault.drivers.github.subprocess.run")
+    def test_put_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = GitHubActionsDriver()
+        assert driver.put("KEY", "val", "owner/repo") is True
+        assert mock_run.call_args.kwargs.get("input") == "val"
+
+    @patch("vault.drivers.github._find_gh", return_value="/usr/bin/gh")
+    @patch("vault.drivers.github.subprocess.run")
+    def test_delete_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = GitHubActionsDriver()
+        assert driver.delete("KEY", "owner/repo") is True
+
+
+class TestHerokuDriver:
+    @patch("vault.drivers.heroku._find_heroku", return_value="/usr/bin/heroku")
+    @patch("vault.drivers.heroku.subprocess.run")
+    def test_exists_true(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess(
+            [], returncode=0, stdout='{"OPENAI_API_KEY": "..."}'
+        )
+        driver = HerokuDriver()
+        assert driver.exists("OPENAI_API_KEY", "my-app") is True
+
+    @patch("vault.drivers.heroku._find_heroku", return_value="/usr/bin/heroku")
+    @patch("vault.drivers.heroku.subprocess.run")
+    def test_put_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = HerokuDriver()
+        assert driver.put("KEY", "val", "my-app") is True
+
+
+class TestNetlifyDriver:
+    @patch("vault.drivers.netlify._find_netlify", return_value="/usr/bin/netlify")
+    @patch("vault.drivers.netlify.subprocess.run")
+    def test_exists_true(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess(
+            [], returncode=0, stdout="OPENAI_API_KEY=sk-...\nOTHER=123\n"
+        )
+        driver = NetlifyDriver()
+        assert driver.exists("OPENAI_API_KEY", "my-site") is True
+
+    @patch("vault.drivers.netlify._find_netlify", return_value="/usr/bin/netlify")
+    @patch("vault.drivers.netlify.subprocess.run")
+    def test_put_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = NetlifyDriver()
+        assert driver.put("KEY", "val", "my-site") is True
+
+
+class TestFlyIODriver:
+    @patch("vault.drivers.flyio._find_fly", return_value="/usr/bin/fly")
+    @patch("vault.drivers.flyio.subprocess.run")
+    def test_exists_true(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess(
+            [], returncode=0, stdout="OPENAI_API_KEY\t1d ago\tset\n"
+        )
+        driver = FlyIODriver()
+        assert driver.exists("OPENAI_API_KEY", "my-app") is True
+
+    @patch("vault.drivers.flyio._find_fly", return_value="/usr/bin/fly")
+    @patch("vault.drivers.flyio.subprocess.run")
+    def test_put_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = FlyIODriver()
+        assert driver.put("KEY", "val", "my-app") is True
+
+
+class TestAWSSSMDriver:
+    @patch("vault.drivers.aws_ssm._find_aws", return_value="/usr/bin/aws")
+    @patch("vault.drivers.aws_ssm.subprocess.run")
+    def test_exists_true(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = AWSSSMDriver()
+        assert driver.exists("OPENAI_API_KEY", "myapp") is True
+        # Verify parameter name format
+        cmd = mock_run.call_args[0][0]
+        assert "/myapp/OPENAI_API_KEY" in cmd
+
+    @patch("vault.drivers.aws_ssm._find_aws", return_value="/usr/bin/aws")
+    @patch("vault.drivers.aws_ssm.subprocess.run")
+    def test_put_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = AWSSSMDriver()
+        assert driver.put("KEY", "val", "myapp") is True
+        cmd = mock_run.call_args[0][0]
+        assert "--overwrite" in cmd
+        assert "--type" in cmd
+        assert "SecureString" in cmd
+
+    @patch("vault.drivers.aws_ssm._find_aws", return_value="/usr/bin/aws")
+    @patch("vault.drivers.aws_ssm.subprocess.run")
+    def test_delete_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = AWSSSMDriver()
+        assert driver.delete("KEY", "myapp") is True
+
+
 class TestGetDriver:
     def test_known_platforms(self):
         assert isinstance(get_driver("cloudflare-pages"), CloudflarePagesDriver)
         assert isinstance(get_driver("vercel"), VercelDriver)
         assert isinstance(get_driver("local"), LocalDriver)
+        assert isinstance(get_driver("github-actions"), GitHubActionsDriver)
+        assert isinstance(get_driver("heroku"), HerokuDriver)
+        assert isinstance(get_driver("netlify"), NetlifyDriver)
+        assert isinstance(get_driver("flyio"), FlyIODriver)
+        assert isinstance(get_driver("aws-ssm"), AWSSSMDriver)
 
     def test_unknown_platform(self):
         with pytest.raises(ValueError, match="Unknown platform"):
-            get_driver("aws-secrets")
+            get_driver("unknown")

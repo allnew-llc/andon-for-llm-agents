@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import getpass
+import subprocess
 from pathlib import Path
 
 from . import audit, keychain
@@ -107,6 +108,72 @@ def cmd_sync(args: argparse.Namespace) -> int:
     return 0 if report.all_ok else 1
 
 
+def _resolve_secret_value(args: argparse.Namespace) -> str | None:
+    """Resolve a secret value from the specified source. Returns None on failure."""
+    from_kc = getattr(args, "from_keychain", None)
+    from_acct = getattr(args, "from_account", None)
+    from_clip = getattr(args, "from_clipboard", False)
+    from_cli = getattr(args, "from_cli", None)
+
+    # 1. --from-keychain: import from existing Keychain entry
+    if from_kc:
+        try:
+            if from_acct:
+                value = keychain.get(from_kc, from_acct)
+                print(f"Keychain からインポート: service={from_kc}, account={from_acct}")
+            else:
+                value = keychain.get_by_service(from_kc)
+                print(f"Keychain からインポート: service={from_kc}")
+            print("  -> andon-vault へコピーします")
+            return value
+        except keychain.KeychainError:
+            print(f"Error: Keychain エントリが見つかりません: service={from_kc}")
+            return None
+
+    # 2. --from-clipboard: read from macOS clipboard, then clear it
+    if from_clip:
+        result = subprocess.run(["pbpaste"], capture_output=True, text=True)
+        if result.returncode != 0 or not result.stdout.strip():
+            print("Error: クリップボードが空です。")
+            return None
+        value = result.stdout.strip()
+        # Clear clipboard immediately for security
+        subprocess.run(["pbcopy"], input="", text=True)
+        print("クリップボードから取得しました（クリップボードはクリア済み）")
+        return value
+
+    # 3. --from-cli: run a command and capture its stdout
+    if from_cli:
+        try:
+            result = subprocess.run(
+                from_cli, shell=True,
+                capture_output=True, text=True, timeout=30,
+            )
+        except subprocess.TimeoutExpired:
+            print(f"Error: コマンドがタイムアウトしました: {from_cli}")
+            return None
+        if result.returncode != 0:
+            print(f"Error: コマンドが失敗しました (exit {result.returncode}): {from_cli}")
+            return None
+        value = result.stdout.strip()
+        if not value:
+            print(f"Error: コマンドの出力が空です: {from_cli}")
+            return None
+        print(f"コマンドから取得: {from_cli}")
+        return value
+
+    # 4. Fallback: interactive prompt (no echo)
+    try:
+        value = getpass.getpass(f"Enter value for {args.name}: ")
+        if not value:
+            print("Error: Empty value.")
+            return None
+        return value
+    except (EOFError, KeyboardInterrupt):
+        print("\nAborted.")
+        return None
+
+
 def cmd_add(args: argparse.Namespace) -> int:
     """Add a new secret to Keychain + vault config."""
     config = VaultConfig.load(Path(args.config))
@@ -118,34 +185,10 @@ def cmd_add(args: argparse.Namespace) -> int:
 
     account = args.account or args.name
 
-    # Import from existing Keychain entry if --from-keychain is specified
-    imported = False
-    from_kc = getattr(args, "from_keychain", None)
-    from_acct = getattr(args, "from_account", None)
-    if from_kc:
-        try:
-            if from_acct:
-                value = keychain.get(from_kc, from_acct)
-                print(f"Keychain からインポート: service={from_kc}, account={from_acct}")
-            else:
-                value = keychain.get_by_service(from_kc)
-                print(f"Keychain からインポート: service={from_kc}")
-            imported = True
-            print("  -> andon-vault へコピーします")
-        except keychain.KeychainError:
-            print(f"Error: Keychain エントリが見つかりません: service={from_kc}")
-            return 1
-
-    if not imported:
-        # Read secret value interactively (no echo)
-        try:
-            value = getpass.getpass(f"Enter value for {args.name}: ")
-            if not value:
-                print("Error: Empty value.")
-                return 1
-        except (EOFError, KeyboardInterrupt):
-            print("\nAborted.")
-            return 1
+    # Resolve value from one of the sources (priority order)
+    value = _resolve_secret_value(args)
+    if value is None:
+        return 1
 
     # Parse targets
     targets: list[Target] = []
@@ -345,6 +388,14 @@ def register_vault_parser(subparsers: argparse._SubParsersAction) -> None:  # ty
     add_p.add_argument(
         "--from-account", dest="from_account", default=None,
         help="Account name for --from-keychain (optional, uses first match if omitted)",
+    )
+    add_p.add_argument(
+        "--from-clipboard", dest="from_clipboard", action="store_true", default=False,
+        help="Read value from macOS clipboard (clipboard is cleared after)",
+    )
+    add_p.add_argument(
+        "--from-cli", dest="from_cli", default=None,
+        help="Run a command and use its stdout as the value (e.g. 'gh auth token')",
     )
 
     # rotate

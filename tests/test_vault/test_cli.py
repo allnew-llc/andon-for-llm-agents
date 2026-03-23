@@ -125,6 +125,7 @@ class TestCmdAdd:
             target=["local:/tmp/x"],
             from_keychain="my-custom-service",
             from_account=None,
+            from_clipboard=False, from_cli=None,
         )
         ret = cmd_add(args)
         assert ret == 0
@@ -159,6 +160,7 @@ class TestCmdAdd:
             target=None,
             from_keychain="my-service",
             from_account="my-acct",
+            from_clipboard=False, from_cli=None,
         )
         ret = cmd_add(args)
         assert ret == 0
@@ -183,12 +185,92 @@ class TestCmdAdd:
             target=None,
             from_keychain=None,
             from_account=None,
+            from_clipboard=False, from_cli=None,
         )
         with patch("vault.cli.getpass.getpass", return_value="typed-value"):
             ret = cmd_add(args)
 
         assert ret == 0
         mock_kc.put.assert_called_once_with("test-vault", "newkey", "typed-value")
+
+    @patch("vault.cli.subprocess.run")
+    @patch("vault.cli.keychain")
+    def test_add_from_clipboard(self, mock_kc, mock_run, tmp_path, capsys):
+        """--from-clipboard でクリップボードから値を取得する"""
+        import subprocess as sp
+
+        cfg_path = tmp_path / "vault.yaml"
+        VaultConfig(keychain_service="test-vault").save(cfg_path)
+
+        # pbpaste returns the value, pbcopy clears it
+        mock_run.side_effect = [
+            sp.CompletedProcess([], returncode=0, stdout="clipboard-secret\n"),  # pbpaste
+            sp.CompletedProcess([], returncode=0),  # pbcopy (clear)
+        ]
+        mock_kc.put.return_value = None
+        mock_kc.KeychainError = Exception
+
+        args = _make_args(
+            cfg_path, name="mykey", account="mykey", env="MY_KEY",
+            description="", target=None,
+            from_keychain=None, from_account=None,
+            from_clipboard=True, from_cli=None,
+        )
+        ret = cmd_add(args)
+        assert ret == 0
+        mock_kc.put.assert_called_once_with("test-vault", "mykey", "clipboard-secret")
+        out = capsys.readouterr().out
+        assert "クリップボード" in out
+
+    @patch("vault.cli.subprocess.run")
+    @patch("vault.cli.keychain")
+    def test_add_from_cli(self, mock_kc, mock_run, tmp_path, capsys):
+        """--from-cli でコマンド出力から値を取得する"""
+        import subprocess as sp
+
+        cfg_path = tmp_path / "vault.yaml"
+        VaultConfig(keychain_service="test-vault").save(cfg_path)
+
+        mock_run.return_value = sp.CompletedProcess(
+            [], returncode=0, stdout="gh-token-value\n"
+        )
+        mock_kc.put.return_value = None
+        mock_kc.KeychainError = Exception
+
+        args = _make_args(
+            cfg_path, name="github", account="github", env="GITHUB_TOKEN",
+            description="", target=None,
+            from_keychain=None, from_account=None,
+            from_clipboard=False, from_cli="gh auth token",
+        )
+        ret = cmd_add(args)
+        assert ret == 0
+        mock_kc.put.assert_called_once_with("test-vault", "github", "gh-token-value")
+        out = capsys.readouterr().out
+        assert "gh auth token" in out
+
+    @patch("vault.cli.subprocess.run")
+    @patch("vault.cli.keychain")
+    def test_add_from_cli_failure(self, mock_kc, mock_run, tmp_path, capsys):
+        """--from-cli のコマンドが失敗した場合"""
+        import subprocess as sp
+
+        cfg_path = tmp_path / "vault.yaml"
+        VaultConfig(keychain_service="test-vault").save(cfg_path)
+
+        mock_run.return_value = sp.CompletedProcess(
+            [], returncode=1, stdout="", stderr="error"
+        )
+        mock_kc.KeychainError = Exception
+
+        args = _make_args(
+            cfg_path, name="fail", account="fail", env="FAIL_KEY",
+            description="", target=None,
+            from_keychain=None, from_account=None,
+            from_clipboard=False, from_cli="false",
+        )
+        ret = cmd_add(args)
+        assert ret == 1
 
 
 class TestCmdAudit:
