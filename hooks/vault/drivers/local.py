@@ -12,6 +12,18 @@ from .base import PlatformDriver
 _LINE_PATTERN = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)=(.*)$")
 
 
+class GitignoreError(Exception):
+    """Raised when a file is not covered by .gitignore."""
+
+
+def _quote_value(value: str) -> str:
+    """Quote a dotenv value if it contains special characters."""
+    if "\n" in value or '"' in value or "#" in value or "'" in value or " " in value:
+        escaped = value.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+        return f'"{escaped}"'
+    return value
+
+
 class LocalDriver(PlatformDriver):
     """Deploy secrets to local dotenv-style files."""
 
@@ -27,9 +39,22 @@ class LocalDriver(PlatformDriver):
         return False
 
     def put(self, env_name: str, value: str, project: str) -> bool:
-        """Add or update KEY=value in the file. `project` is the file path."""
+        """Add or update KEY=value in the file. `project` is the file path.
+
+        Raises GitignoreError if the file is not covered by .gitignore.
+        Values containing special characters are properly quoted.
+        """
         path = Path(project)
+
+        # Hard fail if not in .gitignore — prevent accidental secret commits
+        if not self.check_gitignore(str(path)):
+            raise GitignoreError(
+                f"{path.name} は .gitignore に含まれていません。"
+                f"シークレットのコミットを防ぐため、先に .gitignore に追加してください。"
+            )
+
         path.parent.mkdir(parents=True, exist_ok=True)
+        quoted = _quote_value(value)
 
         lines: list[str] = []
         found = False
@@ -37,13 +62,13 @@ class LocalDriver(PlatformDriver):
             for line in path.read_text(encoding="utf-8").splitlines():
                 m = _LINE_PATTERN.match(line)
                 if m and m.group(1) == env_name:
-                    lines.append(f"{env_name}={value}")
+                    lines.append(f"{env_name}={quoted}")
                     found = True
                 else:
                     lines.append(line)
 
         if not found:
-            lines.append(f"{env_name}={value}")
+            lines.append(f"{env_name}={quoted}")
 
         content = "\n".join(lines) + "\n"
         # Write with restrictive permissions

@@ -144,22 +144,32 @@ def _resolve_secret_value(args: argparse.Namespace) -> str | None:
 
     # 3. --from-cli: run a command and capture its stdout
     if from_cli:
+        import shlex
+
+        try:
+            argv = shlex.split(from_cli)
+        except ValueError as e:
+            print(f"Error: コマンドの解析に失敗: {e}")
+            return None
         try:
             result = subprocess.run(
-                from_cli, shell=True,
+                argv,
                 capture_output=True, text=True, timeout=30,
             )
+        except FileNotFoundError:
+            print(f"Error: コマンドが見つかりません: {argv[0]}")
+            return None
         except subprocess.TimeoutExpired:
-            print(f"Error: コマンドがタイムアウトしました: {from_cli}")
+            print("Error: コマンドがタイムアウトしました")
             return None
         if result.returncode != 0:
-            print(f"Error: コマンドが失敗しました (exit {result.returncode}): {from_cli}")
+            print(f"Error: コマンドが失敗しました (exit {result.returncode})")
             return None
         value = result.stdout.strip()
         if not value:
-            print(f"Error: コマンドの出力が空です: {from_cli}")
+            print("Error: コマンドの出力が空です")
             return None
-        print(f"コマンドから取得: {from_cli}")
+        print("コマンドから取得しました")
         return value
 
     # 4. Fallback: interactive prompt (no echo)

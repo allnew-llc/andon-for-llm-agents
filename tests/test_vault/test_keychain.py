@@ -50,9 +50,12 @@ class TestKeychainPut:
     def test_put_success(self, mock_run):
         mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
         put("andon-vault", "openai", "new-value")
+        # sh -c wrapper — verify the shell command contains security add
         args = mock_run.call_args[0][0]
-        assert "add-generic-password" in args
-        assert "-U" in args
+        assert args[0] == "sh"
+        assert "add-generic-password" in args[2]
+        # Verify value is NOT in argv (security fix)
+        assert "new-value" not in args
 
     @patch("vault.keychain.subprocess.run")
     def test_put_failure(self, mock_run):

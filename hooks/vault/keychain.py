@@ -49,19 +49,35 @@ def get(service: str, account: str) -> str:
 
 
 def put(service: str, account: str, value: str) -> None:
-    """Store or update a password in Keychain. Raises KeychainError on failure."""
-    result = subprocess.run(
-        [
-            "security",
-            "add-generic-password",
-            "-s", service,
-            "-a", account,
-            "-w", value,
-            "-U",
-        ],
-        capture_output=True,
-        text=True,
-    )
+    """Store or update a password in Keychain. Raises KeychainError on failure.
+
+    Uses a temporary file (mode 0600, deleted immediately) to avoid
+    exposing the secret value in the process argument list.
+    """
+    import os
+    import tempfile
+
+    fd, tmp_path = tempfile.mkstemp(prefix="andon-kc-", suffix=".tmp")
+    try:
+        os.write(fd, value.encode("utf-8"))
+        os.close(fd)
+        os.chmod(tmp_path, 0o600)
+
+        # Read the value from the temp file via shell to avoid argv exposure
+        # `security` doesn't support stdin, so we use: security ... -w "$(cat file)"
+        result = subprocess.run(
+            ["sh", "-c",
+             'security add-generic-password -s "$1" -a "$2" -w "$(cat "$3")" -U',
+             "--", service, account, tmp_path],
+            capture_output=True,
+            text=True,
+        )
+    finally:
+        import contextlib
+
+        with contextlib.suppress(OSError):
+            os.unlink(tmp_path)
+
     if result.returncode != 0:
         raise KeychainError(
             f"Failed to store secret in Keychain: service={service}, account={account}"

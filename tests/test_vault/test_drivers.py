@@ -21,7 +21,7 @@ from vault.drivers.gcp import GCPSecretManagerDriver
 from vault.drivers.github import GitHubActionsDriver
 from vault.drivers.gitlab import GitLabCIDriver
 from vault.drivers.heroku import HerokuDriver
-from vault.drivers.local import LocalDriver
+from vault.drivers.local import GitignoreError, LocalDriver
 from vault.drivers.netlify import NetlifyDriver
 from vault.drivers.railway import RailwayDriver
 from vault.drivers.render import RenderDriver
@@ -32,8 +32,15 @@ from vault.drivers.vercel import VercelDriver
 
 class TestLocalDriver:
     @pytest.fixture
-    def env_file(self, tmp_path: Path) -> Path:
-        f = tmp_path / ".dev.vars"
+    def gitignored_dir(self, tmp_path: Path) -> Path:
+        """Create a dir with .git and .gitignore covering .dev.vars"""
+        (tmp_path / ".git").mkdir()
+        (tmp_path / ".gitignore").write_text(".dev.vars\n.env\n.env.*\n")
+        return tmp_path
+
+    @pytest.fixture
+    def env_file(self, gitignored_dir: Path) -> Path:
+        f = gitignored_dir / ".dev.vars"
         f.write_text("EXISTING_KEY=old_value\nOTHER=123\n")
         return f
 
@@ -63,12 +70,34 @@ class TestLocalDriver:
         assert "EXISTING_KEY=updated" in content
         assert "EXISTING_KEY=old_value" not in content
 
-    def test_put_creates_file(self, tmp_path: Path):
-        new_file = tmp_path / "sub" / ".env"
+    def test_put_creates_file(self, gitignored_dir: Path):
+        new_file = gitignored_dir / ".env"
         driver = LocalDriver()
         assert driver.put("KEY", "val", str(new_file)) is True
         assert new_file.exists()
         assert "KEY=val" in new_file.read_text()
+
+    def test_put_fails_without_gitignore(self, tmp_path: Path):
+        """gitignore に含まれていないファイルへの書き込みは拒否"""
+        (tmp_path / ".git").mkdir()
+        (tmp_path / ".gitignore").write_text("*.log\n")
+        target = tmp_path / ".dev.vars"
+        driver = LocalDriver()
+        with pytest.raises(GitignoreError):
+            driver.put("KEY", "val", str(target))
+
+    def test_put_quotes_special_values(self, env_file: Path):
+        """改行や # を含む値はクォートされる"""
+        driver = LocalDriver()
+        driver.put("MULTI", "line1\nline2", str(env_file))
+        content = env_file.read_text()
+        assert 'MULTI="line1\\nline2"' in content
+
+    def test_put_quotes_hash(self, env_file: Path):
+        driver = LocalDriver()
+        driver.put("COMMENT", "val#ue", str(env_file))
+        content = env_file.read_text()
+        assert 'COMMENT="val#ue"' in content
 
     def test_delete_existing(self, env_file: Path):
         driver = LocalDriver()

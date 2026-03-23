@@ -247,7 +247,7 @@ class TestCmdAdd:
         assert ret == 0
         mock_kc.put.assert_called_once_with("test-vault", "github", "gh-token-value")
         out = capsys.readouterr().out
-        assert "gh auth token" in out
+        assert "コマンドから取得" in out
 
     @patch("vault.cli.subprocess.run")
     @patch("vault.cli.keychain")
