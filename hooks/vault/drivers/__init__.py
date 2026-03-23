@@ -4,24 +4,36 @@
 from __future__ import annotations
 
 from .aws_ssm import AWSSSMDriver
+from .azure import AzureKeyVaultDriver
 from .base import PlatformDriver
 from .cloudflare import CloudflarePagesDriver
+from .digitalocean import DigitalOceanDriver
 from .flyio import FlyIODriver
+from .gcp import GCPSecretManagerDriver
 from .github import GitHubActionsDriver
+from .gitlab import GitLabCIDriver
 from .heroku import HerokuDriver
 from .local import LocalDriver
 from .netlify import NetlifyDriver
+from .railway import RailwayDriver
+from .supabase import SupabaseDriver
 from .vercel import VercelDriver
 
 DRIVER_MAP: dict[str, type[PlatformDriver]] = {
-    "cloudflare-pages": CloudflarePagesDriver,
-    "vercel": VercelDriver,
-    "local": LocalDriver,
-    "github-actions": GitHubActionsDriver,
-    "heroku": HerokuDriver,
-    "netlify": NetlifyDriver,
-    "flyio": FlyIODriver,
     "aws-ssm": AWSSSMDriver,
+    "azure-keyvault": AzureKeyVaultDriver,
+    "cloudflare-pages": CloudflarePagesDriver,
+    "digitalocean": DigitalOceanDriver,
+    "flyio": FlyIODriver,
+    "gcp-secrets": GCPSecretManagerDriver,
+    "github-actions": GitHubActionsDriver,
+    "gitlab-ci": GitLabCIDriver,
+    "heroku": HerokuDriver,
+    "local": LocalDriver,
+    "netlify": NetlifyDriver,
+    "railway": RailwayDriver,
+    "supabase": SupabaseDriver,
+    "vercel": VercelDriver,
 }
 
 
@@ -37,12 +49,18 @@ def get_driver(platform: str) -> PlatformDriver:
 __all__ = [
     "PlatformDriver",
     "AWSSSMDriver",
+    "AzureKeyVaultDriver",
     "CloudflarePagesDriver",
+    "DigitalOceanDriver",
     "FlyIODriver",
+    "GCPSecretManagerDriver",
     "GitHubActionsDriver",
+    "GitLabCIDriver",
     "HerokuDriver",
     "LocalDriver",
     "NetlifyDriver",
+    "RailwayDriver",
+    "SupabaseDriver",
     "VercelDriver",
     "DRIVER_MAP",
     "get_driver",

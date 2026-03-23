@@ -8,14 +8,20 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from vault.drivers import get_driver
+from vault.drivers import DRIVER_MAP, get_driver
 from vault.drivers.aws_ssm import AWSSSMDriver
+from vault.drivers.azure import AzureKeyVaultDriver
 from vault.drivers.cloudflare import CloudflarePagesDriver
+from vault.drivers.digitalocean import DigitalOceanDriver
 from vault.drivers.flyio import FlyIODriver
+from vault.drivers.gcp import GCPSecretManagerDriver
 from vault.drivers.github import GitHubActionsDriver
+from vault.drivers.gitlab import GitLabCIDriver
 from vault.drivers.heroku import HerokuDriver
 from vault.drivers.local import LocalDriver
 from vault.drivers.netlify import NetlifyDriver
+from vault.drivers.railway import RailwayDriver
+from vault.drivers.supabase import SupabaseDriver
 from vault.drivers.vercel import VercelDriver
 
 
@@ -304,16 +310,148 @@ class TestAWSSSMDriver:
         assert driver.delete("KEY", "myapp") is True
 
 
+class TestGCPSecretManagerDriver:
+    @patch("vault.drivers.gcp._find_gcloud", return_value="/usr/bin/gcloud")
+    @patch("vault.drivers.gcp.subprocess.run")
+    def test_exists_true(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = GCPSecretManagerDriver()
+        assert driver.exists("OPENAI_API_KEY", "my-project") is True
+
+    @patch("vault.drivers.gcp._find_gcloud", return_value="/usr/bin/gcloud")
+    @patch("vault.drivers.gcp.subprocess.run")
+    def test_put_creates_new(self, mock_run, _):
+        """versions add fails → creates new secret"""
+        mock_run.side_effect = [
+            subprocess.CompletedProcess([], returncode=1),  # versions add fails
+            subprocess.CompletedProcess([], returncode=0),  # create succeeds
+        ]
+        driver = GCPSecretManagerDriver()
+        assert driver.put("KEY", "val", "my-project") is True
+
+    @patch("vault.drivers.gcp._find_gcloud", return_value="/usr/bin/gcloud")
+    @patch("vault.drivers.gcp.subprocess.run")
+    def test_put_adds_version(self, mock_run, _):
+        """versions add succeeds → no create needed"""
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = GCPSecretManagerDriver()
+        assert driver.put("KEY", "val", "my-project") is True
+        assert mock_run.call_count == 1  # only versions add called
+
+
+class TestAzureKeyVaultDriver:
+    @patch("vault.drivers.azure._find_az", return_value="/usr/bin/az")
+    @patch("vault.drivers.azure.subprocess.run")
+    def test_exists_true(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = AzureKeyVaultDriver()
+        assert driver.exists("OPENAI_API_KEY", "my-vault") is True
+
+    @patch("vault.drivers.azure._find_az", return_value="/usr/bin/az")
+    @patch("vault.drivers.azure.subprocess.run")
+    def test_name_normalization(self, mock_run, _):
+        """Underscores are converted to hyphens for Azure"""
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = AzureKeyVaultDriver()
+        driver.put("OPENAI_API_KEY", "val", "my-vault")
+        cmd = mock_run.call_args[0][0]
+        assert "OPENAI-API-KEY" in cmd
+
+    @patch("vault.drivers.azure._find_az", return_value="/usr/bin/az")
+    @patch("vault.drivers.azure.subprocess.run")
+    def test_put_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = AzureKeyVaultDriver()
+        assert driver.put("KEY", "val", "my-vault") is True
+
+
+class TestDigitalOceanDriver:
+    @patch("vault.drivers.digitalocean._find_doctl", return_value="/usr/bin/doctl")
+    @patch("vault.drivers.digitalocean.subprocess.run")
+    def test_exists_true(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess(
+            [], returncode=0, stdout='[{"key": "OPENAI_API_KEY", "value": "..."}]'
+        )
+        driver = DigitalOceanDriver()
+        assert driver.exists("OPENAI_API_KEY", "app-id") is True
+
+    @patch("vault.drivers.digitalocean._find_doctl", return_value="/usr/bin/doctl")
+    @patch("vault.drivers.digitalocean.subprocess.run")
+    def test_put_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = DigitalOceanDriver()
+        assert driver.put("KEY", "val", "app-id") is True
+
+
+class TestSupabaseDriver:
+    @patch("vault.drivers.supabase._find_supabase", return_value="/usr/bin/supabase")
+    @patch("vault.drivers.supabase.subprocess.run")
+    def test_exists_true(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess(
+            [], returncode=0, stdout="OPENAI_API_KEY\t1d ago\n"
+        )
+        driver = SupabaseDriver()
+        assert driver.exists("OPENAI_API_KEY", "proj-ref") is True
+
+    @patch("vault.drivers.supabase._find_supabase", return_value="/usr/bin/supabase")
+    @patch("vault.drivers.supabase.subprocess.run")
+    def test_put_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = SupabaseDriver()
+        assert driver.put("KEY", "val", "proj-ref") is True
+
+
+class TestRailwayDriver:
+    @patch("vault.drivers.railway._find_railway", return_value="/usr/bin/railway")
+    @patch("vault.drivers.railway.subprocess.run")
+    def test_put_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = RailwayDriver()
+        assert driver.put("KEY", "val", "proj-id") is True
+
+
+class TestGitLabCIDriver:
+    @patch("vault.drivers.gitlab._find_glab", return_value="/usr/bin/glab")
+    @patch("vault.drivers.gitlab.subprocess.run")
+    def test_put_update_then_create(self, mock_run, _):
+        """update fails → create succeeds"""
+        mock_run.side_effect = [
+            subprocess.CompletedProcess([], returncode=1),  # update fails
+            subprocess.CompletedProcess([], returncode=0),  # set succeeds
+        ]
+        driver = GitLabCIDriver()
+        assert driver.put("KEY", "val", "group/project") is True
+
+    @patch("vault.drivers.gitlab._find_glab", return_value="/usr/bin/glab")
+    @patch("vault.drivers.gitlab.subprocess.run")
+    def test_delete_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = GitLabCIDriver()
+        assert driver.delete("KEY", "group/project") is True
+
+
 class TestGetDriver:
-    def test_known_platforms(self):
-        assert isinstance(get_driver("cloudflare-pages"), CloudflarePagesDriver)
-        assert isinstance(get_driver("vercel"), VercelDriver)
-        assert isinstance(get_driver("local"), LocalDriver)
-        assert isinstance(get_driver("github-actions"), GitHubActionsDriver)
-        assert isinstance(get_driver("heroku"), HerokuDriver)
-        assert isinstance(get_driver("netlify"), NetlifyDriver)
-        assert isinstance(get_driver("flyio"), FlyIODriver)
-        assert isinstance(get_driver("aws-ssm"), AWSSSMDriver)
+    def test_all_registered_platforms(self):
+        """All registered platforms return the correct driver type"""
+        expected = {
+            "aws-ssm": AWSSSMDriver,
+            "azure-keyvault": AzureKeyVaultDriver,
+            "cloudflare-pages": CloudflarePagesDriver,
+            "digitalocean": DigitalOceanDriver,
+            "flyio": FlyIODriver,
+            "gcp-secrets": GCPSecretManagerDriver,
+            "github-actions": GitHubActionsDriver,
+            "gitlab-ci": GitLabCIDriver,
+            "heroku": HerokuDriver,
+            "local": LocalDriver,
+            "netlify": NetlifyDriver,
+            "railway": RailwayDriver,
+            "supabase": SupabaseDriver,
+            "vercel": VercelDriver,
+        }
+        for name, cls in expected.items():
+            assert isinstance(get_driver(name), cls), f"Failed for {name}"
+        assert len(DRIVER_MAP) == len(expected)
 
     def test_unknown_platform(self):
         with pytest.raises(ValueError, match="Unknown platform"):
