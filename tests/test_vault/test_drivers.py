@@ -133,29 +133,47 @@ class TestVercelDriver:
     @patch("vault.drivers.vercel._find_vercel", return_value="/usr/bin/vercel")
     @patch("vault.drivers.vercel.subprocess.run")
     def test_exists_true(self, mock_run, _):
-        mock_run.return_value = subprocess.CompletedProcess(
-            [], returncode=0, stdout="OPENAI_API_KEY  production  encrypted\n"
-        )
+        # First call = vercel link (success), second = env ls
+        mock_run.side_effect = [
+            subprocess.CompletedProcess([], returncode=0),  # link
+            subprocess.CompletedProcess(
+                [], returncode=0, stdout="OPENAI_API_KEY  production  encrypted\n"
+            ),  # env ls
+        ]
         driver = VercelDriver()
         assert driver.exists("OPENAI_API_KEY", "my-app") is True
 
     @patch("vault.drivers.vercel._find_vercel", return_value="/usr/bin/vercel")
     @patch("vault.drivers.vercel.subprocess.run")
     def test_put_success(self, mock_run, _):
-        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        mock_run.side_effect = [
+            subprocess.CompletedProcess([], returncode=0),  # link
+            subprocess.CompletedProcess([], returncode=0),  # env add
+        ]
         driver = VercelDriver()
         assert driver.put("KEY", "val", "app") is True
-        # Verify --project flag is passed
-        cmd = mock_run.call_args[0][0]
-        assert "--project" in cmd
-        assert "app" in cmd
+        # Second call is env add — verify --cwd is passed
+        env_add_call = mock_run.call_args_list[1]
+        cmd = env_add_call[0][0]
+        assert "--cwd" in cmd
 
     @patch("vault.drivers.vercel._find_vercel", return_value="/usr/bin/vercel")
     @patch("vault.drivers.vercel.subprocess.run")
     def test_delete_success(self, mock_run, _):
-        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        mock_run.side_effect = [
+            subprocess.CompletedProcess([], returncode=0),  # link
+            subprocess.CompletedProcess([], returncode=0),  # env rm
+        ]
         driver = VercelDriver()
         assert driver.delete("KEY", "app") is True
+
+    @patch("vault.drivers.vercel._find_vercel", return_value="/usr/bin/vercel")
+    @patch("vault.drivers.vercel.subprocess.run")
+    def test_put_link_fails(self, mock_run, _):
+        """vercel link が失敗した場合は False"""
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=1)
+        driver = VercelDriver()
+        assert driver.put("KEY", "val", "app") is False
 
     def test_exists_cli_not_found(self):
         """vercel がない場合は False を返す"""
