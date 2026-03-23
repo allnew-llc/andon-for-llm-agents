@@ -3,9 +3,12 @@
 """Platform drivers for secret deployment targets."""
 from __future__ import annotations
 
+from .aws_sm import AWSSecretsManagerDriver
 from .aws_ssm import AWSSSMDriver
 from .azure import AzureKeyVaultDriver
 from .base import PlatformDriver
+from .bitbucket import BitbucketPipelinesDriver
+from .circleci import CircleCIDriver
 from .cloudflare import CloudflarePagesDriver
 from .digitalocean import DigitalOceanDriver
 from .flyio import FlyIODriver
@@ -16,12 +19,17 @@ from .heroku import HerokuDriver
 from .local import LocalDriver
 from .netlify import NetlifyDriver
 from .railway import RailwayDriver
+from .render import RenderDriver
 from .supabase import SupabaseDriver
+from .terraform import TerraformCloudDriver
 from .vercel import VercelDriver
 
 DRIVER_MAP: dict[str, type[PlatformDriver]] = {
+    "aws-secrets-manager": AWSSecretsManagerDriver,
     "aws-ssm": AWSSSMDriver,
     "azure-keyvault": AzureKeyVaultDriver,
+    "bitbucket-pipelines": BitbucketPipelinesDriver,
+    "circleci": CircleCIDriver,
     "cloudflare-pages": CloudflarePagesDriver,
     "digitalocean": DigitalOceanDriver,
     "flyio": FlyIODriver,
@@ -32,7 +40,9 @@ DRIVER_MAP: dict[str, type[PlatformDriver]] = {
     "local": LocalDriver,
     "netlify": NetlifyDriver,
     "railway": RailwayDriver,
+    "render": RenderDriver,
     "supabase": SupabaseDriver,
+    "terraform-cloud": TerraformCloudDriver,
     "vercel": VercelDriver,
 }
 
@@ -48,8 +58,11 @@ def get_driver(platform: str) -> PlatformDriver:
 
 __all__ = [
     "PlatformDriver",
+    "AWSSecretsManagerDriver",
     "AWSSSMDriver",
     "AzureKeyVaultDriver",
+    "BitbucketPipelinesDriver",
+    "CircleCIDriver",
     "CloudflarePagesDriver",
     "DigitalOceanDriver",
     "FlyIODriver",
@@ -60,7 +73,9 @@ __all__ = [
     "LocalDriver",
     "NetlifyDriver",
     "RailwayDriver",
+    "RenderDriver",
     "SupabaseDriver",
+    "TerraformCloudDriver",
     "VercelDriver",
     "DRIVER_MAP",
     "get_driver",

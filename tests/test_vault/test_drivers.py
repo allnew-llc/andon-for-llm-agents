@@ -9,8 +9,11 @@ from unittest.mock import patch
 
 import pytest
 from vault.drivers import DRIVER_MAP, get_driver
+from vault.drivers.aws_sm import AWSSecretsManagerDriver
 from vault.drivers.aws_ssm import AWSSSMDriver
 from vault.drivers.azure import AzureKeyVaultDriver
+from vault.drivers.bitbucket import BitbucketPipelinesDriver
+from vault.drivers.circleci import CircleCIDriver
 from vault.drivers.cloudflare import CloudflarePagesDriver
 from vault.drivers.digitalocean import DigitalOceanDriver
 from vault.drivers.flyio import FlyIODriver
@@ -21,7 +24,9 @@ from vault.drivers.heroku import HerokuDriver
 from vault.drivers.local import LocalDriver
 from vault.drivers.netlify import NetlifyDriver
 from vault.drivers.railway import RailwayDriver
+from vault.drivers.render import RenderDriver
 from vault.drivers.supabase import SupabaseDriver
+from vault.drivers.terraform import TerraformCloudDriver
 from vault.drivers.vercel import VercelDriver
 
 
@@ -430,12 +435,110 @@ class TestGitLabCIDriver:
         assert driver.delete("KEY", "group/project") is True
 
 
+class TestAWSSecretsManagerDriver:
+    @patch("vault.drivers.aws_sm._find_aws", return_value="/usr/bin/aws")
+    @patch("vault.drivers.aws_sm.subprocess.run")
+    def test_put_update_then_create(self, mock_run, _):
+        """put-secret-value fails → create-secret"""
+        mock_run.side_effect = [
+            subprocess.CompletedProcess([], returncode=1),  # put fails
+            subprocess.CompletedProcess([], returncode=0),  # create succeeds
+        ]
+        driver = AWSSecretsManagerDriver()
+        assert driver.put("KEY", "val", "myapp") is True
+        assert mock_run.call_count == 2
+
+    @patch("vault.drivers.aws_sm._find_aws", return_value="/usr/bin/aws")
+    @patch("vault.drivers.aws_sm.subprocess.run")
+    def test_exists_true(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = AWSSecretsManagerDriver()
+        assert driver.exists("KEY", "myapp") is True
+        cmd = mock_run.call_args[0][0]
+        assert "myapp/KEY" in cmd
+
+
+class TestRenderDriver:
+    @patch("vault.drivers.render._find_render", return_value="/usr/bin/render")
+    @patch("vault.drivers.render.subprocess.run")
+    def test_put_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = RenderDriver()
+        assert driver.put("KEY", "val", "srv-xxx") is True
+
+
+class TestCircleCIDriver:
+    @patch("vault.drivers.circleci.subprocess.run")
+    def test_put_success(self, mock_run):
+        import os
+        os.environ["CIRCLECI_TOKEN"] = "test-token"
+        try:
+            mock_run.return_value = subprocess.CompletedProcess(
+                [], returncode=0, stdout='{"name": "KEY"}'
+            )
+            driver = CircleCIDriver()
+            assert driver.put("KEY", "val", "github/org/repo") is True
+        finally:
+            del os.environ["CIRCLECI_TOKEN"]
+
+
+class TestBitbucketPipelinesDriver:
+    @patch("vault.drivers.bitbucket.subprocess.run")
+    def test_exists_true(self, mock_run):
+        import os
+        os.environ["BITBUCKET_USERNAME"] = "user"
+        os.environ["BITBUCKET_APP_PASSWORD"] = "pass"
+        try:
+            mock_run.return_value = subprocess.CompletedProcess(
+                [], returncode=0,
+                stdout='{"values": [{"key": "MY_KEY", "uuid": "{123}"}]}'
+            )
+            driver = BitbucketPipelinesDriver()
+            assert driver.exists("MY_KEY", "ws/repo") is True
+        finally:
+            del os.environ["BITBUCKET_USERNAME"]
+            del os.environ["BITBUCKET_APP_PASSWORD"]
+
+
+class TestTerraformCloudDriver:
+    @patch("vault.drivers.terraform.subprocess.run")
+    def test_exists_true(self, mock_run):
+        import os
+        os.environ["TFE_TOKEN"] = "test-token"
+        try:
+            mock_run.return_value = subprocess.CompletedProcess(
+                [], returncode=0,
+                stdout='{"data": [{"attributes": {"key": "MY_KEY"}, "id": "var-123"}]}'
+            )
+            driver = TerraformCloudDriver()
+            assert driver.exists("MY_KEY", "org/workspace") is True
+        finally:
+            del os.environ["TFE_TOKEN"]
+
+    @patch("vault.drivers.terraform.subprocess.run")
+    def test_put_success(self, mock_run):
+        import os
+        os.environ["TFE_TOKEN"] = "test-token"
+        try:
+            mock_run.side_effect = [
+                subprocess.CompletedProcess([], returncode=0, stdout='{"data": []}'),  # list (delete check)
+                subprocess.CompletedProcess([], returncode=0, stdout='{"id": "var-new"}'),  # create
+            ]
+            driver = TerraformCloudDriver()
+            assert driver.put("KEY", "val", "org/ws") is True
+        finally:
+            del os.environ["TFE_TOKEN"]
+
+
 class TestGetDriver:
     def test_all_registered_platforms(self):
         """All registered platforms return the correct driver type"""
         expected = {
+            "aws-secrets-manager": AWSSecretsManagerDriver,
             "aws-ssm": AWSSSMDriver,
             "azure-keyvault": AzureKeyVaultDriver,
+            "bitbucket-pipelines": BitbucketPipelinesDriver,
+            "circleci": CircleCIDriver,
             "cloudflare-pages": CloudflarePagesDriver,
             "digitalocean": DigitalOceanDriver,
             "flyio": FlyIODriver,
@@ -446,7 +549,9 @@ class TestGetDriver:
             "local": LocalDriver,
             "netlify": NetlifyDriver,
             "railway": RailwayDriver,
+            "render": RenderDriver,
             "supabase": SupabaseDriver,
+            "terraform-cloud": TerraformCloudDriver,
             "vercel": VercelDriver,
         }
         for name, cls in expected.items():
