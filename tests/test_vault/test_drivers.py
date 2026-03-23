@@ -81,51 +81,94 @@ class TestLocalDriver:
 
 
 class TestCloudflareDriver:
+    @patch("vault.drivers.cloudflare._find_wrangler", return_value="/usr/bin/wrangler")
     @patch("vault.drivers.cloudflare.subprocess.run")
-    def test_exists_true(self, mock_run):
+    def test_exists_true(self, mock_run, _):
         mock_run.return_value = subprocess.CompletedProcess(
             [], returncode=0, stdout="OPENAI_API_KEY\nGEMINI_API_KEY\n"
         )
         driver = CloudflarePagesDriver()
         assert driver.exists("OPENAI_API_KEY", "my-project") is True
 
+    @patch("vault.drivers.cloudflare._find_wrangler", return_value="/usr/bin/wrangler")
     @patch("vault.drivers.cloudflare.subprocess.run")
-    def test_exists_false(self, mock_run):
+    def test_exists_false(self, mock_run, _):
         mock_run.return_value = subprocess.CompletedProcess(
             [], returncode=0, stdout="OTHER_KEY\n"
         )
         driver = CloudflarePagesDriver()
         assert driver.exists("OPENAI_API_KEY", "my-project") is False
 
+    @patch("vault.drivers.cloudflare._find_wrangler", return_value="/usr/bin/wrangler")
     @patch("vault.drivers.cloudflare.subprocess.run")
-    def test_put_success(self, mock_run):
+    def test_put_success(self, mock_run, _):
         mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
         driver = CloudflarePagesDriver()
         assert driver.put("KEY", "val", "proj") is True
         call_args = mock_run.call_args
         assert call_args.kwargs.get("input") == "val"
 
+    @patch("vault.drivers.cloudflare._find_wrangler", return_value="/usr/bin/wrangler")
     @patch("vault.drivers.cloudflare.subprocess.run")
-    def test_delete_success(self, mock_run):
+    def test_delete_success(self, mock_run, _):
         mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
         driver = CloudflarePagesDriver()
         assert driver.delete("KEY", "proj") is True
 
+    def test_exists_cli_not_found(self):
+        """wrangler がない場合は False を返す"""
+        with patch("vault.drivers.cloudflare._find_wrangler", side_effect=FileNotFoundError):
+            driver = CloudflarePagesDriver()
+            assert driver.exists("KEY", "proj") is False
+
+    def test_put_cli_not_found(self):
+        """wrangler がない場合は FileNotFoundError"""
+        with patch("vault.drivers.cloudflare._find_wrangler", side_effect=FileNotFoundError("not found")):
+            driver = CloudflarePagesDriver()
+            with pytest.raises(FileNotFoundError):
+                driver.put("KEY", "val", "proj")
+
 
 class TestVercelDriver:
+    @patch("vault.drivers.vercel._find_vercel", return_value="/usr/bin/vercel")
     @patch("vault.drivers.vercel.subprocess.run")
-    def test_exists_true(self, mock_run):
+    def test_exists_true(self, mock_run, _):
         mock_run.return_value = subprocess.CompletedProcess(
             [], returncode=0, stdout="OPENAI_API_KEY  production  encrypted\n"
         )
         driver = VercelDriver()
         assert driver.exists("OPENAI_API_KEY", "my-app") is True
 
+    @patch("vault.drivers.vercel._find_vercel", return_value="/usr/bin/vercel")
     @patch("vault.drivers.vercel.subprocess.run")
-    def test_put_success(self, mock_run):
+    def test_put_success(self, mock_run, _):
         mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
         driver = VercelDriver()
         assert driver.put("KEY", "val", "app") is True
+        # Verify --project flag is passed
+        cmd = mock_run.call_args[0][0]
+        assert "--project" in cmd
+        assert "app" in cmd
+
+    @patch("vault.drivers.vercel._find_vercel", return_value="/usr/bin/vercel")
+    @patch("vault.drivers.vercel.subprocess.run")
+    def test_delete_success(self, mock_run, _):
+        mock_run.return_value = subprocess.CompletedProcess([], returncode=0)
+        driver = VercelDriver()
+        assert driver.delete("KEY", "app") is True
+
+    def test_exists_cli_not_found(self):
+        """vercel がない場合は False を返す"""
+        with patch("vault.drivers.vercel._find_vercel", side_effect=FileNotFoundError):
+            driver = VercelDriver()
+            assert driver.exists("KEY", "app") is False
+
+    def test_put_cli_not_found(self):
+        """vercel がない場合は FileNotFoundError"""
+        with patch("vault.drivers.vercel._find_vercel", side_effect=FileNotFoundError("not found")):
+            driver = VercelDriver()
+            with pytest.raises(FileNotFoundError):
+                driver.put("KEY", "val", "app")
 
 
 class TestGetDriver:

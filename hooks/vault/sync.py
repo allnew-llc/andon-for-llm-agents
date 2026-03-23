@@ -68,6 +68,14 @@ def _sync_one_target(
             success=ok,
             message="" if ok else "Driver put returned False",
         )
+    except FileNotFoundError as e:
+        audit.log_event("SYNC", entry.name, label, "CLI_NOT_FOUND", log_path=audit_log)
+        return SyncResult(
+            secret_name=entry.name,
+            target_label=label,
+            success=False,
+            message=str(e),
+        )
     except Exception as e:
         audit.log_event("SYNC", entry.name, label, "ERROR", log_path=audit_log)
         return SyncResult(
