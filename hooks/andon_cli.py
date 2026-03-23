@@ -25,16 +25,7 @@ _HOOKS_DIR = Path(__file__).parent
 sys.path.insert(0, str(_HOOKS_DIR))
 
 from pack_loader import REGULATED_DOMAINS, PackLoader  # noqa: E402
-from vault.cli import register_vault_parser  # noqa: E402
-from vault.cli import (  # noqa: E402
-    cmd_add as vault_add,
-    cmd_audit as vault_audit,
-    cmd_list as vault_list_cmd,
-    cmd_remove as vault_remove,
-    cmd_rotate as vault_rotate,
-    cmd_status as vault_status,
-    cmd_sync as vault_sync,
-)
+from vault import cli as vault_cli  # noqa: E402
 
 PACKS_DIR = _HOOKS_DIR.parent / "packs"
 
@@ -246,7 +237,7 @@ def main() -> int:
     info_p.add_argument("name", help="Pack name")
 
     # vault subcommand
-    register_vault_parser(sub)
+    vault_cli.register_vault_parser(sub)
 
     args = parser.parse_args()
 
@@ -264,13 +255,14 @@ def main() -> int:
             return 1
     elif args.command == "vault":
         _VAULT_DISPATCH = {
-            "status": vault_status,
-            "sync": vault_sync,
-            "add": vault_add,
-            "rotate": vault_rotate,
-            "audit": vault_audit,
-            "remove": vault_remove,
-            "list": vault_list_cmd,
+            "status": vault_cli.cmd_status,
+            "sync": vault_cli.cmd_sync,
+            "add": vault_cli.cmd_add,
+            "rotate": vault_cli.cmd_rotate,
+            "audit": vault_cli.cmd_audit,
+            "remove": vault_cli.cmd_remove,
+            "list": vault_cli.cmd_list,
+            "search": vault_cli.cmd_search,
         }
         handler = _VAULT_DISPATCH.get(args.vault_command)
         if handler:

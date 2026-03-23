@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from vault.cli import cmd_add, cmd_audit, cmd_list, cmd_remove, cmd_status, cmd_sync
+from vault.cli import cmd_add, cmd_audit, cmd_list, cmd_remove, cmd_search, cmd_status, cmd_sync
 from vault.config import SecretEntry, Target, VaultConfig
 
 
@@ -101,15 +101,14 @@ class TestCmdSync:
 class TestCmdAdd:
     @patch("vault.cli.sync_secret")
     @patch("vault.cli.keychain")
-    def test_add_migrates_from_legacy_keychain(self, mock_kc, mock_sync, tmp_path, capsys):
-        """claude-mcp-* に既存キーがあれば自動コピーする"""
+    def test_add_from_keychain_with_service(self, mock_kc, mock_sync, tmp_path, capsys):
+        """--from-keychain でサービス名を指定してインポートする"""
         from vault.sync import SyncReport, SyncResult
 
         cfg_path = tmp_path / "vault.yaml"
         VaultConfig(keychain_service="test-vault").save(cfg_path)
 
-        mock_kc.exists_by_service.return_value = True  # legacy key found
-        mock_kc.get_by_service.return_value = "legacy-secret-value"
+        mock_kc.get_by_service.return_value = "imported-value"
         mock_kc.put.return_value = None
         mock_kc.KeychainError = Exception
 
@@ -124,26 +123,54 @@ class TestCmdAdd:
             env="OPENAI_API_KEY",
             description="",
             target=["local:/tmp/x"],
+            from_keychain="my-custom-service",
+            from_account=None,
         )
         ret = cmd_add(args)
         assert ret == 0
 
         out = capsys.readouterr().out
-        assert "claude-mcp-openai" in out
+        assert "my-custom-service" in out
         assert "andon-vault" in out
 
-        # Verify: legacy key read by service, then stored under andon-vault
-        mock_kc.exists_by_service.assert_called_once_with("claude-mcp-openai")
-        mock_kc.get_by_service.assert_called_once_with("claude-mcp-openai")
-        mock_kc.put.assert_called_once_with("test-vault", "openai", "legacy-secret-value")
+        mock_kc.get_by_service.assert_called_once_with("my-custom-service")
+        mock_kc.put.assert_called_once_with("test-vault", "openai", "imported-value")
 
+    @patch("vault.cli.sync_secret")
     @patch("vault.cli.keychain")
-    def test_add_prompts_when_no_legacy(self, mock_kc, tmp_path, capsys):
-        """claude-mcp-* に見つからなければ getpass で入力を促す"""
+    def test_add_from_keychain_with_account(self, mock_kc, mock_sync, tmp_path, capsys):
+        """--from-keychain + --from-account で正確に指定する"""
+        from vault.sync import SyncReport
+
         cfg_path = tmp_path / "vault.yaml"
         VaultConfig(keychain_service="test-vault").save(cfg_path)
 
-        mock_kc.exists_by_service.return_value = False  # no legacy key
+        mock_kc.get.return_value = "precise-value"
+        mock_kc.put.return_value = None
+        mock_kc.KeychainError = Exception
+        mock_sync.return_value = SyncReport()
+
+        args = _make_args(
+            cfg_path,
+            name="openai",
+            account="openai",
+            env="OPENAI_API_KEY",
+            description="",
+            target=None,
+            from_keychain="my-service",
+            from_account="my-acct",
+        )
+        ret = cmd_add(args)
+        assert ret == 0
+
+        mock_kc.get.assert_called_once_with("my-service", "my-acct")
+
+    @patch("vault.cli.keychain")
+    def test_add_prompts_when_no_from_keychain(self, mock_kc, tmp_path, capsys):
+        """--from-keychain なしなら getpass で入力を促す"""
+        cfg_path = tmp_path / "vault.yaml"
+        VaultConfig(keychain_service="test-vault").save(cfg_path)
+
         mock_kc.put.return_value = None
         mock_kc.KeychainError = Exception
 
@@ -154,6 +181,8 @@ class TestCmdAdd:
             env="NEW_KEY",
             description="",
             target=None,
+            from_keychain=None,
+            from_account=None,
         )
         with patch("vault.cli.getpass.getpass", return_value="typed-value"):
             ret = cmd_add(args)
@@ -231,3 +260,28 @@ class TestCmdRemove:
         ret = cmd_remove(args)
         assert ret == 1
         assert "not found" in capsys.readouterr().out
+
+
+class TestCmdSearch:
+    @patch("vault.cli.keychain")
+    def test_search_found(self, mock_kc, capsys):
+        from vault.keychain import KeychainEntry
+        mock_kc.search.return_value = [
+            KeychainEntry(service="my-api-openai", account="user1", label="OpenAI"),
+            KeychainEntry(service="openai-key", account="user2"),
+        ]
+        args = argparse.Namespace(pattern="openai")
+        ret = cmd_search(args)
+        assert ret == 0
+        out = capsys.readouterr().out
+        assert "2 件" in out
+        assert "my-api-openai" in out
+        assert "--from-keychain" in out
+
+    @patch("vault.cli.keychain")
+    def test_search_empty(self, mock_kc, capsys):
+        mock_kc.search.return_value = []
+        args = argparse.Namespace(pattern="nonexistent")
+        ret = cmd_search(args)
+        assert ret == 0
+        assert "一致するエントリはありません" in capsys.readouterr().out

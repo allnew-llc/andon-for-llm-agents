@@ -118,21 +118,25 @@ def cmd_add(args: argparse.Namespace) -> int:
 
     account = args.account or args.name
 
-    # Try to find existing key in Keychain (claude-mcp-* convention)
-    # service名だけで検索（account名は不明なため）
-    legacy_service = f"claude-mcp-{args.name}"
-    migrated = False
-    if keychain.exists_by_service(legacy_service):
-        print(f"Keychain に既存キーを検出: service={legacy_service}")
+    # Import from existing Keychain entry if --from-keychain is specified
+    imported = False
+    from_kc = getattr(args, "from_keychain", None)
+    from_acct = getattr(args, "from_account", None)
+    if from_kc:
         try:
-            value = keychain.get_by_service(legacy_service)
-            migrated = True
+            if from_acct:
+                value = keychain.get(from_kc, from_acct)
+                print(f"Keychain からインポート: service={from_kc}, account={from_acct}")
+            else:
+                value = keychain.get_by_service(from_kc)
+                print(f"Keychain からインポート: service={from_kc}")
+            imported = True
             print("  -> andon-vault へコピーします")
         except keychain.KeychainError:
-            print("  -> 値の取得に失敗。手動入力に切り替えます。")
-            migrated = False
+            print(f"Error: Keychain エントリが見つかりません: service={from_kc}")
+            return 1
 
-    if not migrated:
+    if not imported:
         # Read secret value interactively (no echo)
         try:
             value = getpass.getpass(f"Enter value for {args.name}: ")
@@ -283,6 +287,24 @@ def cmd_list(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_search(args: argparse.Namespace) -> int:
+    """Search Keychain for existing entries matching a pattern."""
+    entries = keychain.search(args.pattern)
+    if not entries:
+        print(f"Keychain に '{args.pattern}' に一致するエントリはありません。")
+        return 0
+
+    print(f"\nKeychain 検索結果: '{args.pattern}' ({len(entries)} 件)\n")
+    for i, entry in enumerate(entries, 1):
+        label_str = f"  label={entry.label}" if entry.label else ""
+        print(f"  {i}. service={entry.service}  account={entry.account}{label_str}")
+
+    print("\n使い方:")
+    print("  andon vault add <name> --env <ENV_VAR> --from-keychain <service>")
+    print("  andon vault add <name> --env <ENV_VAR> --from-keychain <service> --from-account <account>")
+    return 0
+
+
 def register_vault_parser(subparsers: argparse._SubParsersAction) -> None:  # type: ignore[type-arg]
     """Register the 'vault' subcommand on the andon CLI parser."""
     vault_parser = subparsers.add_parser("vault", help="Local-first secret management")
@@ -316,6 +338,14 @@ def register_vault_parser(subparsers: argparse._SubParsersAction) -> None:  # ty
         "--target", action="append",
         help="Target in platform:project format (repeatable)",
     )
+    add_p.add_argument(
+        "--from-keychain", dest="from_keychain", default=None,
+        help="Import from existing Keychain entry (service name)",
+    )
+    add_p.add_argument(
+        "--from-account", dest="from_account", default=None,
+        help="Account name for --from-keychain (optional, uses first match if omitted)",
+    )
 
     # rotate
     rotate_p = vault_sub.add_parser("rotate", help="Rotate a secret")
@@ -330,3 +360,7 @@ def register_vault_parser(subparsers: argparse._SubParsersAction) -> None:  # ty
 
     # list
     vault_sub.add_parser("list", help="List vault config (metadata only)")
+
+    # search
+    search_p = vault_sub.add_parser("search", help="Search Keychain for existing entries")
+    search_p.add_argument("pattern", help="Search pattern (substring match on service/account)")
