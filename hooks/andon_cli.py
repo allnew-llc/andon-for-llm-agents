@@ -25,6 +25,16 @@ _HOOKS_DIR = Path(__file__).parent
 sys.path.insert(0, str(_HOOKS_DIR))
 
 from pack_loader import REGULATED_DOMAINS, PackLoader  # noqa: E402
+from vault.cli import register_vault_parser  # noqa: E402
+from vault.cli import (  # noqa: E402
+    cmd_add as vault_add,
+    cmd_audit as vault_audit,
+    cmd_list as vault_list_cmd,
+    cmd_remove as vault_remove,
+    cmd_rotate as vault_rotate,
+    cmd_status as vault_status,
+    cmd_sync as vault_sync,
+)
 
 PACKS_DIR = _HOOKS_DIR.parent / "packs"
 
@@ -235,6 +245,9 @@ def main() -> int:
     info_p = pack_sub.add_parser("info", help="Show pack details")
     info_p.add_argument("name", help="Pack name")
 
+    # vault subcommand
+    register_vault_parser(sub)
+
     args = parser.parse_args()
 
     if args.command == "pack":
@@ -248,6 +261,22 @@ def main() -> int:
             return cmd_info(args)
         else:
             pack_parser.print_help()
+            return 1
+    elif args.command == "vault":
+        _VAULT_DISPATCH = {
+            "status": vault_status,
+            "sync": vault_sync,
+            "add": vault_add,
+            "rotate": vault_rotate,
+            "audit": vault_audit,
+            "remove": vault_remove,
+            "list": vault_list_cmd,
+        }
+        handler = _VAULT_DISPATCH.get(args.vault_command)
+        if handler:
+            return handler(args)
+        else:
+            parser.parse_args(["vault", "--help"])
             return 1
     else:
         parser.print_help()
