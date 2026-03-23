@@ -86,12 +86,37 @@ class SecretEntry:
 
 
 @dataclass
+class NotifierConfig:
+    """Configuration for a notification integration."""
+
+    name: str  # "slack", "teams", "datadog", "pagerduty"
+    webhook_url: str  # Webhook URL, API key, or integration key
+    events: list[str] = field(default_factory=lambda: ["sync_fail", "audit_drift", "rotate"])
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> NotifierConfig:
+        return cls(
+            name=data.get("name", ""),
+            webhook_url=data.get("webhook_url", ""),
+            events=data.get("events", ["sync_fail", "audit_drift", "rotate"]),
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "name": self.name,
+            "webhook_url": self.webhook_url,
+            "events": self.events,
+        }
+
+
+@dataclass
 class VaultConfig:
     """In-memory representation of vault.yaml."""
 
     version: int = 1
     keychain_service: str = DEFAULT_KEYCHAIN_SERVICE
     secrets: dict[str, SecretEntry] = field(default_factory=dict)
+    notifiers: list[NotifierConfig] = field(default_factory=list)
 
     @classmethod
     def load(cls, path: Path | None = None) -> VaultConfig:
@@ -105,10 +130,16 @@ class VaultConfig:
         for name, data in raw.get("secrets", {}).items():
             if isinstance(data, dict):
                 secrets[name] = SecretEntry.from_dict(name, data)
+        notifiers = [
+            NotifierConfig.from_dict(n)
+            for n in raw.get("notifiers", [])
+            if isinstance(n, dict)
+        ]
         return cls(
             version=raw.get("version", 1),
             keychain_service=raw.get("keychain_service", DEFAULT_KEYCHAIN_SERVICE),
             secrets=secrets,
+            notifiers=notifiers,
         )
 
     def save(self, path: Path | None = None) -> None:
@@ -119,6 +150,8 @@ class VaultConfig:
             "keychain_service": self.keychain_service,
             "secrets": {name: entry.to_dict() for name, entry in self.secrets.items()},
         }
+        if self.notifiers:
+            data["notifiers"] = [n.to_dict() for n in self.notifiers]
         config_path.write_text(
             yaml.dump(data, default_flow_style=False, allow_unicode=True, sort_keys=False),
             encoding="utf-8",

@@ -35,7 +35,7 @@ Homepage = "https://github.com/allnew-llc/andon-for-llm-agents"
 Issues = "https://github.com/allnew-llc/andon-for-llm-agents/issues"
 
 [tool.setuptools]
-packages = ["hooks", "hooks.vault", "hooks.vault.drivers"]
+packages = ["hooks", "hooks.vault", "hooks.vault.drivers", "hooks.vault.notifiers"]
 
 [tool.ruff]
 target-version = "py310"

@@ -14,6 +14,7 @@ from pathlib import Path
 from . import audit, keychain
 from .config import SecretEntry, Target, VaultConfig
 from .drivers import get_driver
+from .notifiers.base import EventPayload, VaultEvent
 
 
 @dataclass
@@ -43,6 +44,29 @@ class SyncReport:
     @property
     def all_ok(self) -> bool:
         return self.fail_count == 0
+
+
+def fire_notifications(config: VaultConfig, event: VaultEvent, report: SyncReport,
+                       secret_name: str = "*") -> None:
+    """Send notifications to all configured notifiers for the given event."""
+    from .notifiers import get_notifier
+
+    for nc in config.notifiers:
+        if event.value not in nc.events:
+            continue
+        try:
+            notifier = get_notifier(nc.name, nc.webhook_url)
+            targets = [r.target_label for r in report.results]
+            payload = EventPayload(
+                event=event,
+                secret_name=secret_name,
+                targets=targets,
+                ok_count=report.ok_count,
+                fail_count=report.fail_count,
+            )
+            notifier.notify(payload)
+        except (ValueError, Exception):
+            pass  # Notification failure should never block vault operations
 
 
 def _sync_one_target(
@@ -119,6 +143,9 @@ def sync_secret(
         result = _sync_one_target(entry, target, value, audit_log=audit_log)
         report.results.append(result)
 
+    event = VaultEvent.SYNC_OK if report.all_ok else VaultEvent.SYNC_FAIL
+    fire_notifications(config, event, report, secret_name=secret_name)
+
     return report
 
 
@@ -132,6 +159,10 @@ def sync_all(
     for name in config.secrets:
         sub = sync_secret(config, name, audit_log=audit_log)
         report.results.extend(sub.results)
+
+    event = VaultEvent.SYNC_OK if report.all_ok else VaultEvent.SYNC_FAIL
+    fire_notifications(config, event, report, secret_name="*")
+
     return report
 
 
