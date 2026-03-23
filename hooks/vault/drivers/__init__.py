@@ -7,18 +7,24 @@ from .alibaba import AlibabaKMSDriver
 from .aws_sm import AWSSecretsManagerDriver
 from .aws_ssm import AWSSSMDriver
 from .azure import AzureKeyVaultDriver
+from .azure_devops import AzureDevOpsDriver
 from .base import PlatformDriver
 from .bitbucket import BitbucketPipelinesDriver
 from .circleci import CircleCIDriver
 from .cloudflare import CloudflarePagesDriver
+from .deno import DenoDeployDriver
 from .digitalocean import DigitalOceanDriver
+from .docker import DockerSwarmDriver
 from .flyio import FlyIODriver
 from .gcp import GCPSecretManagerDriver
 from .github import GitHubActionsDriver
 from .gitlab import GitLabCIDriver
+from .hasura import HasuraCloudDriver
 from .heroku import HerokuDriver
 from .huawei import HuaweiCSMSDriver
 from .jdcloud import JDCloudKMSDriver
+from .kubernetes import KubernetesDriver
+from .laravel_forge import LaravelForgeDriver
 from .local import LocalDriver
 from .naver import NaverCloudDriver
 from .netlify import NetlifyDriver
@@ -33,33 +39,45 @@ from .vercel import VercelDriver
 from .volcengine import VolcengineKMSDriver
 
 DRIVER_MAP: dict[str, type[PlatformDriver]] = {
-    "alibaba-kms": AlibabaKMSDriver,
+    # Cloud — Global
     "aws-secrets-manager": AWSSecretsManagerDriver,
     "aws-ssm": AWSSSMDriver,
     "azure-keyvault": AzureKeyVaultDriver,
-    "bitbucket-pipelines": BitbucketPipelinesDriver,
-    "circleci": CircleCIDriver,
+    "gcp-secrets": GCPSecretManagerDriver,
+    # Cloud — Asia
+    "alibaba-kms": AlibabaKMSDriver,
+    "huawei-csms": HuaweiCSMSDriver,
+    "jdcloud-kms": JDCloudKMSDriver,
+    "naver-cloud": NaverCloudDriver,
+    "nhn-cloud": NHNCloudDriver,
+    "sakura-cloud": SakuraCloudDriver,
+    "tencent-ssm": TencentSSMDriver,
+    "volcengine-kms": VolcengineKMSDriver,
+    # PaaS / Hosting
     "cloudflare-pages": CloudflarePagesDriver,
     "digitalocean": DigitalOceanDriver,
     "flyio": FlyIODriver,
-    "gcp-secrets": GCPSecretManagerDriver,
-    "github-actions": GitHubActionsDriver,
-    "gitlab-ci": GitLabCIDriver,
+    "hasura-cloud": HasuraCloudDriver,
     "heroku": HerokuDriver,
-    "huawei-csms": HuaweiCSMSDriver,
-    "jdcloud-kms": JDCloudKMSDriver,
-    "local": LocalDriver,
-    "naver-cloud": NaverCloudDriver,
+    "laravel-forge": LaravelForgeDriver,
     "netlify": NetlifyDriver,
-    "nhn-cloud": NHNCloudDriver,
     "railway": RailwayDriver,
     "render": RenderDriver,
-    "sakura-cloud": SakuraCloudDriver,
     "supabase": SupabaseDriver,
-    "tencent-ssm": TencentSSMDriver,
-    "terraform-cloud": TerraformCloudDriver,
     "vercel": VercelDriver,
-    "volcengine-kms": VolcengineKMSDriver,
+    "deno-deploy": DenoDeployDriver,
+    # CI/CD
+    "azure-devops": AzureDevOpsDriver,
+    "bitbucket-pipelines": BitbucketPipelinesDriver,
+    "circleci": CircleCIDriver,
+    "github-actions": GitHubActionsDriver,
+    "gitlab-ci": GitLabCIDriver,
+    # IaC / Orchestration
+    "docker-swarm": DockerSwarmDriver,
+    "kubernetes": KubernetesDriver,
+    "terraform-cloud": TerraformCloudDriver,
+    # Local
+    "local": LocalDriver,
 }
 
 
@@ -74,33 +92,6 @@ def get_driver(platform: str) -> PlatformDriver:
 
 __all__ = [
     "PlatformDriver",
-    "AlibabaKMSDriver",
-    "AWSSecretsManagerDriver",
-    "AWSSSMDriver",
-    "AzureKeyVaultDriver",
-    "BitbucketPipelinesDriver",
-    "CircleCIDriver",
-    "CloudflarePagesDriver",
-    "DigitalOceanDriver",
-    "FlyIODriver",
-    "GCPSecretManagerDriver",
-    "GitHubActionsDriver",
-    "GitLabCIDriver",
-    "HerokuDriver",
-    "HuaweiCSMSDriver",
-    "JDCloudKMSDriver",
-    "LocalDriver",
-    "NaverCloudDriver",
-    "NetlifyDriver",
-    "NHNCloudDriver",
-    "RailwayDriver",
-    "RenderDriver",
-    "SakuraCloudDriver",
-    "SupabaseDriver",
-    "TencentSSMDriver",
-    "TerraformCloudDriver",
-    "VercelDriver",
-    "VolcengineKMSDriver",
     "DRIVER_MAP",
     "get_driver",
 ]

@@ -537,7 +537,7 @@ class TestGetDriver:
         for name in DRIVER_MAP:
             driver = get_driver(name)
             assert isinstance(driver, PlatformDriver), f"Failed for {name}"
-        assert len(DRIVER_MAP) == 27  # 19 global + 8 Asian
+        assert len(DRIVER_MAP) == 33
 
     def test_unknown_platform(self):
         with pytest.raises(ValueError, match="Unknown platform"):
