@@ -80,12 +80,12 @@ keychain: "/Users/user/Library/Keychains/login.keychain-db"
 version: 512
 class: "genp"
     attributes:
-        "acct"<blob>="masa"
+        "acct"<blob>="testuser"
         "labl"<blob>="OpenAI Key"
         "svce"<blob>="claude-mcp-openai"
 class: "genp"
     attributes:
-        "acct"<blob>="masa"
+        "acct"<blob>="testuser"
         "labl"<blob>="Gemini Key"
         "svce"<blob>="claude-mcp-gemini"
 class: "genp"
@@ -108,7 +108,7 @@ class TestKeychainSearch:
         results = search("openai")
         assert len(results) == 1
         assert results[0].service == "claude-mcp-openai"
-        assert results[0].account == "masa"
+        assert results[0].account == "testuser"
         assert results[0].label == "OpenAI Key"
 
     @patch("vault.keychain.subprocess.run")
