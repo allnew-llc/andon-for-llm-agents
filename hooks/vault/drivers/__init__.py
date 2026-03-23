@@ -3,6 +3,7 @@
 """Platform drivers for secret deployment targets."""
 from __future__ import annotations
 
+from .alibaba import AlibabaKMSDriver
 from .aws_sm import AWSSecretsManagerDriver
 from .aws_ssm import AWSSSMDriver
 from .azure import AzureKeyVaultDriver
@@ -16,15 +17,23 @@ from .gcp import GCPSecretManagerDriver
 from .github import GitHubActionsDriver
 from .gitlab import GitLabCIDriver
 from .heroku import HerokuDriver
+from .huawei import HuaweiCSMSDriver
+from .jdcloud import JDCloudKMSDriver
 from .local import LocalDriver
+from .naver import NaverCloudDriver
 from .netlify import NetlifyDriver
+from .nhn import NHNCloudDriver
 from .railway import RailwayDriver
 from .render import RenderDriver
+from .sakura import SakuraCloudDriver
 from .supabase import SupabaseDriver
+from .tencent import TencentSSMDriver
 from .terraform import TerraformCloudDriver
 from .vercel import VercelDriver
+from .volcengine import VolcengineKMSDriver
 
 DRIVER_MAP: dict[str, type[PlatformDriver]] = {
+    "alibaba-kms": AlibabaKMSDriver,
     "aws-secrets-manager": AWSSecretsManagerDriver,
     "aws-ssm": AWSSSMDriver,
     "azure-keyvault": AzureKeyVaultDriver,
@@ -37,13 +46,20 @@ DRIVER_MAP: dict[str, type[PlatformDriver]] = {
     "github-actions": GitHubActionsDriver,
     "gitlab-ci": GitLabCIDriver,
     "heroku": HerokuDriver,
+    "huawei-csms": HuaweiCSMSDriver,
+    "jdcloud-kms": JDCloudKMSDriver,
     "local": LocalDriver,
+    "naver-cloud": NaverCloudDriver,
     "netlify": NetlifyDriver,
+    "nhn-cloud": NHNCloudDriver,
     "railway": RailwayDriver,
     "render": RenderDriver,
+    "sakura-cloud": SakuraCloudDriver,
     "supabase": SupabaseDriver,
+    "tencent-ssm": TencentSSMDriver,
     "terraform-cloud": TerraformCloudDriver,
     "vercel": VercelDriver,
+    "volcengine-kms": VolcengineKMSDriver,
 }
 
 
@@ -58,6 +74,7 @@ def get_driver(platform: str) -> PlatformDriver:
 
 __all__ = [
     "PlatformDriver",
+    "AlibabaKMSDriver",
     "AWSSecretsManagerDriver",
     "AWSSSMDriver",
     "AzureKeyVaultDriver",
@@ -70,13 +87,20 @@ __all__ = [
     "GitHubActionsDriver",
     "GitLabCIDriver",
     "HerokuDriver",
+    "HuaweiCSMSDriver",
+    "JDCloudKMSDriver",
     "LocalDriver",
+    "NaverCloudDriver",
     "NetlifyDriver",
+    "NHNCloudDriver",
     "RailwayDriver",
     "RenderDriver",
+    "SakuraCloudDriver",
     "SupabaseDriver",
+    "TencentSSMDriver",
     "TerraformCloudDriver",
     "VercelDriver",
+    "VolcengineKMSDriver",
     "DRIVER_MAP",
     "get_driver",
 ]
