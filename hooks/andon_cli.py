@@ -263,6 +263,11 @@ def main() -> int:
             "remove": vault_cli.cmd_remove,
             "list": vault_cli.cmd_list,
             "search": vault_cli.cmd_search,
+            "history": vault_cli.cmd_history,
+            "rollback": vault_cli.cmd_rollback,
+            "run": vault_cli.cmd_run,
+            "export": vault_cli.cmd_export,
+            "import": vault_cli.cmd_import_secrets,
         }
         handler = _VAULT_DISPATCH.get(args.vault_command)
         if handler:
