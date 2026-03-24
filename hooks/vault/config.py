@@ -110,6 +110,35 @@ class NotifierConfig:
 
 
 @dataclass
+class Environment:
+    """An environment with optional secret/target overrides."""
+
+    name: str
+    inherits: str = ""  # parent environment name (empty = no inheritance)
+    secrets: dict[str, SecretEntry] = field(default_factory=dict)
+
+    @classmethod
+    def from_dict(cls, name: str, data: dict[str, Any]) -> Environment:
+        secrets: dict[str, SecretEntry] = {}
+        for sname, sdata in data.get("secrets", {}).items():
+            if isinstance(sdata, dict):
+                secrets[sname] = SecretEntry.from_dict(sname, sdata)
+        return cls(
+            name=name,
+            inherits=data.get("inherits", ""),
+            secrets=secrets,
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        d: dict[str, Any] = {}
+        if self.inherits:
+            d["inherits"] = self.inherits
+        if self.secrets:
+            d["secrets"] = {n: e.to_dict() for n, e in self.secrets.items()}
+        return d
+
+
+@dataclass
 class VaultConfig:
     """In-memory representation of vault.yaml."""
 
@@ -117,6 +146,8 @@ class VaultConfig:
     keychain_service: str = DEFAULT_KEYCHAIN_SERVICE
     secrets: dict[str, SecretEntry] = field(default_factory=dict)
     notifiers: list[NotifierConfig] = field(default_factory=list)
+    environments: dict[str, Environment] = field(default_factory=dict)
+    default_environment: str = ""
 
     @classmethod
     def load(cls, path: Path | None = None) -> VaultConfig:
@@ -135,11 +166,17 @@ class VaultConfig:
             for n in raw.get("notifiers", [])
             if isinstance(n, dict)
         ]
+        environments: dict[str, Environment] = {}
+        for env_name, env_data in raw.get("environments", {}).items():
+            if isinstance(env_data, dict):
+                environments[env_name] = Environment.from_dict(env_name, env_data)
         return cls(
             version=raw.get("version", 1),
             keychain_service=raw.get("keychain_service", DEFAULT_KEYCHAIN_SERVICE),
             secrets=secrets,
             notifiers=notifiers,
+            environments=environments,
+            default_environment=raw.get("default_environment", ""),
         )
 
     def save(self, path: Path | None = None) -> None:
@@ -152,6 +189,10 @@ class VaultConfig:
         }
         if self.notifiers:
             data["notifiers"] = [n.to_dict() for n in self.notifiers]
+        if self.environments:
+            data["environments"] = {n: e.to_dict() for n, e in self.environments.items()}
+        if self.default_environment:
+            data["default_environment"] = self.default_environment
         config_path.write_text(
             yaml.dump(data, default_flow_style=False, allow_unicode=True, sort_keys=False),
             encoding="utf-8",
@@ -165,3 +206,30 @@ class VaultConfig:
 
     def get_secret(self, name: str) -> SecretEntry | None:
         return self.secrets.get(name)
+
+    def resolve_environment(self, env_name: str) -> dict[str, SecretEntry]:
+        """Resolve secrets for an environment with inheritance.
+
+        Walks the inheritance chain and merges secrets.
+        Child overrides take precedence over parent.
+        Base (top-level) secrets are always included as the root.
+        """
+        # Start with base secrets
+        resolved = dict(self.secrets)
+
+        # Build inheritance chain
+        chain: list[Environment] = []
+        current = env_name
+        visited: set[str] = set()
+        while current and current in self.environments and current not in visited:
+            visited.add(current)
+            env = self.environments[current]
+            chain.append(env)
+            current = env.inherits
+
+        # Apply from root to leaf (most specific last)
+        for env in reversed(chain):
+            for name, entry in env.secrets.items():
+                resolved[name] = entry
+
+        return resolved

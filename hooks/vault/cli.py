@@ -422,23 +422,33 @@ def cmd_rollback(args: argparse.Namespace) -> int:
     return 0 if report.all_ok else 1
 
 
+def _resolve_secrets(config: VaultConfig, env_name: str | None) -> dict[str, SecretEntry]:
+    """Resolve secrets, applying environment inheritance if specified."""
+    if env_name:
+        return config.resolve_environment(env_name)
+    return dict(config.secrets)
+
+
 def cmd_run(args: argparse.Namespace) -> int:
     """Run a command with vault secrets injected as environment variables."""
     import os
 
     config = VaultConfig.load(Path(args.config))
-    if not config.secrets:
+    env_name = getattr(args, "env_name", None) or config.default_environment
+    secrets = _resolve_secrets(config, env_name)
+
+    if not secrets:
         print("Error: No secrets configured.")
         return 1
 
     # Build env with secrets from Keychain
     env = os.environ.copy()
-    for name, entry in config.secrets.items():
+    for _name, entry in secrets.items():
         try:
             value = keychain.get(config.keychain_service, entry.account)
             env[entry.env_name] = value
         except keychain.KeychainError:
-            print(f"Warning: Could not load '{name}' from Keychain, skipping.")
+            print(f"Warning: Could not load '{entry.name}' from Keychain, skipping.")
 
     if not args.command:
         print("Error: No command specified. Usage: andon vault run -- <command>")
@@ -455,12 +465,15 @@ def cmd_export(args: argparse.Namespace) -> int:
     import yaml
 
     config = VaultConfig.load(Path(args.config))
-    if not config.secrets:
+    env_name = getattr(args, "env_name", None) or config.default_environment
+    resolved = _resolve_secrets(config, env_name)
+
+    if not resolved:
         print("No secrets to export.")
         return 0
 
     secrets: dict[str, str] = {}
-    for _name, entry in config.secrets.items():
+    for _name, entry in resolved.items():
         try:
             secrets[entry.env_name] = keychain.get(config.keychain_service, entry.account)
         except keychain.KeychainError:
@@ -635,10 +648,12 @@ def register_vault_parser(subparsers: argparse._SubParsersAction) -> None:  # ty
 
     # run
     run_p = vault_sub.add_parser("run", help="Run a command with secrets as env vars")
+    run_p.add_argument("--env", dest="env_name", default=None, help="Environment (dev/stg/prd)")
     run_p.add_argument("command", nargs=argparse.REMAINDER, help="Command to run")
 
     # export
     export_p = vault_sub.add_parser("export", help="Export secrets (json/yaml/env/docker)")
+    export_p.add_argument("--env", dest="env_name", default=None, help="Environment (dev/stg/prd)")
     export_p.add_argument(
         "--format", default="env", choices=["env", "json", "yaml", "docker"],
         help="Output format (default: env)",

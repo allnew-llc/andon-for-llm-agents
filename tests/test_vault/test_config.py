@@ -6,7 +6,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from vault.config import SecretEntry, Target, VaultConfig
+from vault.config import Environment, SecretEntry, Target, VaultConfig
 
 
 @pytest.fixture
@@ -140,3 +140,101 @@ class TestVaultConfig:
         bad.write_text("just a string\n")
         config = VaultConfig.load(bad)
         assert len(config.secrets) == 0
+
+
+class TestEnvironmentInheritance:
+    def test_resolve_base_only(self):
+        config = VaultConfig()
+        config.add_secret(SecretEntry(name="key1", account="k1", env_name="KEY1"))
+        resolved = config.resolve_environment("nonexistent")
+        assert "key1" in resolved
+
+    def test_resolve_inherits_base(self):
+        """Environment inherits all base secrets"""
+        config = VaultConfig()
+        config.add_secret(SecretEntry(name="shared", account="s", env_name="SHARED"))
+        config.environments["production"] = Environment(
+            name="production", inherits="",
+        )
+        resolved = config.resolve_environment("production")
+        assert "shared" in resolved
+
+    def test_override(self):
+        """Environment overrides a base secret"""
+        config = VaultConfig()
+        config.add_secret(SecretEntry(
+            name="db", account="db", env_name="DB_HOST",
+            targets=[Target(platform="local", file="/tmp/base.env")],
+        ))
+        config.environments["production"] = Environment(
+            name="production",
+            secrets={
+                "db": SecretEntry(
+                    name="db", account="db-prod", env_name="DB_HOST",
+                    targets=[Target(platform="local", file="/tmp/prod.env")],
+                ),
+            },
+        )
+        resolved = config.resolve_environment("production")
+        assert resolved["db"].account == "db-prod"
+        assert resolved["db"].targets[0].file == "/tmp/prod.env"
+
+    def test_env_adds_secret(self):
+        """Environment adds a secret not in base"""
+        config = VaultConfig()
+        config.add_secret(SecretEntry(name="shared", account="s", env_name="SHARED"))
+        config.environments["staging"] = Environment(
+            name="staging",
+            secrets={
+                "stg-only": SecretEntry(name="stg-only", account="stg", env_name="STG_KEY"),
+            },
+        )
+        resolved = config.resolve_environment("staging")
+        assert "shared" in resolved
+        assert "stg-only" in resolved
+
+    def test_chain_inheritance(self):
+        """dev inherits base, dev_personal inherits dev"""
+        config = VaultConfig()
+        config.add_secret(SecretEntry(name="base-key", account="b", env_name="BASE"))
+        config.environments["dev"] = Environment(
+            name="dev", inherits="",
+            secrets={
+                "dev-key": SecretEntry(name="dev-key", account="d", env_name="DEV"),
+            },
+        )
+        config.environments["dev_personal"] = Environment(
+            name="dev_personal", inherits="dev",
+            secrets={
+                "personal": SecretEntry(name="personal", account="p", env_name="PERSONAL"),
+            },
+        )
+        resolved = config.resolve_environment("dev_personal")
+        assert "base-key" in resolved
+        assert "dev-key" in resolved
+        assert "personal" in resolved
+
+    def test_circular_inheritance_safety(self):
+        """Circular inheritance doesn't loop forever"""
+        config = VaultConfig()
+        config.environments["a"] = Environment(name="a", inherits="b")
+        config.environments["b"] = Environment(name="b", inherits="a")
+        # Should not hang
+        resolved = config.resolve_environment("a")
+        assert isinstance(resolved, dict)
+
+    def test_save_load_with_environments(self, tmp_path: Path):
+        cfg_path = tmp_path / "vault.yaml"
+        config = VaultConfig()
+        config.add_secret(SecretEntry(name="x", account="x", env_name="X"))
+        config.environments["production"] = Environment(
+            name="production",
+            secrets={"y": SecretEntry(name="y", account="y", env_name="Y")},
+        )
+        config.default_environment = "production"
+        config.save(cfg_path)
+
+        loaded = VaultConfig.load(cfg_path)
+        assert "production" in loaded.environments
+        assert "y" in loaded.environments["production"].secrets
+        assert loaded.default_environment == "production"
