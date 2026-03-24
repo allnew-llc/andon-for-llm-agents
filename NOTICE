@@ -5,12 +5,14 @@ This product includes concepts derived from lean manufacturing principles
 (TPS, Jidoka, Kaizen, ANDON). This project is not affiliated with or endorsed
 by any manufacturing company.
 
+License:
+This software is dual-licensed. See LICENSE for details.
+Personal use is free. Commercial use requires a separate license from AllNew LLC.
+
 Patent Notice:
 Certain methods and systems implemented in this software are the subject of
 pending patent applications filed by AllNew LLC. No patents have been granted
-as of the date of this release. If and when patents are granted, the Apache
-License 2.0 Section 3 (Grant of Patent License) applies — users receive a
-perpetual, royalty-free patent license for their use of this software.
+as of the date of this release.
 
 Related patent applications (Japan Patent Office, all filed March 2026):
   - JP 2026-035626 (ANPAT2026F)

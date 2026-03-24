@@ -7,7 +7,7 @@ name = "andon-for-llm-agents"
 version = "0.2.0"
 description = "TPS-inspired ANDON safety hooks for LLM coding agents"
 readme = "README.md"
-license = "Apache-2.0"
+license = "LicenseRef-Dual"
 requires-python = ">=3.10"
 authors = [{ name = "AllNew LLC" }]
 keywords = ["llm", "agents", "safety", "andon", "hooks", "claude-code"]
@@ -35,7 +35,7 @@ Homepage = "https://github.com/allnew-llc/andon-for-llm-agents"
 Issues = "https://github.com/allnew-llc/andon-for-llm-agents/issues"
 
 [tool.setuptools]
-packages = ["hooks", "hooks.vault", "hooks.vault.drivers", "hooks.vault.notifiers"]
+packages = ["hooks"]
 
 [tool.ruff]
 target-version = "py310"
