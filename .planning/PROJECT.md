@@ -55,13 +55,7 @@ Stop defects from flowing downstream and learn from every failure — applied to
 
 <!-- Current scope. Building toward these. -->
 
-- ✓ **VAULT-01**: Local-first secret management backed by macOS Keychain — v0.5.0
-- ✓ **VAULT-02**: Platform drivers for 33 cloud/CI/CD services — v0.5.0
-- ✓ **VAULT-03**: Drift audit, sync status, notification integrations — v0.5.0
-- ✓ **VAULT-04**: Version history, rollback, run/export/import commands — v0.5.0
-- ✓ **VAULT-05**: Environment inheritance (dev/stg/prd) for secrets — v0.5.0
-- ✓ **VAULT-06**: Local web UI (localhost-only, stdlib, no secret values in browser) — v0.5.0
-- ✓ **VAULT-07**: Security hardening (argv exposure fix, shell=True removal, gitignore check) — v0.5.0
+(Vault features moved to banto — see mcp/banto/)
 
 ### Out of Scope
 
@@ -78,9 +72,9 @@ Stop defects from flowing downstream and learn from every failure — applied to
 - 7 skills in repo: tps-kaizen, qc-audit, freee-analysis, standup, cleanup-artifacts, careful (+ 6 upgraded user skills)
 - 7 analysis scripts (bash, POSIX-only) + 3 Python modules (registry, surfacer, candidate)
 - Gotchas Registry: 7 core + 1 pack YAML, auto-surfacing on ANDON open, Five Whys → candidate loop
-- Vault: local-first secret management — 33 platform drivers, 4,799 LOC + 1,874 LOC tests
 - Integrated with AllNew LLC's ios-app-factory pipeline
-- v0.3.0: Anthropic best practices, v0.4.0: Gotchas Engine, v0.5.0: Vault secret management
+- v0.3.0: Anthropic best practices, v0.4.0: Gotchas Engine
+- Vault features (v0.5.0) moved to mcp/banto as banto sync subpackage
 
 ## Constraints
 
@@ -105,11 +99,5 @@ Stop defects from flowing downstream and learn from every failure — applied to
 | 3-tier confidence (exact/partial/category) | Ranked matching avoids false positives | ✓ Good |
 | Human approval for Gotcha promotion | Safety — no auto-promotion of candidate patterns | ✓ Good |
 | Re-run matching in stats (not persisted) | Simpler architecture, no surfacing output schema dependency | ✓ Good |
-| macOS Keychain as single source of truth | Secure Enclave backed, no cloud dependency | ✓ Good |
-| Platform drivers as thin CLI wrappers | Easy to add new platforms, minimal abstraction | ✓ Good |
-| vault.yaml = metadata only (no values) | Config file safe to commit, values stay in Keychain | ✓ Good |
-| Environment inheritance (base→parent→child) | Reduces duplication, matches real deployment topology | ✓ Good |
-| stdlib-only web UI (no npm/frameworks) | Zero external dependencies, localhost-only security | ✓ Good |
-
 ---
-*Last updated: 2026-03-24 after v0.5.0 vault milestone*
+*Last updated: 2026-03-24 — vault features moved to banto sync*
