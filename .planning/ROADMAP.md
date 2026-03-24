@@ -6,6 +6,7 @@
 - ✅ **v0.2.0 Hardening** - Phases 4-5 (shipped 2026-03-10)
 - ✅ **v0.3.0 Skill Quality & Ecosystem** - Phases 6-10 (shipped 2026-03-19)
 - ✅ **v0.4.0 Gotchas Engine** - Phases 11-14 (shipped 2026-03-19)
+- ✅ **v0.5.0 Vault — Local-First Secret Management** - Phase 15 (shipped 2026-03-24)
 
 ## Phases
 
@@ -97,11 +98,30 @@ Plans:
 - [ ] 14-01-PLAN.md — gotcha-stats.sh script with hit rates, staleness detection, and effectiveness metrics (METRIC-01, METRIC-02, METRIC-03)
 - [ ] 14-02-PLAN.md — SKILL.md integration: verify gotcha-review docs, update Step 0 with Gotcha Registry check (INTEG-01, INTEG-02)
 
+### ✅ v0.5.0 Vault — Local-First Secret Management (SHIPPED 2026-03-24)
+
+**Milestone Goal:** macOS Keychain を唯一の金庫とし、33 プラットフォームに合鍵を配布するローカルファーストのシークレット管理を ANDON に組み込む。
+
+- [x] **Phase 15: Vault Secret Management** - Keychain backend, 33 platform drivers, CLI (15 subcommands), notifications, version history, environments, web UI (completed 2026-03-24)
+
+### Phase 15: Vault Secret Management
+**Goal**: Local-first secret management backed by macOS Keychain with sync to 33 cloud platforms, environment inheritance, and localhost web UI
+**Depends on**: Nothing (independent feature)
+**Requirements**: VAULT-01 through VAULT-07
+**Success Criteria** (what must be TRUE):
+  1. `andon vault add` stores a secret in Keychain and records metadata in vault.yaml (no values in config)
+  2. `andon vault sync` distributes secrets from Keychain to all configured platform targets
+  3. `andon vault status` shows a matrix of secret sync state without revealing values
+  4. `andon vault audit` detects drift between Keychain and platform targets
+  5. `andon vault run --env production -- <cmd>` injects environment-specific secrets
+  6. `andon vault ui` launches a localhost-only web UI that never exposes secret values
+  7. 355 tests pass including 7 web UI tests, with no regressions
+**Execution**: Spec-driven (`.claude/instructions/vault-feature-spec.md`), 15 commits, not GSD-planned per phase
+
 ## Progress
 
 **Execution Order:**
-Phases 1-10 complete. Continuing: 11 → 12 → 13 → 14
-Note: Phases 12 and 13 both depend on Phase 11 and can run in parallel. Phase 14 depends on both 12 and 13.
+Phases 1-14 complete. Phase 15 complete (spec-driven, not GSD-planned per step).
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -113,4 +133,5 @@ Note: Phases 12 and 13 both depend on Phase 11 and can run in parallel. Phase 14
 | 11. Gotchas Registry | v0.4.0 | 2/2 | Complete | 2026-03-19 |
 | 12. ANDON Auto-Surfacing | v0.4.0 | 1/1 | Complete | 2026-03-19 |
 | 13. Five Whys → Gotcha Loop | v0.4.0 | 2/2 | Complete | 2026-03-19 |
-| 14. Analysis, Metrics & Skill Integration | 2/2 | Complete    | 2026-03-19 | 2026-03-19 |
+| 14. Analysis, Metrics & Skill Integration | v0.4.0 | 2/2 | Complete | 2026-03-19 |
+| 15. Vault Secret Management | v0.5.0 | spec-driven | Complete | 2026-03-24 |

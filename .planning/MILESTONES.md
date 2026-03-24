@@ -1,5 +1,26 @@
 # Milestones
 
+## v0.5.0 — Vault: Local-First Secret Management (Shipped 2026-03-24)
+
+**Goal:** macOS Keychain を唯一の金庫とし、33 プラットフォームに合鍵を配布するローカルファーストのシークレット管理
+
+**Stats:** 1 phase (15), spec-driven (no GSD plans), 60 files changed, +7,036 lines, 4,799 LOC in vault modules, 1,874 LOC in tests, 15 commits
+
+**Delivered:**
+- Keychain backend: macOS Secure Enclave backed secret storage
+- 33 platform drivers: Cloudflare, Vercel, AWS SM/SSM, GCP, Azure, K8s, Docker, Heroku, Fly.io, Netlify, Render, Railway, Supabase, GitLab, GitHub, CircleCI, Bitbucket, Terraform, Azure DevOps, Deno, Hasura, Laravel Forge, DigitalOcean, Alibaba, Tencent, Huawei, Naver, NHN, JD Cloud, Sakura, Volcengine
+- CLI: 15 subcommands (status, sync, add, rotate, audit, remove, list, search, history, rollback, run, export, import, ui)
+- Notifications: Slack, Teams, Datadog, PagerDuty webhook integrations
+- Version history: SHA-256 fingerprinted, XOR backup, max 50 versions, rollback support
+- Environment inheritance: dev/stg/prd with chain resolution (child overrides parent)
+- Web UI: localhost-only, stdlib (http.server + json), dark theme, 4 tabs (Status/Secrets/History/Config)
+- Security: argv exposure fix, shell=True removal, gitignore check, pipe-based value passing
+- Import sources: --from-keychain, --from-clipboard, --from-cli, interactive prompt
+
+**Phases:** 15 (spec-driven, `.claude/instructions/vault-feature-spec.md`)
+
+---
+
 ## v0.4.0 — Gotchas Engine (Shipped 2026-03-19)
 
 **Goal:** Gotchas を静的テキストから構造化データ + 自動サーフェシングエンジンに進化させ、学習ループを閉じる

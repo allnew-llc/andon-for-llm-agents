@@ -39,13 +39,30 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 - [x] **INTEG-01**: tps-kaizen SKILL.md updated with gotcha-review subcommand documentation
 - [x] **INTEG-02**: tps-kaizen andon Step 0 updated to include Gotcha Registry check alongside incident history check
 
+## v0.5.0 Requirements
+
+Requirements for Vault — Local-First Secret Management milestone.
+
+### Vault Core
+
+- [x] **VAULT-01**: Local-first secret management — macOS Keychain as single source, vault.yaml metadata only (no values)
+- [x] **VAULT-02**: 33 platform drivers (Cloudflare, Vercel, AWS, GCP, Azure, K8s, Docker, Asian clouds, etc.)
+- [x] **VAULT-03**: Drift audit, sync status matrix, notification integrations (Slack, Teams, Datadog, PagerDuty)
+- [x] **VAULT-04**: Version history with SHA-256 fingerprints, rollback support, run/export/import commands
+- [x] **VAULT-05**: Environment inheritance (dev/stg/prd) with chain resolution
+- [x] **VAULT-06**: Localhost-only web UI (stdlib, no secret values in browser)
+- [x] **VAULT-07**: Security hardening (argv exposure fix, shell=True removal, gitignore check, pipe-based passing)
+
 ## Future Requirements
 
-### v0.5.0 Candidates
+### v0.6.0 Candidates
 
 - **COLLAB-01**: Gotcha sharing across teams via git-based registry sync
 - **ML-01**: Pattern similarity scoring using embedding distance (beyond regex)
 - **VISUAL-01**: Gotcha dependency graph visualization
+- **VAULT-HOOK-01**: PostToolUse hook — detect 401/403/unauthorized and suggest `andon vault audit`
+- **VAULT-HOOK-02**: PreToolUse hook — scan git diff for API key patterns before commit
+- **VAULT-HOOK-03**: PreToolUse hook — run `andon vault audit` before deploy commands
 
 ## Out of Scope
 
@@ -55,6 +72,9 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 | Real-time Gotcha push notifications | Batch analysis sufficient |
 | Auto-promotion of candidates (no human review) | Safety — human approval required for pattern promotion |
 | Breaking changes to existing hooks | Backward compat constraint |
+| Windows/Linux Keychain | macOS only for now |
+| Team secret sharing | Keychain is personal |
+| Auto key rotation | Manual trigger only |
 
 ## Traceability
 
@@ -78,11 +98,18 @@ Requirements for Gotchas Engine milestone. Each maps to roadmap phases.
 | INTEG-01 | Phase 14 | Complete (2026-03-19) |
 | INTEG-02 | Phase 14 | Complete (2026-03-19) |
 
+| VAULT-01 | Phase 15 | Complete (2026-03-24) |
+| VAULT-02 | Phase 15 | Complete (2026-03-24) |
+| VAULT-03 | Phase 15 | Complete (2026-03-24) |
+| VAULT-04 | Phase 15 | Complete (2026-03-24) |
+| VAULT-05 | Phase 15 | Complete (2026-03-24) |
+| VAULT-06 | Phase 15 | Complete (2026-03-24) |
+| VAULT-07 | Phase 15 | Complete (2026-03-24) |
+
 **Coverage:**
-- v0.4.0 requirements: 17 total
-- Mapped to phases: 17
-- Unmapped: 0 ✓
+- v0.4.0 requirements: 17 total, 17 mapped, 0 unmapped ✓
+- v0.5.0 requirements: 7 total, 7 mapped, 0 unmapped ✓
 
 ---
 *Requirements defined: 2026-03-19*
-*Last updated: 2026-03-19 — traceability mapped to phases 11-14*
+*Last updated: 2026-03-24 — v0.5.0 vault requirements added, traceability mapped to phase 15*

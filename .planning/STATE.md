@@ -1,14 +1,14 @@
 ---
 gsd_state_version: 1.0
-milestone: v0.1
-milestone_name: milestone
+milestone: v0.5.0
+milestone_name: Vault — Local-First Secret Management
 status: completed
-stopped_at: Completed 14-01-PLAN.md (gotcha-stats.sh metrics script — METRIC-01/02/03)
-last_updated: "2026-03-19T15:29:42.749Z"
-last_activity: 2026-03-20 — Phase 14 Plan 01 complete (gotcha-stats.sh — METRIC-01/02/03)
+stopped_at: v0.5.0 complete — vault environment inheritance + web UI committed
+last_updated: "2026-03-24T00:00:00.000Z"
+last_activity: 2026-03-24 — v0.5.0 Vault milestone complete (15 commits, 60 files, 7036 lines)
 progress:
-  total_phases: 4
-  completed_phases: 4
+  total_phases: 5
+  completed_phases: 5
   total_plans: 7
   completed_plans: 7
   percent: 100
@@ -18,26 +18,26 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-19)
+See: .planning/PROJECT.md (updated 2026-03-24)
 
 **Core value:** Stop defects from flowing downstream and learn from every failure
-**Current focus:** v0.4.0 Gotchas Engine — COMPLETE (all 4 phases done)
+**Current focus:** v0.5.0 Vault — COMPLETE
 
 ## Current Position
 
-Phase: 14 of 14 (Analysis, Metrics, Skill Integration)
-Plan: 2 of 2 in current phase
+Phase: 15 of 15 (Vault Secret Management)
+Plan: spec-driven (no GSD plans)
 Status: Complete
-Last activity: 2026-03-20 — Phase 14 Plan 01 complete (gotcha-stats.sh — METRIC-01/02/03)
+Last activity: 2026-03-24 — v0.5.0 Vault milestone shipped (environment inheritance + web UI)
 
-Progress: [████████████████████] 100% (v0.4.0 milestone complete — all 4 phases done)
+Progress: [████████████████████] 100% (v0.5.0 milestone complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10 (v0.3.0 milestone, phases 6-10)
-- Average duration: not tracked per plan
-- Total execution time: 1 session (2026-03-19)
+- v0.3.0: 10 plans in 1 session (2026-03-19)
+- v0.4.0: 7 plans in 1 session (2026-03-19)
+- v0.5.0: spec-driven, 15 commits in 2 sessions (2026-03-23 to 2026-03-24)
 
 **By Phase:**
 
@@ -49,16 +49,14 @@ Progress: [████████████████████] 100% (v
 | 9 | 3 | Complete | 2026-03-19 |
 | 10 | 2 | Complete | 2026-03-19 |
 | 11 | 2 | Complete | 2026-03-19 |
+| 12 | 1 | Complete | 2026-03-19 |
+| 13 | 2 | Complete | 2026-03-19 |
+| 14 | 2 | Complete | 2026-03-19 |
+| 15 | spec-driven | Complete | 2026-03-24 |
 
 **Recent Trend:**
-- Last milestone: v0.3.0 shipped same session as planned (all 5 phases)
-- Trend: Stable
-
-*Updated after each plan completion*
-| Phase 12 P01 | 467s | 2 tasks | 3 files |
-| Phase 13-five-whys-gotcha-loop P02 | 2 | 1 tasks | 1 files |
-| Phase 14-analysis-metrics-skill-integration P02 | 9min | 1 task | 1 file |
-| Phase 14-analysis-metrics-skill-integration P01 | 4min | 2 tasks | 1 file |
+- v0.5.0: Vault shipped — spec-driven approach (no per-step GSD plans, feature spec + rapid iteration)
+- Trend: Accelerating (larger features delivered faster with spec-driven approach)
 
 ## Accumulated Context
 
@@ -85,14 +83,14 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None yet.
+- Consider v0.6.0 scope: ANDON hook integration for vault (VAULT-HOOK-01/02/03)
 
 ### Blockers/Concerns
 
-None yet. Phase 11 is self-contained (no external dependencies).
+None.
 
 ## Session Continuity
 
-Last session: 2026-03-20T06:20:00Z
-Stopped at: Completed 14-01-PLAN.md (gotcha-stats.sh metrics script — METRIC-01/02/03)
+Last session: 2026-03-24
+Stopped at: v0.5.0 milestone complete — all GSD files updated
 Resume file: None
