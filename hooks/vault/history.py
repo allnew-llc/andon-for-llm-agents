@@ -1,20 +1,21 @@
 # Copyright 2026 AllNew LLC
 # Licensed under Apache License 2.0
-"""Secret version history — tracks rotations with encrypted rollback.
+"""Secret version history — tracks rotations with Keychain-native rollback.
 
-Each version records:
+Each version records metadata in a JSON file:
   - timestamp
   - sha256 fingerprint (not the value itself)
-  - encrypted backup of the value for rollback
 
-Encryption uses Fernet (symmetric, from stdlib-adjacent cryptography)
-with a key derived from the Keychain service password.
-For simplicity in v1, we store the encrypted value using a per-vault
-key stored in Keychain itself.
+Rollback values are stored in macOS Keychain, NOT in the JSON file.
+This eliminates the need for application-layer encryption — Keychain
+(backed by Secure Enclave) is the sole custodian of secret values.
+
+Keychain storage scheme:
+  service: "{vault_service}-history"
+  account: "{secret_name}:v{version}"
 """
 from __future__ import annotations
 
-import base64
 import hashlib
 import json
 import os
@@ -23,18 +24,21 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from . import keychain
+from .keychain import KeychainError
+
 DEFAULT_HISTORY_PATH = Path.home() / ".config" / "andon" / "vault-history.json"
 MAX_VERSIONS_PER_SECRET = 50
+HISTORY_SERVICE_SUFFIX = "-history"
 
 
 @dataclass
 class SecretVersion:
-    """One version of a secret."""
+    """One version of a secret (metadata only — value stays in Keychain)."""
 
     version: int
     timestamp: str
     fingerprint: str  # SHA-256 of the value (first 12 chars)
-    encrypted_value: str = ""  # base64-encoded XOR-obfuscated backup
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -45,7 +49,6 @@ class SecretVersion:
             version=data.get("version", 0),
             timestamp=data.get("timestamp", ""),
             fingerprint=data.get("fingerprint", ""),
-            encrypted_value=data.get("encrypted_value", ""),
         )
 
 
@@ -81,25 +84,22 @@ def _fingerprint(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()[:12]
 
 
-def _obfuscate(value: str, key: str) -> str:
-    """Simple XOR obfuscation with a key. Not cryptographically strong,
-    but prevents casual reading of history file. The key is stored in Keychain."""
-    key_bytes = hashlib.sha256(key.encode("utf-8")).digest()
-    value_bytes = value.encode("utf-8")
-    result = bytes(v ^ key_bytes[i % len(key_bytes)] for i, v in enumerate(value_bytes))
-    return base64.b64encode(result).decode("ascii")
+def _history_service(vault_service: str) -> str:
+    """Derive the Keychain service name for version history storage."""
+    return vault_service + HISTORY_SERVICE_SUFFIX
 
 
-def _deobfuscate(encoded: str, key: str) -> str:
-    """Reverse of _obfuscate."""
-    key_bytes = hashlib.sha256(key.encode("utf-8")).digest()
-    data = base64.b64decode(encoded)
-    result = bytes(v ^ key_bytes[i % len(key_bytes)] for i, v in enumerate(data))
-    return result.decode("utf-8")
+def _version_account(secret_name: str, version: int) -> str:
+    """Derive the Keychain account name for a specific version."""
+    return f"{secret_name}:v{version}"
 
 
 class HistoryStore:
-    """Manages version history for all secrets."""
+    """Manages version history for all secrets.
+
+    Metadata (version, timestamp, fingerprint) is stored in a JSON file.
+    Secret values for rollback are stored in macOS Keychain.
+    """
 
     def __init__(self, path: Path | None = None) -> None:
         self.path = path or DEFAULT_HISTORY_PATH
@@ -128,38 +128,62 @@ class HistoryStore:
         finally:
             os.close(fd)
 
-    def record(self, secret_name: str, value: str, obfuscation_key: str) -> SecretVersion:
-        """Record a new version of a secret."""
+    def record(
+        self, secret_name: str, value: str, vault_service: str,
+    ) -> SecretVersion:
+        """Record a new version of a secret.
+
+        Stores the value in Keychain and metadata in the JSON file.
+        """
         hist = self._data.get(secret_name, SecretHistory(name=secret_name))
         new_version = hist.current_version + 1
+
+        # Store value in Keychain
+        svc = _history_service(vault_service)
+        acct = _version_account(secret_name, new_version)
+        try:
+            keychain.put(svc, acct, value)
+        except KeychainError:
+            pass  # Best-effort: metadata still recorded for fingerprint tracking
+
         entry = SecretVersion(
             version=new_version,
             timestamp=datetime.now(timezone.utc).astimezone().isoformat(),
             fingerprint=_fingerprint(value),
-            encrypted_value=_obfuscate(value, obfuscation_key),
         )
         hist.versions.append(entry)
-        # Trim old versions
+
+        # Trim old versions and clean up their Keychain entries
         if len(hist.versions) > MAX_VERSIONS_PER_SECRET:
+            removed = hist.versions[:-MAX_VERSIONS_PER_SECRET]
             hist.versions = hist.versions[-MAX_VERSIONS_PER_SECRET:]
+            for old_v in removed:
+                old_acct = _version_account(secret_name, old_v.version)
+                keychain.delete(svc, old_acct)
+
         self._data[secret_name] = hist
         self._save()
         return entry
 
-    def get_history(self, secret_name: str) -> SecretHistory | None:
-        return self._data.get(secret_name)
-
     def get_version_value(
-        self, secret_name: str, version: int, obfuscation_key: str,
+        self, secret_name: str, version: int, vault_service: str,
     ) -> str | None:
-        """Retrieve a previous version's value for rollback."""
+        """Retrieve a previous version's value from Keychain for rollback."""
         hist = self._data.get(secret_name)
         if hist is None:
             return None
-        for v in hist.versions:
-            if v.version == version and v.encrypted_value:
-                return _deobfuscate(v.encrypted_value, obfuscation_key)
-        return None
+        # Verify the version exists in our metadata
+        if not any(v.version == version for v in hist.versions):
+            return None
+        svc = _history_service(vault_service)
+        acct = _version_account(secret_name, version)
+        try:
+            return keychain.get(svc, acct)
+        except KeychainError:
+            return None
+
+    def get_history(self, secret_name: str) -> SecretHistory | None:
+        return self._data.get(secret_name)
 
     def list_versions(self, secret_name: str) -> list[SecretVersion]:
         hist = self._data.get(secret_name)
@@ -167,6 +191,12 @@ class HistoryStore:
             return []
         return list(hist.versions)
 
-    def remove(self, secret_name: str) -> None:
-        self._data.pop(secret_name, None)
+    def remove(self, secret_name: str, vault_service: str = "") -> None:
+        """Remove all history for a secret, including Keychain entries."""
+        hist = self._data.pop(secret_name, None)
+        if hist and vault_service:
+            svc = _history_service(vault_service)
+            for v in hist.versions:
+                acct = _version_account(secret_name, v.version)
+                keychain.delete(svc, acct)
         self._save()

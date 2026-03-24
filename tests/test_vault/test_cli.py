@@ -99,6 +99,11 @@ class TestCmdSync:
 
 
 class TestCmdAdd:
+    @pytest.fixture(autouse=True)
+    def _mock_history(self):
+        with patch("vault.cli.HistoryStore"):
+            yield
+
     @patch("vault.cli.sync_secret")
     @patch("vault.cli.keychain")
     def test_add_from_keychain_with_service(self, mock_kc, mock_sync, tmp_path, capsys):
