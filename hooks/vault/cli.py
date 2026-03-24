@@ -429,6 +429,17 @@ def _resolve_secrets(config: VaultConfig, env_name: str | None) -> dict[str, Sec
     return dict(config.secrets)
 
 
+def cmd_ui(args: argparse.Namespace) -> int:
+    """Launch the local web UI for vault."""
+    from .config import VaultConfig
+    from .web import serve
+
+    config = VaultConfig.load(Path(args.config))
+    port = getattr(args, "port", 8384)
+    serve(config, port=port)
+    return 0
+
+
 def cmd_run(args: argparse.Namespace) -> int:
     """Run a command with vault secrets injected as environment variables."""
     import os
@@ -662,3 +673,7 @@ def register_vault_parser(subparsers: argparse._SubParsersAction) -> None:  # ty
     # import
     import_p = vault_sub.add_parser("import", help="Import secrets from file")
     import_p.add_argument("file", help="Path to .env, .json, or .yaml file")
+
+    # ui
+    ui_p = vault_sub.add_parser("ui", help="Launch local web UI (localhost only)")
+    ui_p.add_argument("--port", type=int, default=8384, help="Port number (default: 8384)")
